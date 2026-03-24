@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * Internal User Representation
@@ -32,11 +33,17 @@ public class User implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String username;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
+	private String password;
+
+	@Column(unique = true)
 	private String token;
 
 	@Column(nullable = false)
 	private UserStatus status;
+
+	@Column(nullable = false, updatable = false)
+	private Instant createdAt;
 
 	public Long getId() {
 		return id;
@@ -62,6 +69,14 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public String getToken() {
 		return token;
 	}
@@ -76,5 +91,13 @@ public class User implements Serializable {
 
 	public void setStatus(UserStatus status) {
 		this.status = status;
+	}
+
+	public Instant getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Instant createdAt) {
+		this.createdAt = createdAt;
 	}
 }

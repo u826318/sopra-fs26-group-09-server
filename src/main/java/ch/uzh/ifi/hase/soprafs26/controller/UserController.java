@@ -4,7 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLoginDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLogoutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
@@ -54,5 +57,28 @@ public class UserController {
 		User createdUser = userService.createUser(userInput);
 		// convert internal representation of user back to API
 		return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
+	}
+
+	@PostMapping("/users/register")
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	public UserAuthDTO register(@RequestBody UserPostDTO userPostDTO) {
+		User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+		User createdUser = userService.registerUser(userInput);
+		return DTOMapper.INSTANCE.convertEntityToUserAuthDTO(createdUser);
+	}
+
+	@PostMapping("/users/login")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public UserAuthDTO login(@RequestBody UserLoginDTO userLoginDTO) {
+		User loggedInUser = userService.loginUser(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+		return DTOMapper.INSTANCE.convertEntityToUserAuthDTO(loggedInUser);
+	}
+
+	@PostMapping("/users/logout")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void logout(@RequestBody UserLogoutDTO userLogoutDTO) {
+		userService.logoutUser(userLogoutDTO.getToken());
 	}
 }

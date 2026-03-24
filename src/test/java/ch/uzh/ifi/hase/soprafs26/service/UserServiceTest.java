@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
@@ -33,10 +35,11 @@ public class UserServiceTest {
 		testUser.setId(1L);
 		testUser.setName("testName");
 		testUser.setUsername("testUsername");
+		testUser.setPassword("password123");
 
 		// when -> any object is being save in the userRepository -> return the dummy
-		// testUser
-		Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
+		// user
+		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 	}
 
 	@Test
@@ -52,35 +55,59 @@ public class UserServiceTest {
 		assertEquals(testUser.getName(), createdUser.getName());
 		assertEquals(testUser.getUsername(), createdUser.getUsername());
 		assertNotNull(createdUser.getToken());
-		assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
+		assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+		assertNotEquals("password123", createdUser.getPassword());
+		assertTrue(new BCryptPasswordEncoder().matches("password123", createdUser.getPassword()));
 	}
 
 	@Test
-	public void createUser_duplicateName_throwsException() {
+	public void createUser_duplicateUsername_throwsException() {
 		// given -> a first user has already been created
-		userService.createUser(testUser);
-
-		// when -> setup additional mocks for UserRepository
-		Mockito.when(userRepository.findByName(Mockito.any())).thenReturn(testUser);
-		Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
-
-		// then -> attempt to create second user with same user -> check that an error
-		// is thrown
-		assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
-	}
-
-	@Test
-	public void createUser_duplicateInputs_throwsException() {
-		// given -> a first user has already been created
-		userService.createUser(testUser);
-
-		// when -> setup additional mocks for UserRepository
-		Mockito.when(userRepository.findByName(Mockito.any())).thenReturn(testUser);
 		Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
 		// then -> attempt to create second user with same user -> check that an error
 		// is thrown
 		assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+	}
+
+	@Test
+	public void loginUser_validCredentials_success() {
+		User persistedUser = new User();
+		persistedUser.setId(1L);
+		persistedUser.setName("testName");
+		persistedUser.setUsername("testUsername");
+		persistedUser.setPassword(new BCryptPasswordEncoder().encode("password123"));
+		Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(persistedUser);
+
+		User loggedInUser = userService.loginUser("testUsername", "password123");
+
+		assertEquals(UserStatus.ONLINE, loggedInUser.getStatus());
+		assertNotNull(loggedInUser.getToken());
+		Mockito.verify(userRepository, Mockito.times(1)).flush();
+	}
+
+	@Test
+	public void loginUser_invalidCredentials_throwsUnauthorized() {
+		User persistedUser = new User();
+		persistedUser.setUsername("testUsername");
+		persistedUser.setPassword(new BCryptPasswordEncoder().encode("password123"));
+		Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(persistedUser);
+
+		ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+				() -> userService.loginUser("testUsername", "wrongPassword"));
+		assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+	}
+
+	@Test
+	public void logoutUser_validToken_success() {
+		testUser.setToken("token-123");
+		Mockito.when(userRepository.findByToken("token-123")).thenReturn(testUser);
+
+		userService.logoutUser("token-123");
+
+		assertEquals(UserStatus.OFFLINE, testUser.getStatus());
+		assertNull(testUser.getToken());
+		Mockito.verify(userRepository, Mockito.times(1)).flush();
 	}
 
 }
