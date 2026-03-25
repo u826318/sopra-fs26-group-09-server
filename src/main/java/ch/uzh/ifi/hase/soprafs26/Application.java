@@ -13,24 +13,41 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class Application {
 
+	private static final String[] DEFAULT_ALLOWED_ORIGINS = {
+			"http://localhost:3000",
+			"http://127.0.0.1:3000",
+			"https://sopra-fs26-group-09-client.vercel.app"
+	};
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 
 	@GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
 	public String helloWorld() {
 		return "The application is running.";
 	}
 
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
+		final String[] allowedOrigins = getAllowedOrigins();
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("*").allowedMethods("*");
+				registry.addMapping("/**")
+						.allowedOrigins(allowedOrigins)
+						.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+						.allowedHeaders("*");
 			}
 		};
+	}
+
+	private String[] getAllowedOrigins() {
+		String rawValue = System.getenv("CORS_ALLOWED_ORIGINS");
+		if (rawValue == null || rawValue.trim().isEmpty()) {
+			return DEFAULT_ALLOWED_ORIGINS;
+		}
+		return rawValue.trim().split("\\s*,\\s*");
 	}
 }
