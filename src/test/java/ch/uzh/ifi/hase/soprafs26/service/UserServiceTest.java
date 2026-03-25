@@ -16,7 +16,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
@@ -27,7 +27,7 @@ public class UserServiceTest {
 	private User testUser;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		MockitoAnnotations.openMocks(this);
 
 		// given
@@ -43,7 +43,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void createUser_validInputs_success() {
+	void createUser_validInputs_success() {
 		// when -> any object is being save in the userRepository -> return the dummy
 		// testUser
 		User createdUser = userService.createUser(testUser);
@@ -61,7 +61,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void createUser_duplicateUsername_throwsException() {
+	void createUser_duplicateUsername_throwsException() {
 		// given -> a first user has already been created
 		Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
@@ -71,7 +71,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void loginUser_validCredentials_success() {
+	void loginUser_validCredentials_success() {
 		User persistedUser = new User();
 		persistedUser.setId(1L);
 		persistedUser.setName("testName");
@@ -87,7 +87,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void loginUser_invalidCredentials_throwsUnauthorized() {
+	void loginUser_invalidCredentials_throwsUnauthorized() {
 		User persistedUser = new User();
 		persistedUser.setUsername("testUsername");
 		persistedUser.setPassword(new BCryptPasswordEncoder().encode("password123"));
@@ -99,7 +99,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void logoutUser_validToken_success() {
+	void logoutUser_validToken_success() {
 		testUser.setToken("token-123");
 		Mockito.when(userRepository.findByToken("token-123")).thenReturn(testUser);
 

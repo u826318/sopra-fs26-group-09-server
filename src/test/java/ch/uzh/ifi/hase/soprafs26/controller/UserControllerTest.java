@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -49,7 +49,7 @@ public class UserControllerTest {
 	private UserService userService;
 
 	@Test
-	public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+	void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
 		// given
 		User user = new User();
 		user.setName("Firstname Lastname");
@@ -74,7 +74,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void createUser_validInput_userCreated() throws Exception {
+	void createUser_validInput_userCreated() throws Exception {
 		// given
 		User user = new User();
 		user.setId(1L);
@@ -106,7 +106,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void registerUser_validInput_userCreated() throws Exception {
+	void registerUser_validInput_userCreated() throws Exception {
 		User user = new User();
 		user.setId(2L);
 		user.setName("Register User");
@@ -134,7 +134,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void loginUser_validInput_success() throws Exception {
+	void loginUser_validInput_success() throws Exception {
 		User user = new User();
 		user.setId(3L);
 		user.setName("Login User");
@@ -162,7 +162,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void logoutUser_validInput_success() throws Exception {
+	void logoutUser_validInput_success() throws Exception {
 		UserLogoutDTO userLogoutDTO = new UserLogoutDTO();
 		userLogoutDTO.setToken("token-logout");
 

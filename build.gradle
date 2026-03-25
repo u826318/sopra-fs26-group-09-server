@@ -60,6 +60,8 @@ sonar {
         property "sonar.projectKey", "u826318_sopra-fs26-group-09-server"
         property "sonar.organization", "u826318"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${projectDir}/build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.cpd.exclusions", "src/test/**"
     }
 }
 
