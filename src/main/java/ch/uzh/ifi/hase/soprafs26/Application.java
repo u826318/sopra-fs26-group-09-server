@@ -48,6 +48,19 @@ public class Application {
 		if (rawValue == null || rawValue.trim().isEmpty()) {
 			return DEFAULT_ALLOWED_ORIGINS;
 		}
-		return rawValue.trim().split("\\s*,\\s*");
+		String sanitized = rawValue.trim();
+		java.util.List<String> origins = new java.util.ArrayList<>();
+		int start = 0;
+		for (int i = 0; i <= sanitized.length(); i++) {
+			boolean atSeparator = i == sanitized.length() || sanitized.charAt(i) == ',';
+			if (atSeparator) {
+				String candidate = sanitized.substring(start, i).trim();
+				if (!candidate.isEmpty()) {
+					origins.add(candidate);
+				}
+				start = i + 1;
+			}
+		}
+		return origins.isEmpty() ? DEFAULT_ALLOWED_ORIGINS : origins.toArray(new String[0]);
 	}
 }
