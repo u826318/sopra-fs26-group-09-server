@@ -43,11 +43,24 @@ public class Application {
 		};
 	}
 
-	private String[] getAllowedOrigins() {
-		String rawValue = System.getenv("CORS_ALLOWED_ORIGINS");
+	String[] getAllowedOrigins() {
+		String rawValue = resolveAllowedOriginsRawValue();
 		if (rawValue == null || rawValue.trim().isEmpty()) {
 			return DEFAULT_ALLOWED_ORIGINS;
 		}
+		String[] parsedOrigins = parseAllowedOrigins(rawValue);
+		return parsedOrigins.length == 0 ? DEFAULT_ALLOWED_ORIGINS : parsedOrigins;
+	}
+
+	String resolveAllowedOriginsRawValue() {
+		String configuredOrigins = System.getProperty("CORS_ALLOWED_ORIGINS");
+		if (configuredOrigins != null && !configuredOrigins.trim().isEmpty()) {
+			return configuredOrigins;
+		}
+		return System.getenv("CORS_ALLOWED_ORIGINS");
+	}
+
+	static String[] parseAllowedOrigins(String rawValue) {
 		String sanitized = rawValue.trim();
 		java.util.List<String> origins = new java.util.ArrayList<>();
 		int start = 0;
@@ -61,6 +74,6 @@ public class Application {
 				start = i + 1;
 			}
 		}
-		return origins.isEmpty() ? DEFAULT_ALLOWED_ORIGINS : origins.toArray(new String[0]);
+		return origins.toArray(new String[0]);
 	}
 }
