@@ -6,6 +6,8 @@ import tools.jackson.databind.ObjectMapper;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLoginDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLogoutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
@@ -38,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -47,7 +49,7 @@ public class UserControllerTest {
 	private UserService userService;
 
 	@Test
-	public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+	void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
 		// given
 		User user = new User();
 		user.setName("Firstname Lastname");
@@ -72,18 +74,20 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void createUser_validInput_userCreated() throws Exception {
+	void createUser_validInput_userCreated() throws Exception {
 		// given
 		User user = new User();
 		user.setId(1L);
 		user.setName("Test User");
 		user.setUsername("testUsername");
+		user.setPassword("password123");
 		user.setToken("1");
 		user.setStatus(UserStatus.ONLINE);
 
 		UserPostDTO userPostDTO = new UserPostDTO();
 		userPostDTO.setName("Test User");
 		userPostDTO.setUsername("testUsername");
+		userPostDTO.setPassword("password123");
 
 		given(userService.createUser(Mockito.any())).willReturn(user);
 
@@ -99,6 +103,74 @@ public class UserControllerTest {
 				.andExpect(jsonPath("$.name", is(user.getName())))
 				.andExpect(jsonPath("$.username", is(user.getUsername())))
 				.andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+	}
+
+	@Test
+	void registerUser_validInput_userCreated() throws Exception {
+		User user = new User();
+		user.setId(2L);
+		user.setName("Register User");
+		user.setUsername("registerUsername");
+		user.setPassword("password123");
+		user.setToken("token-register");
+		user.setStatus(UserStatus.ONLINE);
+
+		UserPostDTO userPostDTO = new UserPostDTO();
+		userPostDTO.setUsername("registerUsername");
+		userPostDTO.setPassword("password123");
+
+		given(userService.registerUser(Mockito.any())).willReturn(user);
+
+		MockHttpServletRequestBuilder postRequest = post("/users/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(userPostDTO));
+
+		mockMvc.perform(postRequest)
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.id", is(user.getId().intValue())))
+				.andExpect(jsonPath("$.username", is(user.getUsername())))
+				.andExpect(jsonPath("$.token", is(user.getToken())))
+				.andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+	}
+
+	@Test
+	void loginUser_validInput_success() throws Exception {
+		User user = new User();
+		user.setId(3L);
+		user.setName("Login User");
+		user.setUsername("loginUsername");
+		user.setPassword("password123");
+		user.setToken("token-login");
+		user.setStatus(UserStatus.ONLINE);
+
+		UserLoginDTO userLoginDTO = new UserLoginDTO();
+		userLoginDTO.setUsername("loginUsername");
+		userLoginDTO.setPassword("password123");
+
+		given(userService.loginUser(Mockito.any(), Mockito.any())).willReturn(user);
+
+		MockHttpServletRequestBuilder postRequest = post("/users/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(userLoginDTO));
+
+		mockMvc.perform(postRequest)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id", is(user.getId().intValue())))
+				.andExpect(jsonPath("$.username", is(user.getUsername())))
+				.andExpect(jsonPath("$.token", is(user.getToken())))
+				.andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+	}
+
+	@Test
+	void logoutUser_validInput_success() throws Exception {
+		UserLogoutDTO userLogoutDTO = new UserLogoutDTO();
+		userLogoutDTO.setToken("token-logout");
+
+		MockHttpServletRequestBuilder postRequest = post("/users/logout")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(userLogoutDTO));
+
+		mockMvc.perform(postRequest).andExpect(status().isNoContent());
 	}
 
 	/**

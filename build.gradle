@@ -39,6 +39,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-json'
+    implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.springframework.boot:spring-boot-h2console'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -59,6 +60,8 @@ sonar {
         property "sonar.projectKey", "u826318_sopra-fs26-group-09-server"
         property "sonar.organization", "u826318"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${projectDir}/build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.cpd.exclusions", "src/test/**,src/main/java/**/rest/dto/**,src/main/java/**/entity/**"
     }
 }
 

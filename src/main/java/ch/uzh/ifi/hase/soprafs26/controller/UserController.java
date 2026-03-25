@@ -4,7 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLoginDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLogoutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
@@ -30,7 +33,6 @@ public class UserController {
 
 	@GetMapping("/users")
 	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
 	public List<UserGetDTO> getAllUsers() {
 		// fetch all users in the internal representation
 		List<User> users = userService.getUsers();
@@ -45,14 +47,42 @@ public class UserController {
 
 	@PostMapping("/users")
 	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
 	public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO) {
 		// convert API user to internal representation
-		User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+		User userInput = toUserEntity(userPostDTO);
 
 		// create user
 		User createdUser = userService.createUser(userInput);
 		// convert internal representation of user back to API
 		return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
+	}
+
+	@PostMapping("/users/register")
+	@ResponseStatus(HttpStatus.CREATED)
+	public UserAuthDTO register(@RequestBody UserPostDTO userPostDTO) {
+		User userInput = toUserEntity(userPostDTO);
+		User createdUser = userService.registerUser(userInput);
+		return toAuthDTO(createdUser);
+	}
+
+	@PostMapping("/users/login")
+	@ResponseStatus(HttpStatus.OK)
+	public UserAuthDTO login(@RequestBody UserLoginDTO userLoginDTO) {
+		User loggedInUser = userService.loginUser(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+		return toAuthDTO(loggedInUser);
+	}
+
+	@PostMapping("/users/logout")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void logout(@RequestBody UserLogoutDTO userLogoutDTO) {
+		userService.logoutUser(userLogoutDTO.getToken());
+	}
+
+	private User toUserEntity(UserPostDTO userPostDTO) {
+		return DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+	}
+
+	private UserAuthDTO toAuthDTO(User user) {
+		return DTOMapper.INSTANCE.convertEntityToUserAuthDTO(user);
 	}
 }
