@@ -16,7 +16,7 @@ public class Application {
 	private static final String[] DEFAULT_ALLOWED_ORIGINS = {
 			"http://localhost:3000",
 			"http://127.0.0.1:3000",
-			"https://sopra-fs26-group-09-client.vercel.app"
+			"https://sopra-fs26-group-09-client-ugch.vercel.app"
 	};
 
 	public static void main(String[] args) {
