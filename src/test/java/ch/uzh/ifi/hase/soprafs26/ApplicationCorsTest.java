@@ -30,7 +30,7 @@ class ApplicationCorsTest {
 		assertArrayEquals(new String[] {
 				"http://localhost:3000",
 				"http://127.0.0.1:3000",
-				"https://sopra-fs26-group-09-client.vercel.app"
+				"https://sopra-fs26-group-09-client-ugch.vercel.app"
 		}, origins);
 	}
 
