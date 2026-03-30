@@ -26,9 +26,19 @@ public class HouseholdMember implements Serializable {
         this.joinedAt = Instant.now();
     }
 
-    public HouseholdMemberId getId() { return id; }
-    public void setId(HouseholdMemberId id) { this.id = id; }
+    public HouseholdMemberId getId() {
+        return id;
+    }
 
-    public Instant getJoinedAt() { return joinedAt; }
-    public void setJoinedAt(Instant joinedAt) { this.joinedAt = joinedAt; }
+    public void setId(HouseholdMemberId id) {
+        this.id = id;
+    }
+
+    public Instant getJoinedAt() {
+        return joinedAt;
+    }
+
+    public void setJoinedAt(Instant joinedAt) {
+        this.joinedAt = joinedAt;
+    }
 }

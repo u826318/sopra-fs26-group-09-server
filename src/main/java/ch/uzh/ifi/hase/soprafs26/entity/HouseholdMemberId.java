@@ -20,11 +20,21 @@ public class HouseholdMemberId implements Serializable {
         this.householdId = householdId;
     }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public Long getUserId() {
+        return userId;
+    }
 
-    public Long getHouseholdId() { return householdId; }
-    public void setHouseholdId(Long householdId) { this.householdId = householdId; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getHouseholdId() {
+        return householdId;
+    }
+
+    public void setHouseholdId(Long householdId) {
+        this.householdId = householdId;
+    }
 
     @Override
     public boolean equals(Object o) {

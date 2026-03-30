@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs26.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,15 +48,15 @@ class HouseholdMemberRepositoryIntegrationTest {
         entityManager.persist(member);
         entityManager.flush();
 
-        Optional<HouseholdMember> found = householdMemberRepository.findByIdUserId(11L);
+        List<HouseholdMember> found = householdMemberRepository.findByIdUserId(11L);
 
-        assertTrue(found.isPresent());
-        assertEquals(21L, found.get().getId().getHouseholdId());
+        assertEquals(1, found.size());
+        assertEquals(21L, found.get(0).getId().getHouseholdId());
     }
 
     @Test
     void findByIdUserId_notFound() {
-        Optional<HouseholdMember> found = householdMemberRepository.findByIdUserId(999L);
+        List<HouseholdMember> found = householdMemberRepository.findByIdUserId(999L);
         assertTrue(found.isEmpty());
     }
 
