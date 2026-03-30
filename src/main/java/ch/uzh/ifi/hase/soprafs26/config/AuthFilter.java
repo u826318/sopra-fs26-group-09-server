@@ -25,7 +25,11 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.equals("/users/register") || path.equals("/users/login");
+        String method = request.getMethod();
+        return "OPTIONS".equalsIgnoreCase(method)
+                || path.startsWith("/ws")
+                || path.equals("/users/register")
+                || path.equals("/users/login");
     }
 
     @Override
@@ -39,6 +43,7 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        token = token.trim();
         User user = userRepository.findByToken(token);
         if (user == null) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid or expired token.");
