@@ -9,8 +9,10 @@ import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLoginDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLogoutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,22 @@ class UserControllerTest {
 	@MockitoBean
 	private UserService userService;
 
+	@MockitoBean
+	private UserRepository userRepository;
+
+	private static final String TEST_TOKEN = "test-token";
+	private User authenticatedUser;
+
+	@BeforeEach
+	void setUp() {
+		authenticatedUser = new User();
+		authenticatedUser.setId(99L);
+		authenticatedUser.setUsername("authUser");
+		authenticatedUser.setToken(TEST_TOKEN);
+		authenticatedUser.setStatus(UserStatus.ONLINE);
+		given(userRepository.findByToken(TEST_TOKEN)).willReturn(authenticatedUser);
+	}
+
 	@Test
 	void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
 		// given
@@ -63,7 +81,9 @@ class UserControllerTest {
 		given(userService.getUsers()).willReturn(allUsers);
 
 		// when
-		MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON);
+		MockHttpServletRequestBuilder getRequest = get("/users")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", TEST_TOKEN);
 
 		// then
 		mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -94,6 +114,7 @@ class UserControllerTest {
 		// when/then -> do the request + validate the result
 		MockHttpServletRequestBuilder postRequest = post("/users")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", TEST_TOKEN)
 				.content(asJsonString(userPostDTO));
 
 		// then
@@ -168,6 +189,7 @@ class UserControllerTest {
 
 		MockHttpServletRequestBuilder postRequest = post("/users/logout")
 				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", TEST_TOKEN)
 				.content(asJsonString(userLogoutDTO));
 
 		mockMvc.perform(postRequest).andExpect(status().isNoContent());
