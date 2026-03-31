@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
-import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
@@ -26,10 +25,10 @@ public class HouseholdController {
     @PostMapping("/households")
     @ResponseStatus(HttpStatus.CREATED)
     public HouseholdGetDTO createHousehold(
-            @RequestAttribute("authenticatedUser") User authenticatedUser,
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
             @RequestBody HouseholdPostDTO householdPostDTO) {
 
-        Household created = householdService.createHousehold(householdPostDTO.getName(), authenticatedUser);
+        Household created = householdService.createHousehold(householdPostDTO.getName(), authenticatedUserId);
         return DTOMapper.INSTANCE.convertEntityToHouseholdGetDTO(created);
     }
 }

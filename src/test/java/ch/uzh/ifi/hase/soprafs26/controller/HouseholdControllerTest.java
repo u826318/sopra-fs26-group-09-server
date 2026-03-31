@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
@@ -63,7 +62,7 @@ class HouseholdControllerTest {
         household.setInviteCode("ABC123");
         household.setOwnerId(1L);
 
-        given(householdService.createHousehold(eq("Smith Family"), any(User.class))).willReturn(household);
+        given(householdService.createHousehold(eq("Smith Family"), eq(1L))).willReturn(household);
 
         HouseholdPostDTO dto = new HouseholdPostDTO();
         dto.setName("Smith Family");
@@ -83,7 +82,7 @@ class HouseholdControllerTest {
 
     @Test
     void createHousehold_emptyName_returns400() throws Exception {
-        given(householdService.createHousehold(eq(""), any(User.class)))
+        given(householdService.createHousehold(eq(""), eq(1L)))
                 .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Household name must not be empty."));
 
         HouseholdPostDTO dto = new HouseholdPostDTO();
@@ -99,7 +98,7 @@ class HouseholdControllerTest {
 
     @Test
     void createHousehold_nullName_returns400() throws Exception {
-        given(householdService.createHousehold(isNull(), any(User.class)))
+        given(householdService.createHousehold(isNull(), eq(1L)))
                 .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Household name must not be empty."));
 
         HouseholdPostDTO dto = new HouseholdPostDTO();

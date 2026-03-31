@@ -10,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
-import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 
@@ -32,19 +31,19 @@ public class HouseholdService {
         this.householdMemberRepository = householdMemberRepository;
     }
 
-    public Household createHousehold(String name, User owner) {
+    public Household createHousehold(String name, Long ownerId) {
         if (name == null || name.trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Household name must not be empty.");
         }
 
         Household household = new Household();
         household.setName(name.trim());
-        household.setOwnerId(owner.getId());
+        household.setOwnerId(ownerId);
         household.setInviteCode(generateUniqueInviteCode());
         household = householdRepository.save(household);
         householdRepository.flush();
 
-        HouseholdMemberId memberId = new HouseholdMemberId(owner.getId(), household.getId());
+        HouseholdMemberId memberId = new HouseholdMemberId(ownerId, household.getId());
         HouseholdMember member = new HouseholdMember();
         member.setId(memberId);
         householdMemberRepository.save(member);
