@@ -32,6 +32,22 @@ class AuthFilterTest {
     }
 
     @Test
+    void validTokenWithWhitespace_trimsAndAuthenticates() throws Exception {
+        User user = new User();
+        user.setToken("valid-token");
+        when(userRepository.findByToken("valid-token")).thenReturn(user);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "  valid-token  ");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        authFilter.doFilterInternal(request, response, filterChain);
+
+        assertEquals(user, request.getAttribute("authenticatedUser"));
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
     void validToken_setsAttributeAndContinues() throws Exception {
         User user = new User();
         user.setToken("valid-token");
@@ -85,26 +101,32 @@ class AuthFilterTest {
     }
 
     @Test
-    void registerPath_skipsFilter() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/users/register");
-
+    void registerPath_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/register");
         assertTrue(authFilter.shouldNotFilter(request));
     }
 
     @Test
-    void loginPath_skipsFilter() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/users/login");
-
+    void loginPath_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/login");
         assertTrue(authFilter.shouldNotFilter(request));
     }
 
     @Test
-    void otherPath_doesNotSkipFilter() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/households");
+    void optionsRequest_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/households");
+        assertTrue(authFilter.shouldNotFilter(request));
+    }
 
+    @Test
+    void wsPath_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/ws");
+        assertTrue(authFilter.shouldNotFilter(request));
+    }
+
+    @Test
+    void otherPath_doesNotSkipFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/households");
         assertFalse(authFilter.shouldNotFilter(request));
     }
 }
