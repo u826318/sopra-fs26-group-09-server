@@ -127,7 +127,6 @@ class AuthFilterTest {
     @Test
     void otherPath_doesNotSkipFilter() {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/households");
-        request.setRequestURI("/households");
         assertFalse(authFilter.shouldNotFilter(request));
     }
 }
