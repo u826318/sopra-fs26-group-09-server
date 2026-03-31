@@ -50,7 +50,7 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        request.setAttribute("authenticatedUser", user);
+        request.setAttribute("authenticatedUserId", user.getId());
         filterChain.doFilter(request, response);
     }
 }

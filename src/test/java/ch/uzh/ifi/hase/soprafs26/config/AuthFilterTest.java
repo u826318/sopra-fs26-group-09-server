@@ -34,6 +34,7 @@ class AuthFilterTest {
     @Test
     void validTokenWithWhitespace_trimsAndAuthenticates() throws Exception {
         User user = new User();
+        user.setId(1L);
         user.setToken("valid-token");
         when(userRepository.findByToken("valid-token")).thenReturn(user);
 
@@ -43,13 +44,14 @@ class AuthFilterTest {
 
         authFilter.doFilterInternal(request, response, filterChain);
 
-        assertEquals(user, request.getAttribute("authenticatedUser"));
+        assertEquals(1L, request.getAttribute("authenticatedUserId"));
         verify(filterChain).doFilter(request, response);
     }
 
     @Test
     void validToken_setsAttributeAndContinues() throws Exception {
         User user = new User();
+        user.setId(1L);
         user.setToken("valid-token");
         when(userRepository.findByToken("valid-token")).thenReturn(user);
 
@@ -59,7 +61,7 @@ class AuthFilterTest {
 
         authFilter.doFilterInternal(request, response, filterChain);
 
-        assertEquals(user, request.getAttribute("authenticatedUser"));
+        assertEquals(1L, request.getAttribute("authenticatedUserId"));
         verify(filterChain).doFilter(request, response);
     }
 

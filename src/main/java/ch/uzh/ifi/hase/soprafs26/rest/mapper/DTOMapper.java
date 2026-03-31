@@ -3,7 +3,9 @@ package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
+import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
@@ -41,4 +43,11 @@ public interface DTOMapper {
 	@Mapping(source = "token", target = "token")
 	@Mapping(source = "status", target = "status")
 	UserAuthDTO convertEntityToUserAuthDTO(User user);
+
+	@Mapping(source = "id", target = "householdId")
+	@Mapping(source = "name", target = "name")
+	@Mapping(source = "inviteCode", target = "inviteCode")
+	@Mapping(source = "ownerId", target = "ownerId")
+	@Mapping(source = "createdAt", target = "createdAt")
+	HouseholdGetDTO convertEntityToHouseholdGetDTO(Household household);
 }
