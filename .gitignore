@@ -44,3 +44,10 @@ local.properties
 .xcode*
 
 /bin
+
+# zip
+*.zip
+
+# misc
+*:Zone.Identifier
+*Zone.Identifier
