@@ -46,7 +46,7 @@ local.properties
 /bin
 
 # zip
-.zip
+*.zip
 
 # misc
 *:Zone.Identifier
