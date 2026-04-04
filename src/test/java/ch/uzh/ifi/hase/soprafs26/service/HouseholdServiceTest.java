@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +57,7 @@ class HouseholdServiceTest {
         assertEquals("Smith Family", result.getName());
         assertEquals(1L, result.getOwnerId());
         assertNotNull(result.getInviteCode());
+        assertNotNull(result.getInviteCodeExpiresAt());
         assertEquals(6, result.getInviteCode().length());
         verify(householdRepository).save(any());
         verify(householdMemberRepository).save(any());
@@ -119,6 +121,7 @@ class HouseholdServiceTest {
         Household result = householdService.regenerateInviteCode(10L, 1L);
 
         assertNotNull(result.getInviteCode());
+        assertNotNull(result.getInviteCodeExpiresAt());
         assertEquals(6, result.getInviteCode().length());
         verify(householdRepository).save(existing);
     }
@@ -141,6 +144,7 @@ class HouseholdServiceTest {
         Household household = new Household();
         household.setId(20L);
         household.setInviteCode("ABC123");
+        household.setInviteCodeExpiresAt(Instant.now().plusSeconds(60));
 
         when(householdRepository.findByInviteCode("ABC123")).thenReturn(Optional.of(household));
         when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 20L)))).thenReturn(false);
@@ -152,10 +156,25 @@ class HouseholdServiceTest {
     }
 
     @Test
+    void joinHouseholdByInviteCode_expiredCode_gone() {
+        Household household = new Household();
+        household.setId(20L);
+        household.setInviteCode("ABC123");
+        household.setInviteCodeExpiresAt(Instant.now().minusSeconds(1));
+
+        when(householdRepository.findByInviteCode("ABC123")).thenReturn(Optional.of(household));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> householdService.joinHouseholdByInviteCode("ABC123", 1L));
+        assertEquals(HttpStatus.GONE, exception.getStatusCode());
+    }
+
+    @Test
     void joinHouseholdByInviteCode_existingMember_conflict() {
         Household household = new Household();
         household.setId(20L);
         household.setInviteCode("ABC123");
+        household.setInviteCodeExpiresAt(Instant.now().plusSeconds(60));
 
         when(householdRepository.findByInviteCode("ABC123")).thenReturn(Optional.of(household));
         when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 20L)))).thenReturn(true);

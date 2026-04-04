@@ -45,6 +45,7 @@ public class HouseholdController {
         HouseholdInviteCodeGetDTO dto = new HouseholdInviteCodeGetDTO();
         dto.setHouseholdId(household.getId());
         dto.setInviteCode(household.getInviteCode());
+        dto.setExpiresAt(household.getInviteCodeExpiresAt());
         return dto;
     }
 
