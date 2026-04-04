@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
@@ -121,6 +122,78 @@ class HouseholdControllerTest {
                 .content(asJsonString(dto));
 
         mockMvc.perform(request).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void generateInviteCode_owner_returns200() throws Exception {
+        Household household = new Household();
+        household.setId(10L);
+        household.setInviteCode("NEW456");
+
+        given(householdService.regenerateInviteCode(eq(10L), eq(1L))).willReturn(household);
+
+        MockHttpServletRequestBuilder request = post("/households/10/invite-code")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.householdId", is(10)))
+                .andExpect(jsonPath("$.inviteCode", is("NEW456")));
+    }
+
+    @Test
+    void generateInviteCode_householdNotFound_returns404() throws Exception {
+        given(householdService.regenerateInviteCode(eq(999L), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        MockHttpServletRequestBuilder request = post("/households/999/invite-code")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void joinHousehold_validInviteCode_returns200() throws Exception {
+        Household household = new Household();
+        household.setId(10L);
+        household.setName("Smith Family");
+        household.setInviteCode("ABC123");
+        household.setOwnerId(1L);
+
+        given(householdService.joinHouseholdByInviteCode(eq("ABC123"), eq(1L))).willReturn(household);
+
+        HouseholdJoinPostDTO dto = new HouseholdJoinPostDTO();
+        dto.setInviteCode("ABC123");
+
+        MockHttpServletRequestBuilder request = post("/households/join")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.householdId", is(10)))
+                .andExpect(jsonPath("$.name", is("Smith Family")))
+                .andExpect(jsonPath("$.inviteCode", is("ABC123")))
+                .andExpect(jsonPath("$.ownerId", is(1)));
+    }
+
+    @Test
+    void joinHousehold_invalidInviteCode_returns404() throws Exception {
+        given(householdService.joinHouseholdByInviteCode(eq("INVALID"), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Invite code is invalid."));
+
+        HouseholdJoinPostDTO dto = new HouseholdJoinPostDTO();
+        dto.setInviteCode("INVALID");
+
+        MockHttpServletRequestBuilder request = post("/households/join")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto));
+
+        mockMvc.perform(request).andExpect(status().isNotFound());
     }
 
     private String asJsonString(final Object object) {

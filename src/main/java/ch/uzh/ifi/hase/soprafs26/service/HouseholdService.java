@@ -52,6 +52,41 @@ public class HouseholdService {
         return household;
     }
 
+    public Household regenerateInviteCode(Long householdId, Long requesterUserId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        if (!household.getOwnerId().equals(requesterUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can generate invite codes.");
+        }
+
+        household.setInviteCode(generateUniqueInviteCode());
+        household = householdRepository.save(household);
+        householdRepository.flush();
+        return household;
+    }
+
+    public Household joinHouseholdByInviteCode(String inviteCode, Long requesterUserId) {
+        if (inviteCode == null || inviteCode.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invite code must not be empty.");
+        }
+
+        String normalizedCode = inviteCode.trim().toUpperCase();
+        Household household = householdRepository.findByInviteCode(normalizedCode)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invite code is invalid."));
+
+        HouseholdMemberId memberId = new HouseholdMemberId(requesterUserId, household.getId());
+        if (householdMemberRepository.existsById(memberId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a member of this household.");
+        }
+
+        HouseholdMember member = new HouseholdMember();
+        member.setId(memberId);
+        householdMemberRepository.save(member);
+        householdMemberRepository.flush();
+        return household;
+    }
+
     private String generateUniqueInviteCode() {
         for (int attempt = 0; attempt < INVITE_CODE_MAX_ATTEMPTS; attempt++) {
             String code = generateInviteCode();
