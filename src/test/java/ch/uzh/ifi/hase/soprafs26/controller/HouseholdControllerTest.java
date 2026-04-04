@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +131,7 @@ class HouseholdControllerTest {
         Household household = new Household();
         household.setId(10L);
         household.setInviteCode("NEW456");
+        household.setInviteCodeExpiresAt(Instant.now().plusSeconds(60));
 
         given(householdService.regenerateInviteCode(eq(10L), eq(1L))).willReturn(household);
 
@@ -139,7 +142,8 @@ class HouseholdControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.householdId", is(10)))
-                .andExpect(jsonPath("$.inviteCode", is("NEW456")));
+                .andExpect(jsonPath("$.inviteCode", is("NEW456")))
+                .andExpect(jsonPath("$.expiresAt").exists());
     }
 
     @Test

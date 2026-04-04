@@ -26,6 +26,9 @@ public class Household implements Serializable {
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
+    @Column
+    private Instant inviteCodeExpiresAt;
+
     @Column(nullable = false)
     private Long ownerId;
 
@@ -59,6 +62,14 @@ public class Household implements Serializable {
 
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
+    }
+
+    public Instant getInviteCodeExpiresAt() {
+        return inviteCodeExpiresAt;
+    }
+
+    public void setInviteCodeExpiresAt(Instant inviteCodeExpiresAt) {
+        this.inviteCodeExpiresAt = inviteCodeExpiresAt;
     }
 
     public Long getOwnerId() {

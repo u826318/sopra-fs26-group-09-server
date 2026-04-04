@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.repository;
 
 import java.util.Optional;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +27,7 @@ class HouseholdRepositoryIntegrationTest {
         Household household = new Household();
         household.setName("Smith Family");
         household.setInviteCode("ABC123");
+        household.setInviteCodeExpiresAt(Instant.now().plusSeconds(60));
         household.setOwnerId(1L);
 
         entityManager.persist(household);
@@ -37,6 +39,7 @@ class HouseholdRepositoryIntegrationTest {
         assertNotNull(found.get().getId());
         assertEquals("Smith Family", found.get().getName());
         assertEquals("ABC123", found.get().getInviteCode());
+        assertNotNull(found.get().getInviteCodeExpiresAt());
         assertEquals(1L, found.get().getOwnerId());
         assertNotNull(found.get().getCreatedAt());
     }
@@ -46,6 +49,7 @@ class HouseholdRepositoryIntegrationTest {
         Household household = new Household();
         household.setName("Jones Family");
         household.setInviteCode("XYZ789");
+        household.setInviteCodeExpiresAt(Instant.now().plusSeconds(60));
         household.setOwnerId(2L);
 
         entityManager.persist(household);

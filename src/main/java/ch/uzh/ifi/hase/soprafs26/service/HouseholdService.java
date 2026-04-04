@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class HouseholdService {
     private static final String INVITE_CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int INVITE_CODE_LENGTH = 6;
     private static final int INVITE_CODE_MAX_ATTEMPTS = 10;
+    private static final Duration INVITE_CODE_TTL = Duration.ofDays(7);
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final HouseholdRepository householdRepository;
@@ -39,7 +42,7 @@ public class HouseholdService {
         Household household = new Household();
         household.setName(name.trim());
         household.setOwnerId(ownerId);
-        household.setInviteCode(generateUniqueInviteCode());
+        refreshInviteCode(household);
         household = householdRepository.save(household);
         householdRepository.flush();
 
@@ -60,7 +63,7 @@ public class HouseholdService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can generate invite codes.");
         }
 
-        household.setInviteCode(generateUniqueInviteCode());
+        refreshInviteCode(household);
         household = householdRepository.save(household);
         householdRepository.flush();
         return household;
@@ -75,6 +78,11 @@ public class HouseholdService {
         Household household = householdRepository.findByInviteCode(normalizedCode)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invite code is invalid."));
 
+        Instant expiresAt = household.getInviteCodeExpiresAt();
+        if (expiresAt != null && expiresAt.isBefore(Instant.now())) {
+            throw new ResponseStatusException(HttpStatus.GONE, "Invite code has expired. Please request a new code.");
+        }
+
         HouseholdMemberId memberId = new HouseholdMemberId(requesterUserId, household.getId());
         if (householdMemberRepository.existsById(memberId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a member of this household.");
@@ -85,6 +93,11 @@ public class HouseholdService {
         householdMemberRepository.save(member);
         householdMemberRepository.flush();
         return household;
+    }
+
+    private void refreshInviteCode(Household household) {
+        household.setInviteCode(generateUniqueInviteCode());
+        household.setInviteCodeExpiresAt(Instant.now().plus(INVITE_CODE_TTL));
     }
 
     private String generateUniqueInviteCode() {
