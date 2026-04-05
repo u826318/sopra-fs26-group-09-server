@@ -25,6 +25,7 @@ class PantryItemRepositoryIntegrationTest {
     @Test
     void savePantryItem_success() {
         PantryItem pantryItem = new PantryItem();
+        pantryItem.setHouseholdId(1L);
         pantryItem.setBarcode("7612345678901");
         pantryItem.setName("Greek Yogurt");
         pantryItem.setKcalPerPackage(150.0);
@@ -38,9 +39,29 @@ class PantryItemRepositoryIntegrationTest {
 
         assertTrue(found.isPresent());
         assertNotNull(found.get().getId());
+        assertEquals(1L, found.get().getHouseholdId());
         assertEquals("7612345678901", found.get().getBarcode());
         assertEquals("Greek Yogurt", found.get().getName());
-        assertEquals(150.0, found.get().getKcalPerPackage());
+        assertEquals(150.0, found.get().getKcalPerPackage(), 0.001);
         assertEquals(2, found.get().getCount());
+    }
+
+    @Test
+    void findByIdAndHouseholdId_success() {
+        PantryItem pantryItem = new PantryItem();
+        pantryItem.setHouseholdId(1L);
+        pantryItem.setBarcode("111");
+        pantryItem.setName("Milk");
+        pantryItem.setKcalPerPackage(80.0);
+        pantryItem.setCount(1);
+        pantryItem.setAddedAt(Instant.now());
+
+        entityManager.persist(pantryItem);
+        entityManager.flush();
+
+        Optional<PantryItem> found = pantryItemRepository.findByIdAndHouseholdId(pantryItem.getId(), 1L);
+
+        assertTrue(found.isPresent());
+        assertEquals("Milk", found.get().getName());
     }
 }

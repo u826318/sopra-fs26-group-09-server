@@ -9,9 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-// TODO: add JPA connection for pantry item once PantryItem entity is introduced
-
-
 @Entity
 @Table(name = "consumption_logs")
 public class ConsumptionLog implements Serializable {
@@ -21,6 +18,12 @@ public class ConsumptionLog implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
+    private Long householdId;
+
+    @Column(nullable = false)
+    private Long userId;
 
     @Column(nullable = false)
     private Long pantryItemId;
@@ -40,6 +43,22 @@ public class ConsumptionLog implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getHouseholdId() {
+        return householdId;
+    }
+
+    public void setHouseholdId(Long householdId) {
+        this.householdId = householdId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getPantryItemId() {

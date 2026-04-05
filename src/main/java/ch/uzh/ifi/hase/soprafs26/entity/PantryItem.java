@@ -9,9 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-
-// TODO: add household relation once Household entity is introduced
-
 @Entity
 @Table(name = "pantry_items")
 public class PantryItem implements Serializable {
@@ -21,6 +18,9 @@ public class PantryItem implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
+    private Long householdId;
 
     @Column(nullable = false)
     private String barcode;
@@ -43,6 +43,14 @@ public class PantryItem implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getHouseholdId() {
+        return householdId;
+    }
+
+    public void setHouseholdId(Long householdId) {
+        this.householdId = householdId;
     }
 
     public String getBarcode() {
