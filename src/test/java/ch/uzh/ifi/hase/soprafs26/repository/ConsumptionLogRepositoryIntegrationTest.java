@@ -24,6 +24,8 @@ class ConsumptionLogRepositoryIntegrationTest {
     @Test
     void findByPantryItemId_success() {
         ConsumptionLog log = new ConsumptionLog();
+        log.setHouseholdId(1L);
+        log.setUserId(99L);
         log.setPantryItemId(1L);
         log.setConsumedQuantity(2);
         log.setConsumedCalories(300.0);
@@ -36,8 +38,10 @@ class ConsumptionLogRepositoryIntegrationTest {
 
         assertNotNull(foundLogs);
         assertEquals(1, foundLogs.size());
+        assertEquals(1L, foundLogs.get(0).getHouseholdId());
+        assertEquals(99L, foundLogs.get(0).getUserId());
         assertEquals(1L, foundLogs.get(0).getPantryItemId());
         assertEquals(2, foundLogs.get(0).getConsumedQuantity());
-        assertEquals(300.0, foundLogs.get(0).getConsumedCalories());
+        assertEquals(300.0, foundLogs.get(0).getConsumedCalories(), 0.001);
     }
 }

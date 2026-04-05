@@ -1,19 +1,39 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
+import ch.uzh.ifi.hase.soprafs26.entity.Household;
+import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 
 @Service
+@Transactional
 public class PantryService {
 
     private final PantryItemRepository pantryItemRepository;
+    private final ConsumptionLogRepository consumptionLogRepository;
+    private final HouseholdRepository householdRepository;
+    private final HouseholdMemberRepository householdMemberRepository;
 
-    public PantryService(PantryItemRepository pantryItemRepository) {
+    public PantryService(
+            PantryItemRepository pantryItemRepository,
+            ConsumptionLogRepository consumptionLogRepository,
+            HouseholdRepository householdRepository,
+            HouseholdMemberRepository householdMemberRepository
+    ) {
         this.pantryItemRepository = pantryItemRepository;
+        this.consumptionLogRepository = consumptionLogRepository;
+        this.householdRepository = householdRepository;
+        this.householdMemberRepository = householdMemberRepository;
     }
 
     /**
@@ -32,5 +52,96 @@ public class PantryService {
         }
 
         return totalCalories;
+    }
+
+    public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Pantry item not found in this household."));
+
+        if (quantity > pantryItem.getCount()) {
+            throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
+        }
+
+        int remainingCount = pantryItem.getCount() - quantity;
+        double consumedCalories = pantryItem.getKcalPerPackage() * quantity;
+
+        ConsumptionLog log = new ConsumptionLog();
+        log.setHouseholdId(householdId);
+        log.setUserId(authenticatedUserId);
+        log.setPantryItemId(pantryItem.getId());
+        log.setConsumedQuantity(quantity);
+        log.setConsumedCalories(consumedCalories);
+        log.setConsumedAt(Instant.now());
+        consumptionLogRepository.save(log);
+
+        ConsumeResult result = new ConsumeResult();
+        result.setItemId(pantryItem.getId());
+        result.setConsumedCalories(consumedCalories);
+
+        if (remainingCount == 0) {
+            pantryItemRepository.delete(pantryItem);
+            result.setRemainingCount(0);
+            result.setRemoved(true);
+        }
+        else {
+            pantryItem.setCount(remainingCount);
+            pantryItemRepository.save(pantryItem);
+            result.setRemainingCount(remainingCount);
+            result.setRemoved(false);
+        }
+
+        return result;
+    }
+
+    public static class ConsumeResult {
+        private Long itemId;
+        private Integer remainingCount;
+        private Double consumedCalories;
+        private boolean removed;
+
+        public Long getItemId() {
+            return itemId;
+        }
+
+        public void setItemId(Long itemId) {
+            this.itemId = itemId;
+        }
+
+        public Integer getRemainingCount() {
+            return remainingCount;
+        }
+
+        public void setRemainingCount(Integer remainingCount) {
+            this.remainingCount = remainingCount;
+        }
+
+        public Double getConsumedCalories() {
+            return consumedCalories;
+        }
+
+        public void setConsumedCalories(Double consumedCalories) {
+            this.consumedCalories = consumedCalories;
+        }
+
+        public boolean isRemoved() {
+            return removed;
+        }
+
+        public void setRemoved(boolean removed) {
+            this.removed = removed;
+        }
     }
 }
