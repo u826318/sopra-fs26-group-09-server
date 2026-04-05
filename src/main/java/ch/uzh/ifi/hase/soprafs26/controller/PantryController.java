@@ -1,6 +1,9 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -8,8 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemResponseDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryOverviewGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 
 @RestController
@@ -41,6 +48,26 @@ public class PantryController {
         responseDTO.setRemainingCount(result.getRemainingCount());
         responseDTO.setConsumedCalories(result.getConsumedCalories());
         responseDTO.setRemoved(result.isRemoved());
+
+        return responseDTO;
+    }
+
+    @GetMapping("/households/{householdId}/pantry")
+    @ResponseStatus(HttpStatus.OK)
+    public PantryOverviewGetDTO getPantry(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId) {
+
+        List<PantryItem> pantryItems = pantryService.getPantryItems(householdId, authenticatedUserId);
+        double totalCalories = pantryService.calculateTotalCalories(householdId);
+
+        List<PantryItemGetDTO> itemDTOs = pantryItems.stream()
+                .map(DTOMapper.INSTANCE::convertEntityToPantryItemGetDTO)
+                .toList();
+
+        PantryOverviewGetDTO responseDTO = new PantryOverviewGetDTO();
+        responseDTO.setItems(itemDTOs);
+        responseDTO.setTotalCalories(totalCalories);
 
         return responseDTO;
     }

@@ -9,6 +9,8 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
 
 /**
  * DTOMapper
@@ -50,4 +52,14 @@ public interface DTOMapper {
 	@Mapping(source = "ownerId", target = "ownerId")
 	@Mapping(source = "createdAt", target = "createdAt")
 	HouseholdGetDTO convertEntityToHouseholdGetDTO(Household household);
+
+	@Mapping(source = "id", target = "id")
+	@Mapping(source = "householdId", target = "householdId")
+	@Mapping(source = "barcode", target = "barcode")
+	@Mapping(source = "name", target = "name")
+	@Mapping(source = "kcalPerPackage", target = "kcalPerPackage")
+	@Mapping(source = "count", target = "count")
+	@Mapping(source = "addedAt", target = "addedAt")
+	PantryItemGetDTO convertEntityToPantryItemGetDTO(PantryItem pantryItem);
+
 }
