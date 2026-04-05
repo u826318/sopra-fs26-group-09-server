@@ -43,7 +43,7 @@ class PantryServiceTest {
         item2.setKcalPerPackage(250.0);
         item2.setCount(1);
 
-        when(mockPantryRepo.findAll()).thenReturn(List.of(item1, item2));
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item1, item2));
 
         PantryService pantryService = new PantryService(
                 mockPantryRepo,
@@ -52,9 +52,75 @@ class PantryServiceTest {
                 mockHouseholdMemberRepo
         );
 
-        double result = pantryService.calculateTotalCalories();
+        double result = pantryService.calculateTotalCalories(1L);
 
         assertEquals(450.0, result, 0.001);
+    }
+
+    @Test
+    void getPantryItems_success() {
+        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
+        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
+        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
+        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
+
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item1 = new PantryItem();
+        item1.setId(10L);
+        item1.setHouseholdId(1L);
+        item1.setName("Milk");
+
+        PantryItem item2 = new PantryItem();
+        item2.setId(11L);
+        item2.setHouseholdId(1L);
+        item2.setName("Bread");
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item1, item2));
+
+        PantryService pantryService = new PantryService(
+                mockPantryRepo,
+                mockConsumptionRepo,
+                mockHouseholdRepo,
+                mockHouseholdMemberRepo
+        );
+
+        List<PantryItem> result = pantryService.getPantryItems(1L, 99L);
+
+        assertEquals(2, result.size());
+        assertEquals("Milk", result.get(0).getName());
+        assertEquals("Bread", result.get(1).getName());
+    }
+
+    @Test
+    void getPantryItems_throwsException_whenUserIsNotMember() {
+        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
+        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
+        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
+        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
+
+        Household household = new Household();
+        household.setId(1L);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
+
+        PantryService pantryService = new PantryService(
+                mockPantryRepo,
+                mockConsumptionRepo,
+                mockHouseholdRepo,
+                mockHouseholdMemberRepo
+        );
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.getPantryItems(1L, 99L)
+        );
+
+        assertEquals("User is not a member of this household.", exception.getMessage());
     }
 
     @Test

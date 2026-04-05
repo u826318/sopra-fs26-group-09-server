@@ -37,14 +37,13 @@ public class PantryService {
     }
 
     /**
-     * Calculates the total calories currently stored in the pantry.
+     * Calculates the total calories currently stored in the pantry for one household.
      * Formula: sum(kcalPerPackage * count)
      */
-    public double calculateTotalCalories() {
-        List<PantryItem> pantryItems = pantryItemRepository.findAll();
+    public double calculateTotalCalories(Long householdId) {
+        List<PantryItem> pantryItems = pantryItemRepository.findByHouseholdId(householdId);
 
         double totalCalories = 0.0;
-
         for (PantryItem item : pantryItems) {
             if (item.getKcalPerPackage() != null && item.getCount() != null) {
                 totalCalories += item.getKcalPerPackage() * item.getCount();
@@ -52,6 +51,19 @@ public class PantryService {
         }
 
         return totalCalories;
+    }
+
+    public List<PantryItem> getPantryItems(Long householdId, Long authenticatedUserId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        return pantryItemRepository.findByHouseholdId(householdId);
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
