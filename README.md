@@ -75,16 +75,22 @@ We recommend using [Postman](https://www.getpostman.com) to test your API Endpoi
 
 Authenticated users can query OpenFoodFacts through the backend.
 
-- `GET /products/lookup?barcode=<barcode>`: Lookup a single product by barcode.
-- `GET /products/search?q=<name>&limit=<n>`: Search products by name (`limit` defaults to `12`).
+- `GET /products/lookup?barcode=<barcode>`: lookup a single product by barcode.
+- `GET /products/search?q=<name>&limit=<n>`: search products by name (`limit` defaults to `12`).
+- `POST /products/barcode/extract` (`multipart/form-data`, part name `image`): extract a barcode string from an uploaded product photo.
 
-Example:
+Examples:
 
 ```bash
 curl -X GET "http://localhost:8080/products/search?q=milk&limit=5" \
   -H "Authorization: <USER_TOKEN>"
 ```
 
+```bash
+curl -X POST "http://localhost:8080/products/barcode/extract" \
+  -H "Authorization: <USER_TOKEN>" \
+  -F "image=@/path/to/barcode-image.png"
+```
 ## Debugging
 If something is not working and/or you don't know what is going on. We recommend using a debugger and step-through the process step-by-step.
 
