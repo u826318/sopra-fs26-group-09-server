@@ -64,4 +64,21 @@ class BarcodeExtractionServiceTest {
 
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode());
     }
+
+    @Test
+    void extractBarcode_nonProductBarcodeFormat_throwsUnprocessableEntity() throws Exception {
+        BitMatrix matrix = new MultiFormatWriter().encode("ABC-abc-1234", BarcodeFormat.CODE_128, 320, 160);
+        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", outputStream);
+
+        MockMultipartFile image = new MockMultipartFile("image", "code128.png", "image/png", outputStream.toByteArray());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> barcodeExtractionService.extractBarcode(image));
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode());
+        assertEquals("Unsupported barcode format. Only EAN-13, EAN-8, UPC-A, and UPC-E are allowed.",
+                exception.getReason());
+    }
 }
