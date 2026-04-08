@@ -30,7 +30,7 @@ class BarcodeExtractionServiceTest {
 
     @Test
     void extractBarcode_validBarcodeImage_success() throws Exception {
-        BitMatrix matrix = new MultiFormatWriter().encode("7610848492087", BarcodeFormat.EAN_13, 320, 160);
+        BitMatrix matrix = new MultiFormatWriter().encode("5901234123457", BarcodeFormat.EAN_13, 320, 160);
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", outputStream);
@@ -38,7 +38,7 @@ class BarcodeExtractionServiceTest {
         MockMultipartFile image = new MockMultipartFile("image", "ean13.png", "image/png", outputStream.toByteArray());
 
         String extracted = barcodeExtractionService.extractBarcode(image);
-        assertEquals("7610848492087", extracted);
+        assertEquals("5901234123457", extracted);
     }
 
     @Test
