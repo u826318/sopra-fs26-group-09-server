@@ -67,7 +67,9 @@ class BarcodeExtractionServiceTest {
 
     @Test
     void extractBarcode_nonProductBarcodeFormat_throwsUnprocessableEntity() throws Exception {
-        BitMatrix matrix = new MultiFormatWriter().encode("ABC-abc-1234", BarcodeFormat.CODE_128, 320, 160);
+        // QR code decoding is more stable across CI environments than CODE_128.
+        // It is still a non-product barcode format and must be rejected.
+        BitMatrix matrix = new MultiFormatWriter().encode("ABC-abc-1234", BarcodeFormat.QR_CODE, 320, 320);
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", outputStream);
