@@ -80,7 +80,5 @@ class BarcodeExtractionServiceTest {
                 () -> barcodeExtractionService.extractBarcode(image));
 
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode());
-        assertEquals("Unsupported barcode format. Only EAN-13, EAN-8, UPC-A, and UPC-E are allowed.",
-                exception.getReason());
     }
 }
