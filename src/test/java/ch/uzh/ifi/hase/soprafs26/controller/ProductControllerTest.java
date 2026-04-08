@@ -18,7 +18,6 @@ import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
-import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
 import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
 
 @WebMvcTest(ProductController.class)
@@ -29,9 +28,6 @@ class ProductControllerTest {
 
     @MockitoBean
     private OpenFoodFactsService openFoodFactsService;
-
-    @MockitoBean
-    private BarcodeExtractionService barcodeExtractionService;
 
     @MockitoBean
     private UserRepository userRepository;
