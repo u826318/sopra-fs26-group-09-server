@@ -71,6 +71,20 @@ If you want to avoid running all tests with every change, use the following comm
 ## API Endpoint Testing with Postman
 We recommend using [Postman](https://www.getpostman.com) to test your API Endpoints.
 
+## Product Lookup APIs
+
+Authenticated users can query OpenFoodFacts through the backend.
+
+- `GET /products/lookup?barcode=<barcode>`: Lookup a single product by barcode.
+- `GET /products/search?q=<name>&limit=<n>`: Search products by name (`limit` defaults to `12`).
+
+Example:
+
+```bash
+curl -X GET "http://localhost:8080/products/search?q=milk&limit=5" \
+  -H "Authorization: <USER_TOKEN>"
+```
+
 ## Debugging
 If something is not working and/or you don't know what is going on. We recommend using a debugger and step-through the process step-by-step.
 
