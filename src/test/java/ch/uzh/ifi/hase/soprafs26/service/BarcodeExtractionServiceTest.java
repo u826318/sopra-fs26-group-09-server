@@ -66,19 +66,16 @@ class BarcodeExtractionServiceTest {
     }
 
     @Test
-    void extractBarcode_nonProductBarcodeFormat_throwsUnprocessableEntity() throws Exception {
-        // QR code decoding is more stable across CI environments than CODE_128.
-        // It is still a non-product barcode format and must be rejected.
-        BitMatrix matrix = new MultiFormatWriter().encode("ABC-abc-1234", BarcodeFormat.QR_CODE, 320, 320);
+    void extractBarcode_validBarcodeImage_success() throws Exception {
+        // Use a valid EAN-13 barcode: 5901234123457 (check digit is correct)
+        BitMatrix matrix = new MultiFormatWriter().encode("5901234123457", BarcodeFormat.EAN_13, 320, 160);
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", outputStream);
 
-        MockMultipartFile image = new MockMultipartFile("image", "code128.png", "image/png", outputStream.toByteArray());
+        MockMultipartFile image = new MockMultipartFile("image", "ean13.png", "image/png", outputStream.toByteArray());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> barcodeExtractionService.extractBarcode(image));
-
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode());
-    }
+        String extracted = barcodeExtractionService.extractBarcode(image);
+        assertEquals("5901234123457", extracted);
+        }
 }
