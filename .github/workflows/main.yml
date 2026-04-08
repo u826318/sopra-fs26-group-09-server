@@ -8,6 +8,10 @@ on:
   # run the workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  group: appengine-deploy
+  cancel-in-progress: false
+
 jobs:
   test:
     name: Test and Sonarqube
@@ -46,7 +50,7 @@ jobs:
         uses: google-github-actions/deploy-appengine@v0.2.0
         with:
           deliverables: app.yaml
-          version: v1
+          version: v-${{ github.run_number }}-${{ github.run_attempt }}
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
 
       - name: Test
