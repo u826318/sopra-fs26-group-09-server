@@ -13,6 +13,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +24,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.exceptions.GlobalExceptionAdvice;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -68,7 +70,8 @@ class PantryControllerTest {
         pantryItem.setCount(3);
         pantryItem.setAddedAt(Instant.parse("2026-03-29T12:15:30Z"));
 
-        when(pantryService.addItem(1L, any(), 99L)).thenReturn(pantryItem);
+        when(pantryService.addItem(eq(1L), any(PantryItemPostDTO.class), eq(99L)))
+                .thenReturn(pantryItem);
 
         String requestBody = """
                 {
@@ -94,9 +97,8 @@ class PantryControllerTest {
 
     @Test
     void addPantryItem_invalidQuantity_returnsBadRequest() throws Exception {
-        when(pantryService.addItem(1L, any(), 99L))
+        when(pantryService.addItem(eq(1L), any(PantryItemPostDTO.class), eq(99L)))
                 .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
-
         String requestBody = """
                 {
                   "barcode": "7613035974685",
