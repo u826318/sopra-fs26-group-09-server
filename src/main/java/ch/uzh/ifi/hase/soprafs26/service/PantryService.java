@@ -14,6 +14,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 
 @Service
 @Transactional
@@ -64,6 +65,43 @@ public class PantryService {
         }
 
         return pantryItemRepository.findByHouseholdId(householdId);
+    }
+
+    public PantryItem addItem(Long householdId, PantryItemPostDTO pantryItemPostDTO, Long authenticatedUserId) {
+        if (pantryItemPostDTO == null) {
+            throw new IllegalArgumentException("Pantry item payload must not be empty.");
+        }
+        if (pantryItemPostDTO.getQuantity() == null || pantryItemPostDTO.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+        if (pantryItemPostDTO.getBarcode() == null || pantryItemPostDTO.getBarcode().trim().isEmpty()) {
+            throw new IllegalArgumentException("Barcode must not be empty.");
+        }
+        if (pantryItemPostDTO.getName() == null || pantryItemPostDTO.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Product name must not be empty.");
+        }
+        if (pantryItemPostDTO.getKcalPerPackage() == null || pantryItemPostDTO.getKcalPerPackage() < 0) {
+            throw new IllegalArgumentException("Calories per package must be zero or greater.");
+        }
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        PantryItem pantryItem = new PantryItem();
+        pantryItem.setHouseholdId(householdId);
+        pantryItem.setBarcode(pantryItemPostDTO.getBarcode().trim());
+        pantryItem.setName(pantryItemPostDTO.getName().trim());
+        pantryItem.setKcalPerPackage(pantryItemPostDTO.getKcalPerPackage());
+        pantryItem.setCount(pantryItemPostDTO.getQuantity());
+        pantryItem.setAddedAt(Instant.now());
+
+        return pantryItemRepository.save(pantryItem);
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {

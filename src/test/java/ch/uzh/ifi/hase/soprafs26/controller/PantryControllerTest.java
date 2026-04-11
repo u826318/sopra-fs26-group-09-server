@@ -58,6 +58,62 @@ class PantryControllerTest {
     }
 
     @Test
+    void addPantryItem_success_returnsCreated() throws Exception {
+        PantryItem pantryItem = new PantryItem();
+        pantryItem.setId(12L);
+        pantryItem.setHouseholdId(1L);
+        pantryItem.setBarcode("7613035974685");
+        pantryItem.setName("Chocolate Bar");
+        pantryItem.setKcalPerPackage(250.0);
+        pantryItem.setCount(3);
+        pantryItem.setAddedAt(Instant.parse("2026-03-29T12:15:30Z"));
+
+        when(pantryService.addItem(1L, any(), 99L)).thenReturn(pantryItem);
+
+        String requestBody = """
+                {
+                  "barcode": "7613035974685",
+                  "name": "Chocolate Bar",
+                  "kcalPerPackage": 250.0,
+                  "quantity": 3
+                }
+                """;
+
+        mockMvc.perform(post("/households/1/pantry")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(12))
+                .andExpect(jsonPath("$.householdId").value(1))
+                .andExpect(jsonPath("$.barcode").value("7613035974685"))
+                .andExpect(jsonPath("$.name").value("Chocolate Bar"))
+                .andExpect(jsonPath("$.kcalPerPackage").value(250.0))
+                .andExpect(jsonPath("$.count").value(3))
+                .andExpect(jsonPath("$.addedAt").value("2026-03-29T12:15:30Z"));
+    }
+
+    @Test
+    void addPantryItem_invalidQuantity_returnsBadRequest() throws Exception {
+        when(pantryService.addItem(1L, any(), 99L))
+                .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
+
+        String requestBody = """
+                {
+                  "barcode": "7613035974685",
+                  "name": "Chocolate Bar",
+                  "kcalPerPackage": 250.0,
+                  "quantity": 0
+                }
+                """;
+
+        mockMvc.perform(post("/households/1/pantry")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
+    }
+
+    @Test
     void consumePantryItem_success_returnsOk() throws Exception {
         PantryService.ConsumeResult result = new PantryService.ConsumeResult();
         result.setItemId(10L);
