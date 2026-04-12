@@ -298,7 +298,7 @@ class HouseholdServiceTest {
     }
 
     @Test
-    void updateBudget_zeroCalorias_throwsBadRequest() {
+    void updateBudget_zeroCalories_throwsBadRequest() {
         Household household = new Household();
         household.setId(10L);
         household.setOwnerId(1L);

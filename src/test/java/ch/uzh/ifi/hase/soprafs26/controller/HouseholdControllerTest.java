@@ -184,7 +184,9 @@ class HouseholdControllerTest {
                 .content(asJsonString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.householdId", is(10)))
-                .andExpect(jsonPath("$.name", is("Smith Family")));
+                .andExpect(jsonPath("$.name", is("Smith Family")))
+                .andExpect(jsonPath("$.inviteCode", is("ABC123")))
+                .andExpect(jsonPath("$.ownerId", is(1)));
     }
 
     @Test

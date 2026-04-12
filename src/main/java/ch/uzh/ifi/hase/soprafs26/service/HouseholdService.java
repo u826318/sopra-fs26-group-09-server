@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
@@ -143,9 +144,17 @@ public class HouseholdService {
                 .orElse(new HouseholdBudget());
         budget.setHouseholdId(householdId);
         budget.setDailyCalorieTarget(dailyCalorieTarget);
-        budget = householdBudgetRepository.save(budget);
-        householdBudgetRepository.flush();
-        return budget;
+        try {
+            budget = householdBudgetRepository.save(budget);
+            householdBudgetRepository.flush();
+            return budget;
+        } catch (DataIntegrityViolationException e) {
+            // Concurrent insert: another request already created the budget row, update it instead
+            budget = householdBudgetRepository.findByHouseholdId(householdId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Budget conflict."));
+            budget.setDailyCalorieTarget(dailyCalorieTarget);
+            return householdBudgetRepository.save(budget);
+        }
     }
 
     public HouseholdStatsGetDTO getStats(Long householdId, String startDateStr, String endDateStr, Long requesterUserId) {
