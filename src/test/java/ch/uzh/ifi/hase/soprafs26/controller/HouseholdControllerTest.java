@@ -1,17 +1,13 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import java.time.Instant;
+
 import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.Instant;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpStatus;
@@ -19,16 +15,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
-import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
-
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -198,6 +196,52 @@ class HouseholdControllerTest {
                 .content(asJsonString(dto));
 
         mockMvc.perform(request).andExpect(status().isNotFound());
+    }
+        @Test
+    void generateInviteCode_nonOwner_returns403() throws Exception {
+        given(householdService.regenerateInviteCode(eq(10L), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.FORBIDDEN,
+                        "Only the household owner can generate invite codes."));
+
+        MockHttpServletRequestBuilder request = post("/households/10/invite-code")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void joinHousehold_expiredInviteCode_returns410() throws Exception {
+        given(householdService.joinHouseholdByInviteCode(eq("EXPIRED"), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.GONE,
+                        "Invite code has expired. Please request a new code."));
+
+        HouseholdJoinPostDTO dto = new HouseholdJoinPostDTO();
+        dto.setInviteCode("EXPIRED");
+
+        MockHttpServletRequestBuilder request = post("/households/join")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto));
+
+        mockMvc.perform(request).andExpect(status().isGone());
+    }
+
+    @Test
+    void joinHousehold_emptyInviteCode_returns400() throws Exception {
+        given(householdService.joinHouseholdByInviteCode(eq(""), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Invite code must not be empty."));
+
+        HouseholdJoinPostDTO dto = new HouseholdJoinPostDTO();
+        dto.setInviteCode("");
+
+        MockHttpServletRequestBuilder request = post("/households/join")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto));
+
+        mockMvc.perform(request).andExpect(status().isBadRequest());
     }
 
     private String asJsonString(final Object object) {
