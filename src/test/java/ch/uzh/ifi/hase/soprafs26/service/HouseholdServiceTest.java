@@ -1,9 +1,15 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
+import java.time.Instant;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,12 +25,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
+import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
@@ -32,6 +41,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
+
 
 class HouseholdServiceTest {
 
@@ -478,4 +488,39 @@ class HouseholdServiceTest {
                 () -> householdService.getStats(99L, "2026-04-10", "2026-04-10", 1L));
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
+
+    @Test
+    void createHousehold_addsCreatorAsMember() {
+        Household result = householdService.createHousehold("Smith Family", 1L);
+
+        ArgumentCaptor<HouseholdMember> captor = ArgumentCaptor.forClass(HouseholdMember.class);
+        verify(householdMemberRepository).save(captor.capture());
+
+        HouseholdMember savedMember = captor.getValue();
+        assertNotNull(savedMember.getId());
+        assertEquals(1L, savedMember.getId().getUserId());
+        assertEquals(result.getId(), savedMember.getId().getHouseholdId());
+    }
+
+    @Test
+    void joinHouseholdByInviteCode_savesMembershipForRequester() {
+        Household household = new Household();
+        household.setId(20L);
+        household.setInviteCode("ABC123");
+        household.setInviteCodeExpiresAt(Instant.now().plusSeconds(60));
+
+        when(householdRepository.findByInviteCode("ABC123")).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(5L, 20L)))).thenReturn(false);
+
+        householdService.joinHouseholdByInviteCode("ABC123", 5L);
+
+        ArgumentCaptor<HouseholdMember> captor = ArgumentCaptor.forClass(HouseholdMember.class);
+        verify(householdMemberRepository).save(captor.capture());
+
+        HouseholdMember savedMember = captor.getValue();
+        assertNotNull(savedMember.getId());
+        assertEquals(5L, savedMember.getId().getUserId());
+        assertEquals(20L, savedMember.getId().getHouseholdId());
+    }
+
 }
