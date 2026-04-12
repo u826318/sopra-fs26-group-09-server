@@ -15,6 +15,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryOverviewGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
@@ -26,6 +27,17 @@ public class PantryController {
 
     public PantryController(PantryService pantryService) {
         this.pantryService = pantryService;
+    }
+
+    @PostMapping("/households/{householdId}/pantry")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PantryItemGetDTO addPantryItem(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @RequestBody PantryItemPostDTO pantryItemPostDTO) {
+
+        PantryItem pantryItem = pantryService.addItem(householdId, pantryItemPostDTO, authenticatedUserId);
+        return DTOMapper.INSTANCE.convertEntityToPantryItemGetDTO(pantryItem);
     }
 
     @PostMapping("/households/{householdId}/pantry/{itemId}/consume")

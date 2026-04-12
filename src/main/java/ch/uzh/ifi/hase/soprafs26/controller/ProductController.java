@@ -1,12 +1,18 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import ch.uzh.ifi.hase.soprafs26.rest.dto.BarcodeExtractionResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
+import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
 import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,14 +20,22 @@ import java.util.List;
 public class ProductController {
 
   private final OpenFoodFactsService openFoodFactsService;
+  private final BarcodeExtractionService barcodeExtractionService;
 
-  public ProductController(OpenFoodFactsService openFoodFactsService) {
+  public ProductController(OpenFoodFactsService openFoodFactsService, BarcodeExtractionService barcodeExtractionService) {
     this.openFoodFactsService = openFoodFactsService;
+    this.barcodeExtractionService = barcodeExtractionService;
   }
 
   @GetMapping("/products/lookup")
   @ResponseStatus(HttpStatus.OK)
   public ProductDTO lookupByBarcode(@RequestParam("barcode") String barcode) {
+    return openFoodFactsService.lookupByBarcode(barcode);
+  }
+
+  @GetMapping("/products/barcode/{barcode}")
+  @ResponseStatus(HttpStatus.OK)
+  public ProductDTO lookupByBarcodePath(@PathVariable("barcode") String barcode) {
     return openFoodFactsService.lookupByBarcode(barcode);
   }
 
@@ -32,6 +46,15 @@ public class ProductController {
       @RequestParam(value = "limit", defaultValue = "12") int limit
   ) {
     return openFoodFactsService.search(query, limit);
+  }
+
+  @PostMapping(value = "/products/barcode/extract", consumes = "multipart/form-data")
+  @ResponseStatus(HttpStatus.OK)
+  public BarcodeExtractionResponseDTO extractBarcodeFromImage(@RequestPart("image") MultipartFile image) {
+    String barcode = barcodeExtractionService.extractBarcode(image);
+    BarcodeExtractionResponseDTO response = new BarcodeExtractionResponseDTO();
+    response.setBarcode(barcode);
+    return response;
   }
 
 }

@@ -1,6 +1,18 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.time.Instant;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +36,15 @@ import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdBudgetPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -55,6 +74,8 @@ class HouseholdControllerTest {
         given(userRepository.findByToken(TEST_TOKEN)).willReturn(authenticatedUser);
     }
 
+    // ── POST /households ─────────────────────────────────────────────────────
+
     @Test
     void createHousehold_validInput_returns201() throws Exception {
         Household household = new Household();
@@ -68,12 +89,10 @@ class HouseholdControllerTest {
         HouseholdPostDTO dto = new HouseholdPostDTO();
         dto.setName("Smith Family");
 
-        MockHttpServletRequestBuilder request = post("/households")
+        mockMvc.perform(post("/households")
                 .header("Authorization", TEST_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(dto));
-
-        mockMvc.perform(request)
+                .content(asJsonString(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.householdId", is(10)))
                 .andExpect(jsonPath("$.name", is("Smith Family")))
@@ -89,12 +108,11 @@ class HouseholdControllerTest {
         HouseholdPostDTO dto = new HouseholdPostDTO();
         dto.setName("");
 
-        MockHttpServletRequestBuilder request = post("/households")
+        mockMvc.perform(post("/households")
                 .header("Authorization", TEST_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(dto));
-
-        mockMvc.perform(request).andExpect(status().isBadRequest());
+                .content(asJsonString(dto)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -104,12 +122,11 @@ class HouseholdControllerTest {
 
         HouseholdPostDTO dto = new HouseholdPostDTO();
 
-        MockHttpServletRequestBuilder request = post("/households")
+        mockMvc.perform(post("/households")
                 .header("Authorization", TEST_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(dto));
-
-        mockMvc.perform(request).andExpect(status().isBadRequest());
+                .content(asJsonString(dto)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -117,12 +134,13 @@ class HouseholdControllerTest {
         HouseholdPostDTO dto = new HouseholdPostDTO();
         dto.setName("Smith Family");
 
-        MockHttpServletRequestBuilder request = post("/households")
+        mockMvc.perform(post("/households")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(dto));
-
-        mockMvc.perform(request).andExpect(status().isUnauthorized());
+                .content(asJsonString(dto)))
+                .andExpect(status().isUnauthorized());
     }
+
+    // ── POST /households/{id}/invite-code ────────────────────────────────────
 
     @Test
     void generateInviteCode_owner_returns200() throws Exception {
@@ -133,11 +151,9 @@ class HouseholdControllerTest {
 
         given(householdService.regenerateInviteCode(eq(10L), eq(1L))).willReturn(household);
 
-        MockHttpServletRequestBuilder request = post("/households/10/invite-code")
+        mockMvc.perform(post("/households/10/invite-code")
                 .header("Authorization", TEST_TOKEN)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        mockMvc.perform(request)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.householdId", is(10)))
                 .andExpect(jsonPath("$.inviteCode", is("NEW456")))
@@ -149,12 +165,13 @@ class HouseholdControllerTest {
         given(householdService.regenerateInviteCode(eq(999L), eq(1L)))
                 .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
-        MockHttpServletRequestBuilder request = post("/households/999/invite-code")
+        mockMvc.perform(post("/households/999/invite-code")
                 .header("Authorization", TEST_TOKEN)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        mockMvc.perform(request).andExpect(status().isNotFound());
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
+
+    // ── POST /households/join ────────────────────────────────────────────────
 
     @Test
     void joinHousehold_validInviteCode_returns200() throws Exception {
@@ -169,12 +186,10 @@ class HouseholdControllerTest {
         HouseholdJoinPostDTO dto = new HouseholdJoinPostDTO();
         dto.setInviteCode("ABC123");
 
-        MockHttpServletRequestBuilder request = post("/households/join")
+        mockMvc.perform(post("/households/join")
                 .header("Authorization", TEST_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(dto));
-
-        mockMvc.perform(request)
+                .content(asJsonString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.householdId", is(10)))
                 .andExpect(jsonPath("$.name", is("Smith Family")))
@@ -190,12 +205,200 @@ class HouseholdControllerTest {
         HouseholdJoinPostDTO dto = new HouseholdJoinPostDTO();
         dto.setInviteCode("INVALID");
 
-        MockHttpServletRequestBuilder request = post("/households/join")
+        mockMvc.perform(post("/households/join")
                 .header("Authorization", TEST_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(dto));
+                .content(asJsonString(dto)))
+                .andExpect(status().isNotFound());
+    }
 
-        mockMvc.perform(request).andExpect(status().isNotFound());
+    // ── GET /households/{id}/budget ──────────────────────────────────────────
+
+    @Test
+    void getBudget_member_returns200() throws Exception {
+        HouseholdBudget budget = new HouseholdBudget();
+        budget.setId(1L);
+        budget.setHouseholdId(10L);
+        budget.setDailyCalorieTarget(2000.0);
+        budget.setUpdatedAt(Instant.now());
+
+        given(householdService.getBudget(eq(10L), eq(1L))).willReturn(budget);
+
+        mockMvc.perform(get("/households/10/budget")
+                .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.budgetId", is(1)))
+                .andExpect(jsonPath("$.householdId", is(10)))
+                .andExpect(jsonPath("$.dailyCalorieTarget", is(2000.0)))
+                .andExpect(jsonPath("$.updatedAt").exists());
+    }
+
+    @Test
+    void getBudget_noBudgetSet_returns404() throws Exception {
+        given(householdService.getBudget(eq(10L), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "No budget set for this household."));
+
+        mockMvc.perform(get("/households/10/budget")
+                .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getBudget_notMember_returns403() throws Exception {
+        given(householdService.getBudget(eq(10L), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a member of this household."));
+
+        mockMvc.perform(get("/households/10/budget")
+                .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getBudget_noToken_returns401() throws Exception {
+        mockMvc.perform(get("/households/10/budget"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // ── PUT /households/{id}/budget ──────────────────────────────────────────
+
+    @Test
+    void updateBudget_owner_returns200() throws Exception {
+        HouseholdBudget budget = new HouseholdBudget();
+        budget.setId(1L);
+        budget.setHouseholdId(10L);
+        budget.setDailyCalorieTarget(2000.0);
+        budget.setUpdatedAt(Instant.now());
+
+        given(householdService.updateBudget(eq(10L), eq(2000.0), eq(1L))).willReturn(budget);
+
+        HouseholdBudgetPutDTO dto = new HouseholdBudgetPutDTO();
+        dto.setDailyCalorieTarget(2000.0);
+
+        mockMvc.perform(put("/households/10/budget")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.budgetId", is(1)))
+                .andExpect(jsonPath("$.dailyCalorieTarget", is(2000.0)));
+    }
+
+    @Test
+    void updateBudget_nonOwner_returns403() throws Exception {
+        given(householdService.updateBudget(eq(10L), eq(2000.0), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can update the budget."));
+
+        HouseholdBudgetPutDTO dto = new HouseholdBudgetPutDTO();
+        dto.setDailyCalorieTarget(2000.0);
+
+        mockMvc.perform(put("/households/10/budget")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void updateBudget_invalidTarget_returns400() throws Exception {
+        given(householdService.updateBudget(eq(10L), eq(0.0), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Daily calorie target must be greater than 0."));
+
+        HouseholdBudgetPutDTO dto = new HouseholdBudgetPutDTO();
+        dto.setDailyCalorieTarget(0.0);
+
+        mockMvc.perform(put("/households/10/budget")
+                .header("Authorization", TEST_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateBudget_noToken_returns401() throws Exception {
+        HouseholdBudgetPutDTO dto = new HouseholdBudgetPutDTO();
+        dto.setDailyCalorieTarget(2000.0);
+
+        mockMvc.perform(put("/households/10/budget")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(dto)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // ── GET /households/{id}/stats ───────────────────────────────────────────
+
+    @Test
+    void getStats_withBudget_returns200() throws Exception {
+        HouseholdStatsGetDTO stats = new HouseholdStatsGetDTO();
+        stats.setStartDate("2026-04-01");
+        stats.setEndDate("2026-04-07");
+        stats.setDailyCalorieTarget(2000.0);
+        stats.setTotalCaloriesConsumed(12600.0);
+        stats.setAverageDailyCalories(1800.0);
+        stats.setDailyBreakdown(List.of(
+                new DailyBreakdownDTO("2026-04-01", 1800.0),
+                new DailyBreakdownDTO("2026-04-02", 1800.0)));
+        stats.setComparisonToBudget(new ComparisonToBudgetDTO("UNDER_BUDGET", -200.0, 90.0));
+
+        given(householdService.getStats(eq(10L), eq("2026-04-01"), eq("2026-04-07"), eq(1L))).willReturn(stats);
+
+        mockMvc.perform(get("/households/10/stats")
+                .header("Authorization", TEST_TOKEN)
+                .param("startDate", "2026-04-01")
+                .param("endDate", "2026-04-07"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.startDate", is("2026-04-01")))
+                .andExpect(jsonPath("$.endDate", is("2026-04-07")))
+                .andExpect(jsonPath("$.dailyCalorieTarget", is(2000.0)))
+                .andExpect(jsonPath("$.totalCaloriesConsumed", is(12600.0)))
+                .andExpect(jsonPath("$.averageDailyCalories", is(1800.0)))
+                .andExpect(jsonPath("$.dailyBreakdown", hasSize(2)))
+                .andExpect(jsonPath("$.comparisonToBudget.status", is("UNDER_BUDGET")))
+                .andExpect(jsonPath("$.comparisonToBudget.differenceFromTarget", is(-200.0)))
+                .andExpect(jsonPath("$.comparisonToBudget.percentageOfTarget", is(90.0)));
+    }
+
+    @Test
+    void getStats_notMember_returns403() throws Exception {
+        given(householdService.getStats(eq(10L), eq("2026-04-01"), eq("2026-04-07"), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a member of this household."));
+
+        mockMvc.perform(get("/households/10/stats")
+                .header("Authorization", TEST_TOKEN)
+                .param("startDate", "2026-04-01")
+                .param("endDate", "2026-04-07"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getStats_householdNotFound_returns404() throws Exception {
+        given(householdService.getStats(eq(999L), eq("2026-04-01"), eq("2026-04-07"), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        mockMvc.perform(get("/households/999/stats")
+                .header("Authorization", TEST_TOKEN)
+                .param("startDate", "2026-04-01")
+                .param("endDate", "2026-04-07"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getStats_invalidDate_returns400() throws Exception {
+        given(householdService.getStats(eq(10L), eq("bad"), eq("2026-04-07"), eq(1L)))
+                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format. Expected YYYY-MM-DD."));
+
+        mockMvc.perform(get("/households/10/stats")
+                .header("Authorization", TEST_TOKEN)
+                .param("startDate", "bad")
+                .param("endDate", "2026-04-07"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getStats_noToken_returns401() throws Exception {
+        mockMvc.perform(get("/households/10/stats")
+                .param("startDate", "2026-04-01")
+                .param("endDate", "2026-04-07"))
+                .andExpect(status().isUnauthorized());
     }
         @Test
     void generateInviteCode_nonOwner_returns403() throws Exception {
