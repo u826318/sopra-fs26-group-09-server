@@ -1,18 +1,25 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
+import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdBudgetGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdBudgetPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdInviteCodeGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
 
@@ -57,5 +64,47 @@ public class HouseholdController {
 
         Household household = householdService.joinHouseholdByInviteCode(joinPostDTO.getInviteCode(), authenticatedUserId);
         return DTOMapper.INSTANCE.convertEntityToHouseholdGetDTO(household);
+    }
+
+    @GetMapping("/households/{householdId}/budget")
+    @ResponseStatus(HttpStatus.OK)
+    public HouseholdBudgetGetDTO getBudget(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId) {
+
+        HouseholdBudget budget = householdService.getBudget(householdId, authenticatedUserId);
+        HouseholdBudgetGetDTO dto = new HouseholdBudgetGetDTO();
+        dto.setBudgetId(budget.getId());
+        dto.setHouseholdId(budget.getHouseholdId());
+        dto.setDailyCalorieTarget(budget.getDailyCalorieTarget());
+        dto.setUpdatedAt(budget.getUpdatedAt());
+        return dto;
+    }
+
+    @PutMapping("/households/{householdId}/budget")
+    @ResponseStatus(HttpStatus.OK)
+    public HouseholdBudgetGetDTO updateBudget(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @RequestBody HouseholdBudgetPutDTO budgetPutDTO) {
+
+        HouseholdBudget budget = householdService.updateBudget(householdId, budgetPutDTO.getDailyCalorieTarget(), authenticatedUserId);
+        HouseholdBudgetGetDTO dto = new HouseholdBudgetGetDTO();
+        dto.setBudgetId(budget.getId());
+        dto.setHouseholdId(budget.getHouseholdId());
+        dto.setDailyCalorieTarget(budget.getDailyCalorieTarget());
+        dto.setUpdatedAt(budget.getUpdatedAt());
+        return dto;
+    }
+
+    @GetMapping("/households/{householdId}/stats")
+    @ResponseStatus(HttpStatus.OK)
+    public HouseholdStatsGetDTO getStats(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        return householdService.getStats(householdId, startDate, endDate, authenticatedUserId);
     }
 }

@@ -29,7 +29,7 @@ public class OpenFoodFactsService {
 
   private static final Logger log = LoggerFactory.getLogger(OpenFoodFactsService.class);
 
-  private static final String OFF_BASE = "https://world.openfoodfacts.net";
+  private static final String OFF_BASE = "https://world.openfoodfacts.org";
   private static final String USER_AGENT = "sopra-fs26-group-09-virtual-pantry/0.1 (OpenFoodFacts portal)";
   private static final int MAX_LIMIT = 12;
 
