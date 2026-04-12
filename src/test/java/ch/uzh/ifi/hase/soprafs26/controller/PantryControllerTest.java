@@ -32,33 +32,33 @@ import jakarta.servlet.http.HttpServletRequest;
 @Import(GlobalExceptionAdvice.class)
 class PantryControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockitoBean
-    private PantryService pantryService;
+        @MockitoBean
+        private PantryService pantryService;
 
-    @MockitoBean
-    private UserRepository userRepository;
+        @MockitoBean
+        private UserRepository userRepository;
 
-    @MockitoBean
-    private AuthFilter authFilter;
+        @MockitoBean
+        private AuthFilter authFilter;
 
-    @BeforeEach
-    void setUp() throws Exception {
+        @BeforeEach
+        void setUp() throws Exception {
         doAnswer(invocation -> {
-            ServletRequest request = invocation.getArgument(0);
-            ServletResponse response = invocation.getArgument(1);
-            FilterChain chain = invocation.getArgument(2);
+                ServletRequest request = invocation.getArgument(0);
+                ServletResponse response = invocation.getArgument(1);
+                FilterChain chain = invocation.getArgument(2);
 
-            ((HttpServletRequest) request).setAttribute("authenticatedUserId", 99L);
-            chain.doFilter(request, response);
-            return null;
+                ((HttpServletRequest) request).setAttribute("authenticatedUserId", 99L);
+                chain.doFilter(request, response);
+                return null;
         }).when(authFilter).doFilter(any(), any(), any());
-    }
+        }
 
-    @Test
-    void consumePantryItem_success_returnsOk() throws Exception {
+        @Test
+        void consumePantryItem_success_returnsOk() throws Exception {
         PantryService.ConsumeResult result = new PantryService.ConsumeResult();
         result.setItemId(10L);
         result.setRemainingCount(3);
@@ -69,7 +69,7 @@ class PantryControllerTest {
 
         String requestBody = """
                 {
-                  "quantity": 2
+                        "quantity": 2
                 }
                 """;
 
@@ -81,16 +81,16 @@ class PantryControllerTest {
                 .andExpect(jsonPath("$.remainingCount").value(3))
                 .andExpect(jsonPath("$.consumedCalories").value(200.0))
                 .andExpect(jsonPath("$.removed").value(false));
-    }
+        }
 
-    @Test
-    void consumePantryItem_invalidQuantity_returnsBadRequest() throws Exception {
+        @Test
+        void consumePantryItem_invalidQuantity_returnsBadRequest() throws Exception {
         when(pantryService.consumeItem(1L, 10L, 0, 99L))
                 .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
 
         String requestBody = """
                 {
-                  "quantity": 0
+                        "quantity": 0
                 }
                 """;
 
@@ -99,10 +99,10 @@ class PantryControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
-    }
+        }
 
-    @Test
-    void getPantry_success_returnsItemsAndTotalCalories() throws Exception {
+        @Test
+        void getPantry_success_returnsItemsAndTotalCalories() throws Exception {
         PantryItem item1 = new PantryItem();
         item1.setId(10L);
         item1.setHouseholdId(1L);
@@ -140,15 +140,16 @@ class PantryControllerTest {
                 .andExpect(jsonPath("$.items[1].name").value("Bread"))
                 .andExpect(jsonPath("$.items[1].kcalPerPackage").value(250.0))
                 .andExpect(jsonPath("$.items[1].count").value(1));
-    }
+        }
 
-    @Test
-    void getPantry_whenUserIsNotMember_returnsBadRequest() throws Exception {
+        @Test
+        void getPantry_whenUserIsNotMember_returnsBadRequest() throws Exception {
         when(pantryService.getPantryItems(1L, 99L))
                 .thenThrow(new IllegalArgumentException("User is not a member of this household."));
 
         mockMvc.perform(get("/households/1/pantry"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("User is not a member of this household."));
-    }
+        }
+
 }
