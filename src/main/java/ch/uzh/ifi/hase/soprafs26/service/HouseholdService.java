@@ -3,6 +3,9 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,12 +15,17 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
+import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 
 @Service
 @Transactional
 public class HouseholdService {
+
+    public record HouseholdAccess(Household household, String role) {
+    }
 
     private static final String INVITE_CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int INVITE_CODE_LENGTH = 6;
@@ -27,11 +35,17 @@ public class HouseholdService {
 
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
+    private final PantryItemRepository pantryItemRepository;
+    private final ConsumptionLogRepository consumptionLogRepository;
 
     public HouseholdService(HouseholdRepository householdRepository,
-            HouseholdMemberRepository householdMemberRepository) {
+            HouseholdMemberRepository householdMemberRepository,
+            PantryItemRepository pantryItemRepository,
+            ConsumptionLogRepository consumptionLogRepository) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
+        this.pantryItemRepository = pantryItemRepository;
+        this.consumptionLogRepository = consumptionLogRepository;
     }
 
     public Household createHousehold(String name, Long ownerId) {
@@ -40,6 +54,7 @@ public class HouseholdService {
         }
 
         Household household = new Household();
+        household.setId(null);
         household.setName(name.trim());
         household.setOwnerId(ownerId);
         refreshInviteCode(household);
@@ -53,6 +68,57 @@ public class HouseholdService {
         householdMemberRepository.flush();
 
         return household;
+    }
+
+    public List<HouseholdAccess> getHouseholdsForUser(Long requesterUserId) {
+        List<HouseholdMember> memberships = householdMemberRepository.findByIdUserId(requesterUserId);
+        if (memberships.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> householdIds = memberships.stream()
+                .map(HouseholdMember::getId)
+                .map(HouseholdMemberId::getHouseholdId)
+                .distinct()
+                .toList();
+
+        Map<Long, Household> householdsById = new LinkedHashMap<>();
+        for (Household household : householdRepository.findAllById(householdIds)) {
+            householdsById.put(household.getId(), household);
+        }
+
+        return householdIds.stream()
+                .map(householdsById::get)
+                .filter(household -> household != null)
+                .map(household -> new HouseholdAccess(household, resolveRole(household, requesterUserId)))
+                .toList();
+    }
+
+    public HouseholdAccess getHouseholdForUser(Long householdId, Long requesterUserId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(requesterUserId, householdId);
+        if (!householdMemberRepository.existsById(membershipId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not a member of this household.");
+        }
+
+        return new HouseholdAccess(household, resolveRole(household, requesterUserId));
+    }
+
+    public void deleteHousehold(Long householdId, Long requesterUserId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        if (!household.getOwnerId().equals(requesterUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can delete this household.");
+        }
+
+        consumptionLogRepository.deleteByHouseholdId(householdId);
+        pantryItemRepository.deleteByHouseholdId(householdId);
+        householdMemberRepository.deleteByIdHouseholdId(householdId);
+        householdRepository.delete(household);
+        householdRepository.flush();
     }
 
     public Household regenerateInviteCode(Long householdId, Long requesterUserId) {
@@ -93,6 +159,10 @@ public class HouseholdService {
         householdMemberRepository.save(member);
         householdMemberRepository.flush();
         return household;
+    }
+
+    private String resolveRole(Household household, Long requesterUserId) {
+        return household.getOwnerId().equals(requesterUserId) ? "owner" : "member";
     }
 
     private void refreshInviteCode(Household household) {

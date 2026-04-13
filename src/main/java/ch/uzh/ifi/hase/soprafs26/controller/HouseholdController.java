@@ -1,8 +1,12 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -15,6 +19,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
+import ch.uzh.ifi.hase.soprafs26.service.HouseholdService.HouseholdAccess;
 
 @RestController
 public class HouseholdController {
@@ -25,6 +30,24 @@ public class HouseholdController {
         this.householdService = householdService;
     }
 
+    @GetMapping("/households")
+    @ResponseStatus(HttpStatus.OK)
+    public List<HouseholdGetDTO> getHouseholds(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId) {
+        return householdService.getHouseholdsForUser(authenticatedUserId).stream()
+                .map(this::toHouseholdGetDTO)
+                .toList();
+    }
+
+    @GetMapping("/households/{householdId}")
+    @ResponseStatus(HttpStatus.OK)
+    public HouseholdGetDTO getHousehold(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId) {
+        HouseholdAccess householdAccess = householdService.getHouseholdForUser(householdId, authenticatedUserId);
+        return toHouseholdGetDTO(householdAccess);
+    }
+
     @PostMapping("/households")
     @ResponseStatus(HttpStatus.CREATED)
     public HouseholdGetDTO createHousehold(
@@ -32,7 +55,15 @@ public class HouseholdController {
             @RequestBody HouseholdPostDTO householdPostDTO) {
 
         Household created = householdService.createHousehold(householdPostDTO.getName(), authenticatedUserId);
-        return DTOMapper.INSTANCE.convertEntityToHouseholdGetDTO(created);
+        return toHouseholdGetDTO(new HouseholdAccess(created, "owner"));
+    }
+
+    @DeleteMapping("/households/{householdId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteHousehold(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId) {
+        householdService.deleteHousehold(householdId, authenticatedUserId);
     }
 
     @PostMapping("/households/{householdId}/invite-code")
@@ -56,6 +87,12 @@ public class HouseholdController {
             @RequestBody HouseholdJoinPostDTO joinPostDTO) {
 
         Household household = householdService.joinHouseholdByInviteCode(joinPostDTO.getInviteCode(), authenticatedUserId);
-        return DTOMapper.INSTANCE.convertEntityToHouseholdGetDTO(household);
+        return toHouseholdGetDTO(new HouseholdAccess(household, "member"));
+    }
+
+    private HouseholdGetDTO toHouseholdGetDTO(HouseholdAccess householdAccess) {
+        HouseholdGetDTO dto = DTOMapper.INSTANCE.convertEntityToHouseholdGetDTO(householdAccess.household());
+        dto.setRole(householdAccess.role());
+        return dto;
     }
 }
