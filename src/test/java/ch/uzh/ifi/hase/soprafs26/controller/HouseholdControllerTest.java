@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -46,6 +47,8 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
+import ch.uzh.ifi.hase.soprafs26.service.HouseholdService.HouseholdAccess;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -77,6 +80,52 @@ class HouseholdControllerTest {
     // ── POST /households ─────────────────────────────────────────────────────
 
     @Test
+    void getHouseholds_returnsList() throws Exception {
+        Household ownerHousehold = new Household();
+        ownerHousehold.setId(10L);
+        ownerHousehold.setName("Owner House");
+        ownerHousehold.setInviteCode("OWN123");
+        ownerHousehold.setOwnerId(1L);
+
+        Household memberHousehold = new Household();
+        memberHousehold.setId(20L);
+        memberHousehold.setName("Member House");
+        memberHousehold.setInviteCode("MEM123");
+        memberHousehold.setOwnerId(2L);
+
+        given(householdService.getHouseholdsForUser(eq(1L))).willReturn(List.of(
+                new HouseholdAccess(ownerHousehold, "owner"),
+                new HouseholdAccess(memberHousehold, "member")
+        ));
+
+        mockMvc.perform(get("/households").header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].householdId", is(10)))
+                .andExpect(jsonPath("$[0].role", is("owner")))
+                .andExpect(jsonPath("$[1].householdId", is(20)))
+                .andExpect(jsonPath("$[1].role", is("member")));
+    }
+
+    @Test
+    void getHousehold_returnsSingleHousehold() throws Exception {
+        Household household = new Household();
+        household.setId(10L);
+        household.setName("Smith Family");
+        household.setInviteCode("ABC123");
+        household.setOwnerId(1L);
+
+        given(householdService.getHouseholdForUser(eq(10L), eq(1L)))
+                .willReturn(new HouseholdAccess(household, "owner"));
+
+        mockMvc.perform(get("/households/10").header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.householdId", is(10)))
+                .andExpect(jsonPath("$.name", is("Smith Family")))
+                .andExpect(jsonPath("$.role", is("owner")));
+    }
+
+    @Test
     void createHousehold_validInput_returns201() throws Exception {
         Household household = new Household();
         household.setId(10L);
@@ -97,7 +146,8 @@ class HouseholdControllerTest {
                 .andExpect(jsonPath("$.householdId", is(10)))
                 .andExpect(jsonPath("$.name", is("Smith Family")))
                 .andExpect(jsonPath("$.inviteCode", is("ABC123")))
-                .andExpect(jsonPath("$.ownerId", is(1)));
+                .andExpect(jsonPath("$.ownerId", is(1)))
+                .andExpect(jsonPath("$.role", is("owner")));
     }
 
     @Test
@@ -141,6 +191,12 @@ class HouseholdControllerTest {
     }
 
     // ── POST /households/{id}/invite-code ────────────────────────────────────
+
+    @Test
+    void deleteHousehold_returns204() throws Exception {
+        mockMvc.perform(delete("/households/10").header("Authorization", TEST_TOKEN))
+                .andExpect(status().isNoContent());
+    }
 
     @Test
     void generateInviteCode_owner_returns200() throws Exception {
@@ -194,7 +250,8 @@ class HouseholdControllerTest {
                 .andExpect(jsonPath("$.householdId", is(10)))
                 .andExpect(jsonPath("$.name", is("Smith Family")))
                 .andExpect(jsonPath("$.inviteCode", is("ABC123")))
-                .andExpect(jsonPath("$.ownerId", is(1)));
+                .andExpect(jsonPath("$.ownerId", is(1)))
+                .andExpect(jsonPath("$.role", is("member")));
     }
 
     @Test

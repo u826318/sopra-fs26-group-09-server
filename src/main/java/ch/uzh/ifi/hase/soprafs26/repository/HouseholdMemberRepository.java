@@ -12,4 +12,5 @@ import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 public interface HouseholdMemberRepository extends JpaRepository<HouseholdMember, HouseholdMemberId> {
     List<HouseholdMember> findByIdUserId(Long userId);
     List<HouseholdMember> findByIdHouseholdId(Long householdId);
+    void deleteByIdHouseholdId(Long householdId);
 }

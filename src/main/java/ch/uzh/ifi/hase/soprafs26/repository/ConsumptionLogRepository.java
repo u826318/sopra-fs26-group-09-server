@@ -11,5 +11,6 @@ import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 @Repository("consumptionLogRepository")
 public interface ConsumptionLogRepository extends JpaRepository<ConsumptionLog, Long> {
     List<ConsumptionLog> findByPantryItemId(Long pantryItemId);
+    void deleteByHouseholdId(Long householdId);
     List<ConsumptionLog> findByHouseholdIdAndConsumedAtBetween(Long householdId, Instant start, Instant end);
 }

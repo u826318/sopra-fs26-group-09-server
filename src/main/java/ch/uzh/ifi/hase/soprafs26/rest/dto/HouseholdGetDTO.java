@@ -9,6 +9,7 @@ public class HouseholdGetDTO {
     private String inviteCode;
     private Long ownerId;
     private Instant createdAt;
+    private String role;
 
     public Long getHouseholdId() {
         return householdId;
@@ -48,5 +49,13 @@ public class HouseholdGetDTO {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
