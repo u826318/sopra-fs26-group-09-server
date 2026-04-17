@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,11 +23,10 @@ import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
-import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
-import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
@@ -50,15 +48,18 @@ public class HouseholdService {
     private final HouseholdMemberRepository householdMemberRepository;
     private final ConsumptionLogRepository consumptionLogRepository;
     private final HouseholdBudgetRepository householdBudgetRepository;
+    private final PantryItemRepository pantryItemRepository;
 
     public HouseholdService(HouseholdRepository householdRepository,
             HouseholdMemberRepository householdMemberRepository,
             ConsumptionLogRepository consumptionLogRepository,
-            HouseholdBudgetRepository householdBudgetRepository) {
+            HouseholdBudgetRepository householdBudgetRepository,
+            PantryItemRepository pantryItemRepository) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
         this.consumptionLogRepository = consumptionLogRepository;
         this.householdBudgetRepository = householdBudgetRepository;
+        this.pantryItemRepository = pantryItemRepository;
     }
 
     public Household createHousehold(String name, Long ownerId) {
