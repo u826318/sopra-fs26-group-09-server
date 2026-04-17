@@ -12,6 +12,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
@@ -28,6 +30,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
@@ -40,6 +43,10 @@ public class HouseholdService {
     }
 
     private static final String MSG_HOUSEHOLD_NOT_FOUND = "Household not found.";
+
+    private static final int CONSUMPTION_LOGS_DEFAULT_LIMIT = 20;
+    private static final int CONSUMPTION_LOGS_MAX_LIMIT = 100;
+    private static final String REMOVED_PRODUCT_LABEL = "Removed item";
 
     private static final String INVITE_CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int INVITE_CODE_LENGTH = 6;
@@ -299,6 +306,43 @@ public class HouseholdService {
         dto.setTotalCaloriesConsumed(totalCalories);
         dto.setDailyBreakdown(dailyBreakdown);
         dto.setComparisonToBudget(comparison);
+        return dto;
+    }
+
+    public List<ConsumptionLogGetDTO> getConsumptionLogs(Long householdId, Long requesterUserId, Integer limit) {
+        if (!householdRepository.existsById(householdId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND);
+        }
+
+        HouseholdMemberId memberId = new HouseholdMemberId(requesterUserId, householdId);
+        if (!householdMemberRepository.existsById(memberId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a member of this household.");
+        }
+
+        int size = limit == null ? CONSUMPTION_LOGS_DEFAULT_LIMIT : limit;
+        size = Math.min(Math.max(size, 1), CONSUMPTION_LOGS_MAX_LIMIT);
+
+        List<ConsumptionLog> logs = consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(
+                householdId,
+                PageRequest.of(0, size));
+
+        return logs.stream()
+                .map(log -> toConsumptionLogGetDTO(log, householdId))
+                .toList();
+    }
+
+    private ConsumptionLogGetDTO toConsumptionLogGetDTO(ConsumptionLog log, Long householdId) {
+        ConsumptionLogGetDTO dto = new ConsumptionLogGetDTO();
+        dto.setLogId(log.getId());
+        dto.setConsumedAt(log.getConsumedAt());
+        dto.setPantryItemId(log.getPantryItemId());
+        dto.setConsumedQuantity(log.getConsumedQuantity());
+        dto.setConsumedCalories(log.getConsumedCalories());
+        dto.setUserId(log.getUserId());
+        String productName = pantryItemRepository.findByIdAndHouseholdId(log.getPantryItemId(), householdId)
+                .map(PantryItem::getName)
+                .orElse(REMOVED_PRODUCT_LABEL);
+        dto.setProductName(productName);
         return dto;
     }
 
