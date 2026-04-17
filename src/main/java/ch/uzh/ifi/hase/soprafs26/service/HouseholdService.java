@@ -6,11 +6,11 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,11 +24,10 @@ import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
-import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
-import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
@@ -40,6 +39,8 @@ public class HouseholdService {
     public record HouseholdAccess(Household household, String role) {
     }
 
+    private static final String MSG_HOUSEHOLD_NOT_FOUND = "Household not found.";
+
     private static final String INVITE_CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int INVITE_CODE_LENGTH = 6;
     private static final int INVITE_CODE_MAX_ATTEMPTS = 10;
@@ -50,15 +51,18 @@ public class HouseholdService {
     private final HouseholdMemberRepository householdMemberRepository;
     private final ConsumptionLogRepository consumptionLogRepository;
     private final HouseholdBudgetRepository householdBudgetRepository;
+    private final PantryItemRepository pantryItemRepository;
 
     public HouseholdService(HouseholdRepository householdRepository,
             HouseholdMemberRepository householdMemberRepository,
             ConsumptionLogRepository consumptionLogRepository,
-            HouseholdBudgetRepository householdBudgetRepository) {
+            HouseholdBudgetRepository householdBudgetRepository,
+            PantryItemRepository pantryItemRepository) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
         this.consumptionLogRepository = consumptionLogRepository;
         this.householdBudgetRepository = householdBudgetRepository;
+        this.pantryItemRepository = pantryItemRepository;
     }
 
     public Household createHousehold(String name, Long ownerId) {
@@ -102,14 +106,14 @@ public class HouseholdService {
 
         return householdIds.stream()
                 .map(householdsById::get)
-                .filter(household -> household != null)
+                .filter(Objects::nonNull)
                 .map(household -> new HouseholdAccess(household, resolveRole(household, requesterUserId)))
                 .toList();
     }
 
     public HouseholdAccess getHouseholdForUser(Long householdId, Long requesterUserId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(requesterUserId, householdId);
         if (!householdMemberRepository.existsById(membershipId)) {
@@ -121,7 +125,7 @@ public class HouseholdService {
 
     public void deleteHousehold(Long householdId, Long requesterUserId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
 
         if (!household.getOwnerId().equals(requesterUserId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can delete this household.");
@@ -136,7 +140,7 @@ public class HouseholdService {
 
     public Household regenerateInviteCode(Long householdId, Long requesterUserId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
 
         if (!household.getOwnerId().equals(requesterUserId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can generate invite codes.");
@@ -179,7 +183,7 @@ public class HouseholdService {
     }
     public HouseholdBudget getBudget(Long householdId, Long requesterUserId) {
         if (!householdRepository.existsById(householdId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND);
         }
 
         HouseholdMemberId memberId = new HouseholdMemberId(requesterUserId, householdId);
@@ -193,7 +197,7 @@ public class HouseholdService {
 
     public HouseholdBudget updateBudget(Long householdId, Double dailyCalorieTarget, Long requesterUserId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
 
         if (!household.getOwnerId().equals(requesterUserId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can update the budget.");
@@ -222,7 +226,7 @@ public class HouseholdService {
 
     public HouseholdStatsGetDTO getStats(Long householdId, String startDateStr, String endDateStr, Long requesterUserId) {
         if (!householdRepository.existsById(householdId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND);
         }
 
         HouseholdMemberId memberId = new HouseholdMemberId(requesterUserId, householdId);
