@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs26.repository;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,6 @@ public interface ConsumptionLogRepository extends JpaRepository<ConsumptionLog, 
     List<ConsumptionLog> findByPantryItemId(Long pantryItemId);
     void deleteByHouseholdId(Long householdId);
     List<ConsumptionLog> findByHouseholdIdAndConsumedAtBetween(Long householdId, Instant start, Instant end);
+
+    List<ConsumptionLog> findByHouseholdIdOrderByConsumedAtDesc(Long householdId, Pageable pageable);
 }

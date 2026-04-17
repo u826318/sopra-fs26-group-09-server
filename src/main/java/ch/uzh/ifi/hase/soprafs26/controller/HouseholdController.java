@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +22,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdInviteCodeGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
@@ -143,5 +143,15 @@ public class HouseholdController {
             @RequestParam String endDate) {
 
         return householdService.getStats(householdId, startDate, endDate, authenticatedUserId);
+    }
+
+    @GetMapping("/households/{householdId}/consumption-logs")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ConsumptionLogGetDTO> getConsumptionLogs(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @RequestParam(required = false) Integer limit) {
+
+        return householdService.getConsumptionLogs(householdId, authenticatedUserId, limit);
     }
 }

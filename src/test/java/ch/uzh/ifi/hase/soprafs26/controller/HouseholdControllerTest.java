@@ -40,6 +40,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdBudgetPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
@@ -457,7 +458,43 @@ class HouseholdControllerTest {
                 .param("endDate", "2026-04-07"))
                 .andExpect(status().isUnauthorized());
     }
-        @Test
+
+    // ── GET /households/{id}/consumption-logs ────────────────────────────────
+
+    @Test
+    void getConsumptionLogs_returns200() throws Exception {
+        ConsumptionLogGetDTO dto = new ConsumptionLogGetDTO();
+        dto.setLogId(1L);
+        dto.setConsumedAt(Instant.parse("2026-04-17T12:00:00Z"));
+        dto.setPantryItemId(5L);
+        dto.setProductName("Rice");
+        dto.setConsumedQuantity(1);
+        dto.setConsumedCalories(100.0);
+        dto.setUserId(1L);
+
+        given(householdService.getConsumptionLogs(eq(10L), eq(1L), isNull()))
+                .willReturn(List.of(dto));
+
+        mockMvc.perform(get("/households/10/consumption-logs")
+                .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].productName", is("Rice")))
+                .andExpect(jsonPath("$[0].consumedCalories", is(100.0)));
+    }
+
+    @Test
+    void getConsumptionLogs_withLimit_passesLimit() throws Exception {
+        given(householdService.getConsumptionLogs(eq(10L), eq(1L), eq(50)))
+                .willReturn(List.of());
+
+        mockMvc.perform(get("/households/10/consumption-logs")
+                .header("Authorization", TEST_TOKEN)
+                .param("limit", "50"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void generateInviteCode_nonOwner_returns403() throws Exception {
         given(householdService.regenerateInviteCode(eq(10L), eq(1L)))
                 .willThrow(new ResponseStatusException(HttpStatus.FORBIDDEN,

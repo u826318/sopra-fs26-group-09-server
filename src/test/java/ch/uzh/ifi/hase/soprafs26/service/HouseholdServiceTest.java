@@ -40,7 +40,12 @@ import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
+
+import org.springframework.data.domain.Pageable;
 
 
 class HouseholdServiceTest {
@@ -56,6 +61,9 @@ class HouseholdServiceTest {
 
     @Mock
     private HouseholdBudgetRepository householdBudgetRepository;
+
+    @Mock
+    private PantryItemRepository pantryItemRepository;
 
     @InjectMocks
     private HouseholdService householdService;
@@ -486,6 +494,79 @@ class HouseholdServiceTest {
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> householdService.getStats(99L, "2026-04-10", "2026-04-10", 1L));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    // ── getConsumptionLogs ─────────────────────────────────────────────────────
+
+    @Test
+    void getConsumptionLogs_member_returnsMappedDtos() {
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(true);
+
+        ConsumptionLog log = new ConsumptionLog();
+        log.setId(100L);
+        log.setHouseholdId(10L);
+        log.setUserId(1L);
+        log.setPantryItemId(5L);
+        log.setConsumedQuantity(2);
+        log.setConsumedCalories(400.0);
+        log.setConsumedAt(Instant.parse("2026-04-17T12:00:00Z"));
+
+        when(consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(eq(10L), any(Pageable.class)))
+                .thenReturn(List.of(log));
+
+        PantryItem item = new PantryItem();
+        item.setName("Organic Rice");
+        when(pantryItemRepository.findByIdAndHouseholdId(5L, 10L)).thenReturn(Optional.of(item));
+
+        List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, 20);
+
+        assertEquals(1, result.size());
+        assertEquals(100L, result.get(0).getLogId());
+        assertEquals("Organic Rice", result.get(0).getProductName());
+        assertEquals(400.0, result.get(0).getConsumedCalories());
+    }
+
+    @Test
+    void getConsumptionLogs_removedItem_usesPlaceholderName() {
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(true);
+
+        ConsumptionLog log = new ConsumptionLog();
+        log.setId(101L);
+        log.setHouseholdId(10L);
+        log.setUserId(1L);
+        log.setPantryItemId(99L);
+        log.setConsumedQuantity(1);
+        log.setConsumedCalories(100.0);
+        log.setConsumedAt(Instant.now());
+
+        when(consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(eq(10L), any(Pageable.class)))
+                .thenReturn(List.of(log));
+        when(pantryItemRepository.findByIdAndHouseholdId(99L, 10L)).thenReturn(Optional.empty());
+
+        List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, null);
+
+        assertEquals("Removed item", result.get(0).getProductName());
+    }
+
+    @Test
+    void getConsumptionLogs_notMember_forbidden() {
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(false);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.getConsumptionLogs(10L, 1L, 20));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+    }
+
+    @Test
+    void getConsumptionLogs_householdNotFound_throws404() {
+        when(householdRepository.existsById(99L)).thenReturn(false);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.getConsumptionLogs(99L, 1L, 20));
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
 
