@@ -180,6 +180,28 @@ class UserControllerTest {
 	}
 
 	@Test
+	void demoLogin_success() throws Exception {
+		User user = new User();
+		user.setId(4L);
+		user.setName("Debug Portal Demo");
+		user.setUsername("debug-demo");
+		user.setToken("demo-token");
+		user.setStatus(UserStatus.ONLINE);
+
+		given(userService.loginDemoUser()).willReturn(user);
+
+		MockHttpServletRequestBuilder postRequest = post("/users/demo-login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{}");
+
+		mockMvc.perform(postRequest)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.username", is(user.getUsername())))
+				.andExpect(jsonPath("$.token", is(user.getToken())))
+				.andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+	}
+
+	@Test
 	void logoutUser_validInput_success() throws Exception {
 		UserLogoutDTO userLogoutDTO = new UserLogoutDTO();
 		userLogoutDTO.setToken("token-logout");

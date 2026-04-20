@@ -20,6 +20,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
 import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
 import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
+import ch.uzh.ifi.hase.soprafs26.service.ReceiptAnalysisService;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
@@ -32,6 +33,9 @@ class ProductControllerTest {
 
     @MockitoBean
     private BarcodeExtractionService barcodeExtractionService;
+
+    @MockitoBean
+    private ReceiptAnalysisService receiptAnalysisService;
 
     @MockitoBean
     private UserRepository userRepository;

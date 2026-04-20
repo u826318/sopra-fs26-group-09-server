@@ -2,8 +2,10 @@ package ch.uzh.ifi.hase.soprafs26.controller;
 
 import ch.uzh.ifi.hase.soprafs26.rest.dto.BarcodeExtractionResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ReceiptAnalysisResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
 import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
+import ch.uzh.ifi.hase.soprafs26.service.ReceiptAnalysisService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +23,16 @@ public class ProductController {
 
   private final OpenFoodFactsService openFoodFactsService;
   private final BarcodeExtractionService barcodeExtractionService;
+  private final ReceiptAnalysisService receiptAnalysisService;
 
-  public ProductController(OpenFoodFactsService openFoodFactsService, BarcodeExtractionService barcodeExtractionService) {
+  public ProductController(
+      OpenFoodFactsService openFoodFactsService,
+      BarcodeExtractionService barcodeExtractionService,
+      ReceiptAnalysisService receiptAnalysisService
+  ) {
     this.openFoodFactsService = openFoodFactsService;
     this.barcodeExtractionService = barcodeExtractionService;
+    this.receiptAnalysisService = receiptAnalysisService;
   }
 
   @GetMapping("/products/lookup")
@@ -57,4 +65,9 @@ public class ProductController {
     return response;
   }
 
+  @PostMapping(value = "/products/receipt/analyze", consumes = "multipart/form-data")
+  @ResponseStatus(HttpStatus.OK)
+  public ReceiptAnalysisResponseDTO analyzeReceipt(@RequestPart("image") MultipartFile image) {
+    return receiptAnalysisService.analyzeReceipt(image);
+  }
 }

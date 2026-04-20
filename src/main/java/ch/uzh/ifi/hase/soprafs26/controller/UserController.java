@@ -72,6 +72,13 @@ public class UserController {
 		return toAuthDTO(loggedInUser);
 	}
 
+	@PostMapping("/users/demo-login")
+	@ResponseStatus(HttpStatus.OK)
+	public UserAuthDTO createDemoSession() {
+		User demoUser = userService.loginDemoUser();
+		return toAuthDTO(demoUser);
+	}
+
 	@PostMapping("/users/logout")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void logout(@RequestBody UserLogoutDTO userLogoutDTO) {

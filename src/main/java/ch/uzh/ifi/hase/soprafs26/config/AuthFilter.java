@@ -29,7 +29,13 @@ public class AuthFilter extends OncePerRequestFilter {
         return "OPTIONS".equalsIgnoreCase(method)
                 || path.equals("/ws")
                 || path.equals("/users/register")
-                || path.equals("/users/login");
+                || path.equals("/users/login")
+                || path.equals("/users/demo-login")
+                || path.equals("/products/lookup")
+                || path.equals("/products/search")
+                || path.equals("/products/barcode/extract")
+                || path.equals("/products/receipt/analyze")
+                || path.startsWith("/products/barcode/");
     }
 
     @Override

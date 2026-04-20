@@ -127,6 +127,24 @@ class AuthFilterTest {
     }
 
     @Test
+    void demoLoginPath_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/demo-login");
+        assertTrue(authFilter.shouldNotFilter(request));
+    }
+
+    @Test
+    void receiptAnalyzePath_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/products/receipt/analyze");
+        assertTrue(authFilter.shouldNotFilter(request));
+    }
+
+    @Test
+    void productBarcodePath_skipsFilter() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/products/barcode/12345");
+        assertTrue(authFilter.shouldNotFilter(request));
+    }
+
+    @Test
     void otherPath_doesNotSkipFilter() {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/households");
         assertFalse(authFilter.shouldNotFilter(request));

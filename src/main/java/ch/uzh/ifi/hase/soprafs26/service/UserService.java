@@ -32,6 +32,9 @@ public class UserService {
 	private final Logger log = LoggerFactory.getLogger(UserService.class);
 	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+	private static final String DEBUG_PORTAL_USERNAME = "debug-demo";
+	private static final String DEBUG_PORTAL_PASSWORD = "debug-portal-password";
+
 	private final UserRepository userRepository;
 
 	public UserService(@Qualifier("userRepository") UserRepository userRepository) {
@@ -79,6 +82,26 @@ public class UserService {
 
 		log.debug("Logged in user: {}", user.getUsername());
 		return user;
+	}
+
+	public User loginDemoUser() {
+		User demoUser = userRepository.findByUsername(DEBUG_PORTAL_USERNAME);
+
+		if (demoUser == null) {
+			demoUser = new User();
+			demoUser.setName("Debug Portal Demo");
+			demoUser.setUsername(DEBUG_PORTAL_USERNAME);
+			demoUser.setPassword(passwordEncoder.encode(DEBUG_PORTAL_PASSWORD));
+			demoUser.setCreatedAt(Instant.now());
+		}
+
+		demoUser.setToken(UUID.randomUUID().toString());
+		demoUser.setStatus(UserStatus.ONLINE);
+		demoUser = userRepository.save(demoUser);
+		userRepository.flush();
+
+		log.debug("Issued debug portal demo session: {}", demoUser.getUsername());
+		return demoUser;
 	}
 
 	public void logoutUser(String token) {
