@@ -10,11 +10,14 @@ import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
+import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 
 @Service
 @Transactional
@@ -24,17 +27,23 @@ public class PantryService {
     private final ConsumptionLogRepository consumptionLogRepository;
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
+    private final UserRepository userRepository;
+    private final PantryBroadcastService pantryBroadcastService;
 
     public PantryService(
             PantryItemRepository pantryItemRepository,
             ConsumptionLogRepository consumptionLogRepository,
             HouseholdRepository householdRepository,
-            HouseholdMemberRepository householdMemberRepository
+            HouseholdMemberRepository householdMemberRepository,
+            UserRepository userRepository,
+            PantryBroadcastService pantryBroadcastService
     ) {
         this.pantryItemRepository = pantryItemRepository;
         this.consumptionLogRepository = consumptionLogRepository;
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
+        this.userRepository = userRepository;
+        this.pantryBroadcastService = pantryBroadcastService;
     }
 
     /**
@@ -101,7 +110,28 @@ public class PantryService {
         pantryItem.setCount(pantryItemPostDTO.getQuantity());
         pantryItem.setAddedAt(Instant.now());
 
-        return pantryItemRepository.save(pantryItem);
+        PantryItem saved = pantryItemRepository.save(pantryItem);
+
+        User actor = userRepository.findById(authenticatedUserId).orElse(null);
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("ITEM_ADDED");
+        msg.setHouseholdId(householdId);
+        msg.setTriggeredByUserId(authenticatedUserId);
+        msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);
+        msg.setTimestamp(Instant.now().toString());
+        msg.setNewTotalCalories(calculateTotalCalories(householdId));
+        PantryUpdateMessage.PantryItemPayload payload = new PantryUpdateMessage.PantryItemPayload();
+        payload.setItemId(saved.getId());
+        payload.setProductName(saved.getName());
+        payload.setBarcode(saved.getBarcode());
+        payload.setQuantity(saved.getCount().doubleValue());
+        payload.setCaloriesPerUnit(saved.getKcalPerPackage());
+        payload.setAddedByUserId(authenticatedUserId);
+        payload.setAddedAt(saved.getAddedAt().toString());
+        msg.setItem(payload);
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
+
+        return saved;
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
@@ -152,6 +182,16 @@ public class PantryService {
             result.setRemainingCount(remainingCount);
             result.setRemoved(false);
         }
+
+        User actor = userRepository.findById(authenticatedUserId).orElse(null);
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("ITEM_CONSUMED");
+        msg.setHouseholdId(householdId);
+        msg.setTriggeredByUserId(authenticatedUserId);
+        msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);
+        msg.setTimestamp(Instant.now().toString());
+        msg.setNewTotalCalories(calculateTotalCalories(householdId));
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
 
         return result;
     }

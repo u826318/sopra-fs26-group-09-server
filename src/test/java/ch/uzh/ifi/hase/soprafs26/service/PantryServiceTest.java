@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -23,17 +25,44 @@ import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
+import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 
 class PantryServiceTest {
 
+    private PantryItemRepository mockPantryRepo;
+    private ConsumptionLogRepository mockConsumptionRepo;
+    private HouseholdRepository mockHouseholdRepo;
+    private HouseholdMemberRepository mockHouseholdMemberRepo;
+    private UserRepository mockUserRepo;
+    private PantryBroadcastService mockBroadcastService;
+    private PantryService pantryService;
+
+    @BeforeEach
+    void setUp() {
+        mockPantryRepo = mock(PantryItemRepository.class);
+        mockConsumptionRepo = mock(ConsumptionLogRepository.class);
+        mockHouseholdRepo = mock(HouseholdRepository.class);
+        mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
+        mockUserRepo = mock(UserRepository.class);
+        mockBroadcastService = mock(PantryBroadcastService.class);
+
+        pantryService = new PantryService(
+                mockPantryRepo,
+                mockConsumptionRepo,
+                mockHouseholdRepo,
+                mockHouseholdMemberRepo,
+                mockUserRepo,
+                mockBroadcastService
+        );
+
+        when(mockUserRepo.findById(anyLong())).thenReturn(Optional.empty());
+        when(mockPantryRepo.findByHouseholdId(anyLong())).thenReturn(List.of());
+    }
+
     @Test
     void calculateTotalCalories_success() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         PantryItem item1 = new PantryItem();
         item1.setHouseholdId(1L);
         item1.setKcalPerPackage(100.0);
@@ -46,13 +75,6 @@ class PantryServiceTest {
 
         when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item1, item2));
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         double result = pantryService.calculateTotalCalories(1L);
 
         assertEquals(450.0, result, 0.001);
@@ -60,11 +82,6 @@ class PantryServiceTest {
 
     @Test
     void getPantryItems_success() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
@@ -82,13 +99,6 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item1, item2));
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         List<PantryItem> result = pantryService.getPantryItems(1L, 99L);
 
         assertEquals(2, result.size());
@@ -98,23 +108,11 @@ class PantryServiceTest {
 
     @Test
     void getPantryItems_throwsException_whenUserIsNotMember() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
-
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -126,11 +124,6 @@ class PantryServiceTest {
 
     @Test
     void addItem_success_savesPantryItem() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
@@ -148,13 +141,6 @@ class PantryServiceTest {
             return saved;
         });
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         PantryItem result = pantryService.addItem(1L, postDTO, 99L);
 
         assertEquals(12L, result.getId());
@@ -166,27 +152,43 @@ class PantryServiceTest {
         assertTrue(result.getAddedAt() != null);
 
         verify(mockPantryRepo, times(1)).save(any(PantryItem.class));
+        verify(mockBroadcastService, times(1)).broadcastPantryUpdate(any(Long.class), any(PantryUpdateMessage.class));
     }
 
     @Test
-    void addItem_throwsException_whenQuantityIsInvalid() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
+    void addItem_success_broadcastsEventType() {
+        Household household = new Household();
+        household.setId(1L);
 
         PantryItemPostDTO postDTO = new PantryItemPostDTO();
         postDTO.setBarcode("7613035974685");
         postDTO.setName("Chocolate Bar");
         postDTO.setKcalPerPackage(250.0);
-        postDTO.setQuantity(0);
+        postDTO.setQuantity(1);
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.save(any(PantryItem.class))).thenAnswer(inv -> {
+            PantryItem saved = inv.getArgument(0);
+            saved.setId(5L);
+            return saved;
+        });
+
+        pantryService.addItem(1L, postDTO, 99L);
+
+        verify(mockBroadcastService).broadcastPantryUpdate(
+                org.mockito.ArgumentMatchers.eq(1L),
+                org.mockito.ArgumentMatchers.argThat(msg -> "ITEM_ADDED".equals(msg.getEventType()))
         );
+    }
+
+    @Test
+    void addItem_throwsException_whenQuantityIsInvalid() {
+        PantryItemPostDTO postDTO = new PantryItemPostDTO();
+        postDTO.setBarcode("7613035974685");
+        postDTO.setName("Chocolate Bar");
+        postDTO.setKcalPerPackage(250.0);
+        postDTO.setQuantity(0);
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -199,11 +201,6 @@ class PantryServiceTest {
 
     @Test
     void addItem_throwsException_whenHouseholdNotFound() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         PantryItemPostDTO postDTO = new PantryItemPostDTO();
         postDTO.setBarcode("7613035974685");
         postDTO.setName("Chocolate Bar");
@@ -211,13 +208,6 @@ class PantryServiceTest {
         postDTO.setQuantity(3);
 
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
-
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -230,11 +220,6 @@ class PantryServiceTest {
 
     @Test
     void addItem_throwsException_whenUserIsNotMember() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
@@ -247,13 +232,6 @@ class PantryServiceTest {
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> pantryService.addItem(1L, postDTO, 99L)
@@ -265,11 +243,6 @@ class PantryServiceTest {
 
     @Test
     void consumeItem_success_updatesCountAndSavesLog() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
@@ -283,13 +256,6 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 99L);
 
         assertEquals(10L, result.getItemId());
@@ -300,15 +266,11 @@ class PantryServiceTest {
         verify(mockConsumptionRepo, times(1)).save(any(ConsumptionLog.class));
         verify(mockPantryRepo, times(1)).save(item);
         verify(mockPantryRepo, never()).delete(any(PantryItem.class));
+        verify(mockBroadcastService, times(1)).broadcastPantryUpdate(any(Long.class), any(PantryUpdateMessage.class));
     }
 
     @Test
     void consumeItem_success_removesItemWhenCountReachesZero() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
@@ -322,13 +284,6 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 99L);
 
         assertEquals(10L, result.getItemId());
@@ -338,16 +293,34 @@ class PantryServiceTest {
 
         verify(mockConsumptionRepo, times(1)).save(any(ConsumptionLog.class));
         verify(mockPantryRepo, times(1)).delete(item);
-        verify(mockPantryRepo, never()).save(any(PantryItem.class));
+        verify(mockBroadcastService, times(1)).broadcastPantryUpdate(any(Long.class), any(PantryUpdateMessage.class));
+    }
+
+    @Test
+    void consumeItem_success_broadcastsEventType() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setKcalPerPackage(100.0);
+        item.setCount(3);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        pantryService.consumeItem(1L, 10L, 1, 99L);
+
+        verify(mockBroadcastService).broadcastPantryUpdate(
+                org.mockito.ArgumentMatchers.eq(1L),
+                org.mockito.ArgumentMatchers.argThat(msg -> "ITEM_CONSUMED".equals(msg.getEventType()))
+        );
     }
 
     @Test
     void consumeItem_throwsException_whenQuantityExceedsAvailableCount() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
@@ -361,13 +334,6 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> pantryService.consumeItem(1L, 10L, 5, 99L)
@@ -379,18 +345,6 @@ class PantryServiceTest {
 
     @Test
     void consumeItem_throwsException_whenQuantityIsInvalid() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
-
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> pantryService.consumeItem(1L, 10L, 0, 99L)
@@ -401,19 +355,7 @@ class PantryServiceTest {
 
     @Test
     void consumeItem_throwsException_whenHouseholdNotFound() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
-
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -425,23 +367,11 @@ class PantryServiceTest {
 
     @Test
     void consumeItem_throwsException_whenUserIsNotMember() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
-
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -453,24 +383,12 @@ class PantryServiceTest {
 
     @Test
     void consumeItem_throwsException_whenPantryItemNotFound() {
-        PantryItemRepository mockPantryRepo = mock(PantryItemRepository.class);
-        ConsumptionLogRepository mockConsumptionRepo = mock(ConsumptionLogRepository.class);
-        HouseholdRepository mockHouseholdRepo = mock(HouseholdRepository.class);
-        HouseholdMemberRepository mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
-
         Household household = new Household();
         household.setId(1L);
 
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.empty());
-
-        PantryService pantryService = new PantryService(
-                mockPantryRepo,
-                mockConsumptionRepo,
-                mockHouseholdRepo,
-                mockHouseholdMemberRepo
-        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
