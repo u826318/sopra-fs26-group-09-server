@@ -36,13 +36,16 @@ import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdMemberGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 
 import org.springframework.data.domain.Pageable;
@@ -64,6 +67,9 @@ class HouseholdServiceTest {
 
     @Mock
     private PantryItemRepository pantryItemRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private HouseholdService householdService;
@@ -602,6 +608,88 @@ class HouseholdServiceTest {
         assertNotNull(savedMember.getId());
         assertEquals(5L, savedMember.getId().getUserId());
         assertEquals(20L, savedMember.getId().getHouseholdId());
+    }
+
+    // ── getMembers ──────────────────────────────────────────────────────────
+
+    @Test
+    void getMembers_success_returnsMappedDtos() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        HouseholdMember member1 = new HouseholdMember();
+        member1.setId(new HouseholdMemberId(1L, 10L));
+        member1.setJoinedAt(Instant.parse("2026-04-01T10:00:00Z"));
+
+        HouseholdMember member2 = new HouseholdMember();
+        member2.setId(new HouseholdMemberId(2L, 10L));
+        member2.setJoinedAt(Instant.parse("2026-04-05T12:00:00Z"));
+
+        User user1 = new User();
+        user1.setId(1L);
+        user1.setUsername("alice");
+
+        User user2 = new User();
+        user2.setId(2L);
+        user2.setUsername("bob");
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 10L)))).thenReturn(true);
+        when(householdMemberRepository.findByIdHouseholdId(10L)).thenReturn(List.of(member1, member2));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+
+        List<HouseholdMemberGetDTO> result = householdService.getMembers(10L, 1L);
+
+        assertEquals(2, result.size());
+        assertEquals("alice", result.get(0).getUsername());
+        assertEquals("owner", result.get(0).getRole());
+        assertEquals("bob", result.get(1).getUsername());
+        assertEquals("member", result.get(1).getRole());
+    }
+
+    @Test
+    void getMembers_householdNotFound_throws404() {
+        when(householdRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.getMembers(99L, 1L));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void getMembers_notMember_throws403() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(99L, 10L)))).thenReturn(false);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.getMembers(10L, 99L));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+    }
+
+    @Test
+    void getMembers_unknownUser_usesPlaceholderUsername() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        HouseholdMember member = new HouseholdMember();
+        member.setId(new HouseholdMemberId(1L, 10L));
+        member.setJoinedAt(Instant.now());
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 10L)))).thenReturn(true);
+        when(householdMemberRepository.findByIdHouseholdId(10L)).thenReturn(List.of(member));
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        List<HouseholdMemberGetDTO> result = householdService.getMembers(10L, 1L);
+
+        assertEquals("Unknown", result.get(0).getUsername());
     }
 
 }
