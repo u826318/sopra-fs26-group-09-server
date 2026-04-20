@@ -25,12 +25,15 @@ import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdMemberGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
@@ -59,17 +62,20 @@ public class HouseholdService {
     private final ConsumptionLogRepository consumptionLogRepository;
     private final HouseholdBudgetRepository householdBudgetRepository;
     private final PantryItemRepository pantryItemRepository;
+    private final UserRepository userRepository;
 
     public HouseholdService(HouseholdRepository householdRepository,
             HouseholdMemberRepository householdMemberRepository,
             ConsumptionLogRepository consumptionLogRepository,
             HouseholdBudgetRepository householdBudgetRepository,
-            PantryItemRepository pantryItemRepository) {
+            PantryItemRepository pantryItemRepository,
+            UserRepository userRepository) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
         this.consumptionLogRepository = consumptionLogRepository;
         this.householdBudgetRepository = householdBudgetRepository;
         this.pantryItemRepository = pantryItemRepository;
+        this.userRepository = userRepository;
     }
 
     public Household createHousehold(String name, Long ownerId) {
@@ -359,6 +365,28 @@ public class HouseholdService {
             }
         }
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to generate a unique invite code.");
+    }
+
+    public List<HouseholdMemberGetDTO> getMembers(Long householdId, Long authenticatedUserId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, householdId);
+        if (!householdMemberRepository.existsById(membershipId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a member of this household.");
+        }
+
+        List<HouseholdMember> members = householdMemberRepository.findByIdHouseholdId(householdId);
+        return members.stream().map(member -> {
+            Long userId = member.getId().getUserId();
+            User user = userRepository.findById(userId).orElse(null);
+            HouseholdMemberGetDTO dto = new HouseholdMemberGetDTO();
+            dto.setUserId(userId);
+            dto.setUsername(user != null ? user.getUsername() : "Unknown");
+            dto.setRole(userId.equals(household.getOwnerId()) ? "owner" : "member");
+            dto.setJoinedAt(member.getJoinedAt());
+            return dto;
+        }).toList();
     }
 
     private String generateInviteCode() {

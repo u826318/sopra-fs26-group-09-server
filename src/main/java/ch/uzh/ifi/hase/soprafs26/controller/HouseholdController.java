@@ -23,6 +23,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdInviteCodeGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdMemberGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.HouseholdService;
@@ -143,6 +144,14 @@ public class HouseholdController {
             @RequestParam String endDate) {
 
         return householdService.getStats(householdId, startDate, endDate, authenticatedUserId);
+    }
+
+    @GetMapping("/households/{householdId}/members")
+    @ResponseStatus(HttpStatus.OK)
+    public List<HouseholdMemberGetDTO> getMembers(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId) {
+        return householdService.getMembers(householdId, authenticatedUserId);
     }
 
     @GetMapping("/households/{householdId}/consumption-logs")
