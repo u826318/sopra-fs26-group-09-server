@@ -154,4 +154,66 @@ class PantryControllerTest {
                 .andExpect(jsonPath("$.message").value("User is not a member of this household."));
         }
 
+        @Test
+        void addPantryItem_success_returnsCreated() throws Exception {
+                PantryItem savedItem = new PantryItem();
+                savedItem.setId(10L);
+                savedItem.setHouseholdId(1L);
+                savedItem.setBarcode("7612345678901");
+                savedItem.setName("Milk");
+                savedItem.setKcalPerPackage(120.0);
+                savedItem.setCount(2);
+                savedItem.setAddedAt(Instant.parse("2026-03-29T10:15:30Z"));
+
+                when(pantryService.addItem(
+                        eq(1L),
+                        any(PantryItemPostDTO.class),
+                        eq(99L)
+                )).thenReturn(savedItem);
+
+                String requestBody = """
+                        {
+                                "barcode": "7612345678901",
+                                "name": "Milk",
+                                "kcalPerPackage": 120.0,
+                                "quantity": 2
+                        }
+                        """;
+
+                mockMvc.perform(post("/households/1/pantry")
+                                .contentType("application/json")
+                                .content(requestBody))
+                        .andExpect(status().isCreated())
+                        .andExpect(jsonPath("$.id").value(10))
+                        .andExpect(jsonPath("$.householdId").value(1))
+                        .andExpect(jsonPath("$.barcode").value("7612345678901"))
+                        .andExpect(jsonPath("$.name").value("Milk"))
+                        .andExpect(jsonPath("$.kcalPerPackage").value(120.0))
+                        .andExpect(jsonPath("$.count").value(2));
+        }
+
+        @Test
+        void addPantryItem_invalidQuantity_returnsBadRequest() throws Exception {
+        when(pantryService.addItem(
+                eq(1L),
+                any(PantryItemPostDTO.class),
+                eq(99L)
+        )).thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
+
+        String requestBody = """
+                {
+                        "barcode": "7612345678901",
+                        "name": "Milk",
+                        "kcalPerPackage": 120.0,
+                        "quantity": 0
+                }
+                """;
+
+        mockMvc.perform(post("/households/1/pantry")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
+        }
+
 }
