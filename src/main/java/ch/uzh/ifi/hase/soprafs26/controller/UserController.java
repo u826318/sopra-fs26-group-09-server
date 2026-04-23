@@ -31,6 +31,13 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@GetMapping("/users/me")
+	@ResponseStatus(HttpStatus.OK)
+	public UserGetDTO getCurrentUser(@RequestHeader("Authorization") String token) {
+		User user = userService.getUserByToken(token);
+		return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+	}
+
 	@GetMapping("/users")
 	@ResponseStatus(HttpStatus.OK)
 	public List<UserGetDTO> getAllUsers() {

@@ -42,6 +42,14 @@ public class UserService {
 		return this.userRepository.findAll();
 	}
 
+	public User getUserByToken(String token) {
+		User user = userRepository.findByToken(token);
+		if (user == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired token.");
+		}
+		return user;
+	}
+
 	public User createUser(User newUser) {
 		return registerUser(newUser);
 	}
