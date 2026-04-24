@@ -487,7 +487,7 @@ class PantryServiceTest {
     }
 
     @Test
-    void removeItem_broadcastsEventType() {
+    void removeItem_broadcastsItemUpdated_whenCountDecremented() {
         Household household = new Household();
         household.setId(1L);
 
@@ -502,6 +502,29 @@ class PantryServiceTest {
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
         pantryService.removeItem(1L, 10L, 1, 99L);
+
+        verify(mockBroadcastService).broadcastPantryUpdate(
+                org.mockito.ArgumentMatchers.eq(1L),
+                org.mockito.ArgumentMatchers.argThat(msg -> "ITEM_UPDATED".equals(msg.getEventType()))
+        );
+    }
+
+    @Test
+    void removeItem_broadcastsItemRemoved_whenCountReachesZero() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setKcalPerPackage(100.0);
+        item.setCount(2);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        pantryService.removeItem(1L, 10L, 2, 99L);
 
         verify(mockBroadcastService).broadcastPantryUpdate(
                 org.mockito.ArgumentMatchers.eq(1L),

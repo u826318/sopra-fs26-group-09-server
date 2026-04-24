@@ -173,6 +173,7 @@ public class PantryService {
         if (barcode == null) {
             return null;
         }
+
         String trimmedBarcode = barcode.trim();
         return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
     }
@@ -284,7 +285,7 @@ public class PantryService {
 
         User actor = userRepository.findById(authenticatedUserId).orElse(null);
         PantryUpdateMessage msg = new PantryUpdateMessage();
-        msg.setEventType("ITEM_REMOVED");
+        msg.setEventType(result.isRemoved() ? "ITEM_REMOVED" : "ITEM_UPDATED");
         msg.setHouseholdId(householdId);
         msg.setTriggeredByUserId(authenticatedUserId);
         msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);
