@@ -11,6 +11,7 @@ public class ConsumptionLogGetDTO {
     private Integer consumedQuantity;
     private Double consumedCalories;
     private Long userId;
+    private String username;
 
     public Long getLogId() {
         return logId;
@@ -66,5 +67,13 @@ public class ConsumptionLogGetDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

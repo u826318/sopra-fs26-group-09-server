@@ -13,10 +13,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -533,12 +535,19 @@ class HouseholdServiceTest {
         item.setName("Organic Rice");
         when(pantryItemRepository.findByIdAndHouseholdId(5L, 10L)).thenReturn(Optional.of(item));
 
+        User actor = new User();
+        actor.setId(1L);
+        actor.setUsername("alice");
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of(actor));
+
         List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, 20);
 
         assertEquals(1, result.size());
         assertEquals(100L, result.get(0).getLogId());
         assertEquals("Organic Rice", result.get(0).getProductName());
         assertEquals(400.0, result.get(0).getConsumedCalories());
+        assertEquals(1L, result.get(0).getUserId());
+        assertEquals("alice", result.get(0).getUsername());
     }
 
     @Test
@@ -558,10 +567,58 @@ class HouseholdServiceTest {
         when(consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(eq(10L), any(Pageable.class)))
                 .thenReturn(List.of(log));
         when(pantryItemRepository.findByIdAndHouseholdId(99L, 10L)).thenReturn(Optional.empty());
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of());
 
         List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, null);
 
         assertEquals("Removed item", result.get(0).getProductName());
+        assertEquals("Unknown user", result.get(0).getUsername());
+    }
+
+    @Test
+    void getConsumptionLogs_multipleUsers_mapsUsernamesWithSingleQuery() {
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(true);
+
+        ConsumptionLog log1 = new ConsumptionLog();
+        log1.setId(200L);
+        log1.setHouseholdId(10L);
+        log1.setUserId(1L);
+        log1.setPantryItemId(5L);
+        log1.setConsumedQuantity(1);
+        log1.setConsumedCalories(120.0);
+        log1.setConsumedAt(Instant.parse("2026-04-17T10:00:00Z"));
+
+        ConsumptionLog log2 = new ConsumptionLog();
+        log2.setId(201L);
+        log2.setHouseholdId(10L);
+        log2.setUserId(2L);
+        log2.setPantryItemId(5L);
+        log2.setConsumedQuantity(2);
+        log2.setConsumedCalories(240.0);
+        log2.setConsumedAt(Instant.parse("2026-04-17T12:00:00Z"));
+
+        when(consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(eq(10L), any(Pageable.class)))
+                .thenReturn(List.of(log1, log2));
+
+        PantryItem item = new PantryItem();
+        item.setName("Oat Milk");
+        when(pantryItemRepository.findByIdAndHouseholdId(5L, 10L)).thenReturn(Optional.of(item));
+
+        User alice = new User();
+        alice.setId(1L);
+        alice.setUsername("alice");
+        User bob = new User();
+        bob.setId(2L);
+        bob.setUsername("bob");
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of(alice, bob));
+
+        List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, 20);
+
+        assertEquals(2, result.size());
+        assertEquals("alice", result.get(0).getUsername());
+        assertEquals("bob", result.get(1).getUsername());
+        verify(userRepository, times(1)).findAllById(anyIterable());
     }
 
     @Test

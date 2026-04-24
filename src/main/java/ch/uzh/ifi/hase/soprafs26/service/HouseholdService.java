@@ -3,10 +3,13 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -51,6 +54,7 @@ public class HouseholdService {
     private static final int CONSUMPTION_LOGS_DEFAULT_LIMIT = 20;
     private static final int CONSUMPTION_LOGS_MAX_LIMIT = 100;
     private static final String REMOVED_PRODUCT_LABEL = "Removed item";
+    private static final String UNKNOWN_USERNAME_LABEL = "Unknown user";
 
     private static final String INVITE_CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int INVITE_CODE_LENGTH = 6;
@@ -349,12 +353,23 @@ public class HouseholdService {
                 householdId,
                 PageRequest.of(0, size));
 
+        Set<Long> distinctUserIds = logs.stream()
+                .map(ConsumptionLog::getUserId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<Long, String> usernamesByUserId = new HashMap<>();
+        if (!distinctUserIds.isEmpty()) {
+            userRepository.findAllById(distinctUserIds)
+                    .forEach(user -> usernamesByUserId.put(user.getId(), user.getUsername()));
+        }
+
         return logs.stream()
-                .map(log -> toConsumptionLogGetDTO(log, householdId))
+                .map(log -> toConsumptionLogGetDTO(log, householdId, usernamesByUserId))
                 .toList();
     }
 
-    private ConsumptionLogGetDTO toConsumptionLogGetDTO(ConsumptionLog log, Long householdId) {
+    private ConsumptionLogGetDTO toConsumptionLogGetDTO(ConsumptionLog log, Long householdId,
+            Map<Long, String> usernamesByUserId) {
         ConsumptionLogGetDTO dto = new ConsumptionLogGetDTO();
         dto.setLogId(log.getId());
         dto.setConsumedAt(log.getConsumedAt());
@@ -366,6 +381,8 @@ public class HouseholdService {
                 .map(PantryItem::getName)
                 .orElse(REMOVED_PRODUCT_LABEL);
         dto.setProductName(productName);
+        String username = usernamesByUserId.getOrDefault(log.getUserId(), UNKNOWN_USERNAME_LABEL);
+        dto.setUsername(username);
         return dto;
     }
 
