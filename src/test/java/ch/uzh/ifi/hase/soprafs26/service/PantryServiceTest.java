@@ -8,12 +8,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -274,6 +279,7 @@ class PantryServiceTest {
 
     @Test
     void consumeItem_success_removesItemWhenCountReachesZero() {
+        // arrange
         Household household = new Household();
         household.setId(1L);
 
@@ -287,16 +293,44 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
+        // act
         PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 99L);
 
+        // assert: returned result (state-based)
         assertEquals(10L, result.getItemId());
         assertEquals(0, result.getRemainingCount());
         assertEquals(240.0, result.getConsumedCalories(), 0.001);
         assertTrue(result.isRemoved());
 
-        verify(mockConsumptionRepo, times(1)).save(any(ConsumptionLog.class));
+        // assert: persisted ConsumptionLog carries the correct payload
+        ArgumentCaptor<ConsumptionLog> logCaptor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo, times(1)).save(logCaptor.capture());
+        ConsumptionLog savedLog = logCaptor.getValue();
+        assertEquals(1L, savedLog.getHouseholdId());
+        assertEquals(99L, savedLog.getUserId());
+        assertEquals(10L, savedLog.getPantryItemId());
+        assertEquals(2, savedLog.getConsumedQuantity());
+        assertEquals(240.0, savedLog.getConsumedCalories(), 0.001);
+        assertNotNull(savedLog.getConsumedAt());
+
+        // assert: delete-branch took, save-branch did NOT (positive + negative)
         verify(mockPantryRepo, times(1)).delete(item);
-        verify(mockBroadcastService, times(1)).broadcastPantryUpdate(any(Long.class), any(PantryUpdateMessage.class));
+        verify(mockPantryRepo, never()).save(item);
+
+        // assert: broadcast message carries the correct event semantics
+        ArgumentCaptor<PantryUpdateMessage> msgCaptor = ArgumentCaptor.forClass(PantryUpdateMessage.class);
+        verify(mockBroadcastService, times(1)).broadcastPantryUpdate(eq(1L), msgCaptor.capture());
+        PantryUpdateMessage msg = msgCaptor.getValue();
+        assertEquals("ITEM_CONSUMED", msg.getEventType());
+        assertEquals(1L, msg.getHouseholdId());
+        assertEquals(99L, msg.getTriggeredByUserId());
+
+        // assert: side effects happen in the correct order
+        // (log must be persisted BEFORE the pantry row is deleted, and broadcast happens last)
+        InOrder inOrder = inOrder(mockConsumptionRepo, mockPantryRepo, mockBroadcastService);
+        inOrder.verify(mockConsumptionRepo).save(any(ConsumptionLog.class));
+        inOrder.verify(mockPantryRepo).delete(item);
+        inOrder.verify(mockBroadcastService).broadcastPantryUpdate(eq(1L), any(PantryUpdateMessage.class));
     }
 
     @Test
