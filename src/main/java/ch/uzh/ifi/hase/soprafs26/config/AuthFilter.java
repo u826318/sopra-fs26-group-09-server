@@ -27,7 +27,7 @@ public class AuthFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
         return "OPTIONS".equalsIgnoreCase(method)
-                || path.equals("/ws")
+                || path.startsWith("/ws")
                 || path.equals("/users/register")
                 || path.equals("/users/login");
     }
