@@ -4,10 +4,15 @@ import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
+import ch.uzh.ifi.hase.soprafs26.service.LocalProductDatasetService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -39,6 +45,17 @@ class OpenFoodFactsIntegrationTest {
     private static final String TEST_TOKEN = "off-integration-test-token";
     private static final String OFF_USER_AGENT = "sopra-fs26-group-09-virtual-pantry/0.1 (OpenFoodFacts portal)";
     private static final String OFF_BASE = "https://world.openfoodfacts.org";
+
+    @TestConfiguration
+    static class LocalFallbackDisabledTestConfig {
+        @Bean
+        @Primary
+        LocalProductDatasetService localProductDatasetService() {
+            LocalProductDatasetService localFallback = Mockito.mock(LocalProductDatasetService.class);
+            Mockito.when(localFallback.lookupByBarcode(Mockito.anyString())).thenReturn(Optional.empty());
+            return localFallback;
+        }
+    }
 
     @Autowired
     private MockMvc mockMvc;

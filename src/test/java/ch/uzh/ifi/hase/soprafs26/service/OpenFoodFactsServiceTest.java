@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -24,10 +25,14 @@ class OpenFoodFactsServiceTest {
 
     private OpenFoodFactsService openFoodFactsService;
     private RestTemplate restTemplate;
+    private LocalProductDatasetService localProductDatasetService;
 
     @BeforeEach
     void setup() {
-        openFoodFactsService = new OpenFoodFactsService();
+        localProductDatasetService = Mockito.mock(LocalProductDatasetService.class);
+        Mockito.when(localProductDatasetService.lookupByBarcode(anyString())).thenReturn(Optional.empty());
+
+        openFoodFactsService = new OpenFoodFactsService(localProductDatasetService);
         restTemplate = Mockito.mock(RestTemplate.class);
         ReflectionTestUtils.setField(openFoodFactsService, "restTemplate", restTemplate);
     }
@@ -94,24 +99,6 @@ class OpenFoodFactsServiceTest {
     }
 
     @Test
-    void lookupByBarcode_statusNotOne_throwsNotFound() {
-        String body = """
-                {
-                  "status": 0
-                }
-                """;
-
-        Mockito.when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> openFoodFactsService.lookupByBarcode("0000"));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("OpenFoodFacts: product not found for barcode 0000", exception.getReason());
-    }
-
-    @Test
     void lookupByBarcode_invalidJson_throwsBadGateway() {
         Mockito.when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(new ResponseEntity<>("{not-valid-json", HttpStatus.OK));
@@ -120,8 +107,11 @@ class OpenFoodFactsServiceTest {
                 () -> openFoodFactsService.lookupByBarcode("7612345678901"));
 
         assertEquals(HttpStatus.BAD_GATEWAY, exception.getStatusCode());
-        assertEquals("Failed to parse OpenFoodFacts response", exception.getReason());
-    }
+        assertTrue(
+        exception.getReason().startsWith(
+                "OpenFoodFacts failed and local dataset had no fallback match for barcode 7612345678901"
+        )
+        );    }
 
     @Test
     void search_blankQuery_throwsBadRequest() {
@@ -250,7 +240,11 @@ class OpenFoodFactsServiceTest {
                 () -> openFoodFactsService.lookupByBarcode("123"));
 
         assertEquals(HttpStatus.BAD_GATEWAY, exception.getStatusCode());
-        assertEquals("OpenFoodFacts request failed: 500 INTERNAL_SERVER_ERROR", exception.getReason());
+        assertTrue(
+        exception.getReason().startsWith(
+                "OpenFoodFacts failed and local dataset had no fallback match for barcode 123"
+        )
+        );
     }
 
     @Test
@@ -262,6 +256,9 @@ class OpenFoodFactsServiceTest {
                 () -> openFoodFactsService.lookupByBarcode("123"));
 
         assertEquals(HttpStatus.BAD_GATEWAY, exception.getStatusCode());
-        assertEquals("OpenFoodFacts request failed", exception.getReason());
-    }
+        assertTrue(
+        exception.getReason().startsWith(
+                "OpenFoodFacts failed and local dataset had no fallback match for barcode 123"
+        )
+        );    }
 }

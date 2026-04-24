@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,17 @@ public class OpenFoodFactsService {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final LocalProductDatasetService localProductDatasetService;
 
+  /**
+   * Test-friendly constructor kept for existing unit tests that instantiate the
+   * service directly with new OpenFoodFactsService(). Spring uses the annotated
+   * constructor below so the managed local fallback service is injected.
+   */
+  public OpenFoodFactsService() {
+    this(new LocalProductDatasetService());
+  }
+
+  
+  @Autowired
   public OpenFoodFactsService(LocalProductDatasetService localProductDatasetService) {
     this.localProductDatasetService = localProductDatasetService;
   }
