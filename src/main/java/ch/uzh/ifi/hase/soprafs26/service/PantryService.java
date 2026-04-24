@@ -139,38 +139,30 @@ public class PantryService {
     }
 
     private PantryItem mergeOrCreatePantryItem(
-            Long householdId,
-            String barcode,
-            String name,
-            Double kcalPerPackage,
-            Integer quantity
+        Household household,
+        PantryItem incomingPantryItem,
+        Long authenticatedUserId
     ) {
-        List<PantryItem> matchingItems = pantryItemRepository.findByHouseholdIdAndBarcode(householdId, barcode);
+        String normalizedBarcode = normalizeBarcode(incomingPantryItem.getBarcode());
 
-        if (matchingItems.isEmpty()) {
-            PantryItem pantryItem = new PantryItem();
-            pantryItem.setHouseholdId(householdId);
-            pantryItem.setBarcode(barcode);
-            pantryItem.setName(name);
-            pantryItem.setKcalPerPackage(kcalPerPackage);
-            pantryItem.setCount(quantity);
-            pantryItem.setAddedAt(Instant.now());
-            return pantryItemRepository.save(pantryItem);
+        PantryItem matchingItem = null;
+        if (normalizedBarcode != null) {
+            matchingItem = pantryItemRepository
+                .findByHouseholdIdAndBarcode(household.getId(), normalizedBarcode)
+                .orElse(null);
         }
 
-        PantryItem canonical = matchingItems.get(0);
-        canonical.setBarcode(barcode);
-        canonical.setName(name);
-        canonical.setKcalPerPackage(kcalPerPackage);
-        canonical.setCount(safeCount(canonical.getCount()) + quantity);
-
-        for (int i = 1; i < matchingItems.size(); i++) {
-            PantryItem duplicate = matchingItems.get(i);
-            canonical.setCount(safeCount(canonical.getCount()) + safeCount(duplicate.getCount()));
-            pantryItemRepository.delete(duplicate);
+        if (matchingItem != null) {
+            matchingItem.setCount(matchingItem.getCount() + incomingPantryItem.getCount());
+            matchingItem.setUpdatedByUserId(authenticatedUserId);
+            return pantryItemRepository.save(matchingItem);
         }
 
-        return pantryItemRepository.save(canonical);
+        incomingPantryItem.setHousehold(household);
+        incomingPantryItem.setBarcode(normalizedBarcode);
+        incomingPantryItem.setUpdatedByUserId(authenticatedUserId);
+
+        return pantryItemRepository.save(incomingPantryItem);
     }
 
     private int safeCount(Integer count) {
