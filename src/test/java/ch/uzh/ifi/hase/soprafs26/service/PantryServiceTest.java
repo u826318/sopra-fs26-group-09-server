@@ -3,6 +3,9 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -209,12 +212,12 @@ class PantryServiceTest {
 
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
                 () -> pantryService.addItem(1L, postDTO, 99L)
         );
 
-        assertEquals("Household not found.", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         verify(mockPantryRepo, never()).save(any(PantryItem.class));
     }
 
@@ -357,12 +360,12 @@ class PantryServiceTest {
     void consumeItem_throwsException_whenHouseholdNotFound() {
         when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
                 () -> pantryService.consumeItem(1L, 10L, 1, 99L)
         );
 
-        assertEquals("Household not found.", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
     @Test
@@ -390,11 +393,11 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
                 () -> pantryService.consumeItem(1L, 10L, 1, 99L)
         );
 
-        assertEquals("Pantry item not found in this household.", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 }
