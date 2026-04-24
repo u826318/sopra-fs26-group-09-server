@@ -64,6 +64,30 @@ public class PantryController {
         return responseDTO;
     }
 
+    @PostMapping("/households/{householdId}/pantry/{itemId}/remove")
+    @ResponseStatus(HttpStatus.OK)
+    public ConsumePantryItemResponseDTO removePantryItem(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @PathVariable Long itemId,
+            @RequestBody ConsumePantryItemPostDTO removePostDTO) {
+
+        PantryService.ConsumeResult result = pantryService.removeItem(
+                householdId,
+                itemId,
+                removePostDTO.getQuantity(),
+                authenticatedUserId
+        );
+
+        ConsumePantryItemResponseDTO responseDTO = new ConsumePantryItemResponseDTO();
+        responseDTO.setItemId(result.getItemId());
+        responseDTO.setRemainingCount(result.getRemainingCount());
+        responseDTO.setConsumedCalories(result.getConsumedCalories());
+        responseDTO.setRemoved(result.isRemoved());
+
+        return responseDTO;
+    }
+
     @GetMapping("/households/{householdId}/pantry")
     @ResponseStatus(HttpStatus.OK)
     public PantryOverviewGetDTO getPantry(

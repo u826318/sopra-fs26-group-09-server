@@ -242,6 +242,58 @@ public class PantryService {
         return result;
     }
 
+    public ConsumeResult removeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Pantry item not found in this household."));
+
+        if (quantity > pantryItem.getCount()) {
+            throw new IllegalArgumentException("Removed quantity exceeds available quantity.");
+        }
+
+        int remainingCount = pantryItem.getCount() - quantity;
+
+        ConsumeResult result = new ConsumeResult();
+        result.setItemId(pantryItem.getId());
+        result.setConsumedCalories(0.0);
+
+        if (remainingCount == 0) {
+            pantryItemRepository.delete(pantryItem);
+            result.setRemainingCount(0);
+            result.setRemoved(true);
+        }
+        else {
+            pantryItem.setCount(remainingCount);
+            pantryItemRepository.save(pantryItem);
+            result.setRemainingCount(remainingCount);
+            result.setRemoved(false);
+        }
+
+        User actor = userRepository.findById(authenticatedUserId).orElse(null);
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("ITEM_REMOVED");
+        msg.setHouseholdId(householdId);
+        msg.setTriggeredByUserId(authenticatedUserId);
+        msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);
+        msg.setTimestamp(Instant.now().toString());
+        msg.setNewTotalCalories(calculateTotalCalories(householdId));
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
+
+        return result;
+    }
+
     public static class ConsumeResult {
         private Long itemId;
         private Integer remainingCount;
