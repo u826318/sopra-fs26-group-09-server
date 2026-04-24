@@ -1,0 +1,708 @@
+{
+  "source_file": "local_product_dataset.csv",
+  "bucket_count": 100,
+  "global_min_code": "00000000",
+  "global_max_code": "556236370868632515561280111132506485562501111335036445564501111321464172",
+  "buckets": [
+    {
+      "bucket_id": 0,
+      "filename": "bucket_000.csv",
+      "min_code": "00000000",
+      "max_code": "03448441",
+      "row_count": 43846
+    },
+    {
+      "bucket_id": 1,
+      "filename": "bucket_001.csv",
+      "min_code": "03448625",
+      "max_code": "18323637",
+      "row_count": 43846
+    },
+    {
+      "bucket_id": 2,
+      "filename": "bucket_002.csv",
+      "min_code": "18323816",
+      "max_code": "23045989",
+      "row_count": 43846
+    },
+    {
+      "bucket_id": 3,
+      "filename": "bucket_003.csv",
+      "min_code": "23046047",
+      "max_code": "44412135",
+      "row_count": 43846
+    },
+    {
+      "bucket_id": 4,
+      "filename": "bucket_004.csv",
+      "min_code": "44412166",
+      "max_code": "0000403739569",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 5,
+      "filename": "bucket_005.csv",
+      "min_code": "0000403940300",
+      "max_code": "0011535501535",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 6,
+      "filename": "bucket_006.csv",
+      "min_code": "0011535501542",
+      "max_code": "0021908136813",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 7,
+      "filename": "bucket_007.csv",
+      "min_code": "0021908137179",
+      "max_code": "0033383310640",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 8,
+      "filename": "bucket_008.csv",
+      "min_code": "0033383310657",
+      "max_code": "0041190078745",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 9,
+      "filename": "bucket_009.csv",
+      "min_code": "0041190078752",
+      "max_code": "0041735060235",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 10,
+      "filename": "bucket_010.csv",
+      "min_code": "0041735060259",
+      "max_code": "0051933052055",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 11,
+      "filename": "bucket_011.csv",
+      "min_code": "0051933052079",
+      "max_code": "0062356545741",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 12,
+      "filename": "bucket_012.csv",
+      "min_code": "0062356545765",
+      "max_code": "0070920476674",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 13,
+      "filename": "bucket_013.csv",
+      "min_code": "0070920476681",
+      "max_code": "0074780377720",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 14,
+      "filename": "bucket_014.csv",
+      "min_code": "0074780377737",
+      "max_code": "0079200085186",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 15,
+      "filename": "bucket_015.csv",
+      "min_code": "0079200085292",
+      "max_code": "0096619130580",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 16,
+      "filename": "bucket_016.csv",
+      "min_code": "0096619130962",
+      "max_code": "0200944008531",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 17,
+      "filename": "bucket_017.csv",
+      "min_code": "0200944018370",
+      "max_code": "0210748014690",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 18,
+      "filename": "bucket_018.csv",
+      "min_code": "0210748015024",
+      "max_code": "0246655607748",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 19,
+      "filename": "bucket_019.csv",
+      "min_code": "0246655608622",
+      "max_code": "0313000200005",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 20,
+      "filename": "bucket_020.csv",
+      "min_code": "0313001611862",
+      "max_code": "0625533027357",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 21,
+      "filename": "bucket_021.csv",
+      "min_code": "0625534301005",
+      "max_code": "0658010121224",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 22,
+      "filename": "bucket_022.csv",
+      "min_code": "0658010121231",
+      "max_code": "0708756002025",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 23,
+      "filename": "bucket_023.csv",
+      "min_code": "0708756003039",
+      "max_code": "0738661008300",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 24,
+      "filename": "bucket_024.csv",
+      "min_code": "0738661008317",
+      "max_code": "0776992031086",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 25,
+      "filename": "bucket_025.csv",
+      "min_code": "0776992032113",
+      "max_code": "0810345031153",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 26,
+      "filename": "bucket_026.csv",
+      "min_code": "0810345031160",
+      "max_code": "0840031405128",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 27,
+      "filename": "bucket_027.csv",
+      "min_code": "0840031405678",
+      "max_code": "0850078222305",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 28,
+      "filename": "bucket_028.csv",
+      "min_code": "0850078255198",
+      "max_code": "0858900005102",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 29,
+      "filename": "bucket_029.csv",
+      "min_code": "0858900005119",
+      "max_code": "0897044000697",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 30,
+      "filename": "bucket_030.csv",
+      "min_code": "0897044000802",
+      "max_code": "2007030004471",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 31,
+      "filename": "bucket_031.csv",
+      "min_code": "2007030004488",
+      "max_code": "2153685004356",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 32,
+      "filename": "bucket_032.csv",
+      "min_code": "2153685004752",
+      "max_code": "2257340003163",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 33,
+      "filename": "bucket_033.csv",
+      "min_code": "2257340003446",
+      "max_code": "2353025002695",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 34,
+      "filename": "bucket_034.csv",
+      "min_code": "2353025002756",
+      "max_code": "2531439006403",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 35,
+      "filename": "bucket_035.csv",
+      "min_code": "2531440013902",
+      "max_code": "2726241005922",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 36,
+      "filename": "bucket_036.csv",
+      "min_code": "2726242010635",
+      "max_code": "3017760715096",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 37,
+      "filename": "bucket_037.csv",
+      "min_code": "3017760715195",
+      "max_code": "3123456789163",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 38,
+      "filename": "bucket_038.csv",
+      "min_code": "3123456789187",
+      "max_code": "3245390036698",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 39,
+      "filename": "bucket_039.csv",
+      "min_code": "3245390037138",
+      "max_code": "3263280121347",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 40,
+      "filename": "bucket_040.csv",
+      "min_code": "3263280121361",
+      "max_code": "3281230001952",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 41,
+      "filename": "bucket_041.csv",
+      "min_code": "3281230002034",
+      "max_code": "3346041395802",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 42,
+      "filename": "bucket_042.csv",
+      "min_code": "3346041395819",
+      "max_code": "3416510001654",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 43,
+      "filename": "bucket_043.csv",
+      "min_code": "3416510001685",
+      "max_code": "3492500068500",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 44,
+      "filename": "bucket_044.csv",
+      "min_code": "3492500068517",
+      "max_code": "3561770005192",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 45,
+      "filename": "bucket_045.csv",
+      "min_code": "3561770005208",
+      "max_code": "3660140938853",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 46,
+      "filename": "bucket_046.csv",
+      "min_code": "3660140939058",
+      "max_code": "3700888909200",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 47,
+      "filename": "bucket_047.csv",
+      "min_code": "3700888912514",
+      "max_code": "3760089880289",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 48,
+      "filename": "bucket_048.csv",
+      "min_code": "3760089881538",
+      "max_code": "3760250162008",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 49,
+      "filename": "bucket_049.csv",
+      "min_code": "3760250162015",
+      "max_code": "3770011247172",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 50,
+      "filename": "bucket_050.csv",
+      "min_code": "3770011247202",
+      "max_code": "3881800000004",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 51,
+      "filename": "bucket_051.csv",
+      "min_code": "3881804030052",
+      "max_code": "4007993019930",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 52,
+      "filename": "bucket_052.csv",
+      "min_code": "4007993020042",
+      "max_code": "4024691111919",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 53,
+      "filename": "bucket_053.csv",
+      "min_code": "4024691113814",
+      "max_code": "4056489295648",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 54,
+      "filename": "bucket_054.csv",
+      "min_code": "4056489295716",
+      "max_code": "4061461584030",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 55,
+      "filename": "bucket_055.csv",
+      "min_code": "4061461584047",
+      "max_code": "4088700067482",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 56,
+      "filename": "bucket_056.csv",
+      "min_code": "4088700067499",
+      "max_code": "4260106871904",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 57,
+      "filename": "bucket_057.csv",
+      "min_code": "4260106871966",
+      "max_code": "4306188387664",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 58,
+      "filename": "bucket_058.csv",
+      "min_code": "4306188387756",
+      "max_code": "4388844004276",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 59,
+      "filename": "bucket_059.csv",
+      "min_code": "4388844004603",
+      "max_code": "4712308172056",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 60,
+      "filename": "bucket_060.csv",
+      "min_code": "4712308172124",
+      "max_code": "4865602000621",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 61,
+      "filename": "bucket_061.csv",
+      "min_code": "4865602001055",
+      "max_code": "5000169134603",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 62,
+      "filename": "bucket_062.csv",
+      "min_code": "5000169134610",
+      "max_code": "5020379176675",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 63,
+      "filename": "bucket_063.csv",
+      "min_code": "5020379176873",
+      "max_code": "5057172820474",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 64,
+      "filename": "bucket_064.csv",
+      "min_code": "5057172820870",
+      "max_code": "5060878780546",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 65,
+      "filename": "bucket_065.csv",
+      "min_code": "5060878780553",
+      "max_code": "5310002251146",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 66,
+      "filename": "bucket_066.csv",
+      "min_code": "5310002360749",
+      "max_code": "5410228214939",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 67,
+      "filename": "bucket_067.csv",
+      "min_code": "5410228214946",
+      "max_code": "5600409202620",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 68,
+      "filename": "bucket_068.csv",
+      "min_code": "5600409202637",
+      "max_code": "5712875800474",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 69,
+      "filename": "bucket_069.csv",
+      "min_code": "5712875800498",
+      "max_code": "5907662200036",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 70,
+      "filename": "bucket_070.csv",
+      "min_code": "5907662630239",
+      "max_code": "6111099000599",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 71,
+      "filename": "bucket_071.csv",
+      "min_code": "6111099000605",
+      "max_code": "6281104970015",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 72,
+      "filename": "bucket_072.csv",
+      "min_code": "6281104970046",
+      "max_code": "6953240773897",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 73,
+      "filename": "bucket_073.csv",
+      "min_code": "6953240774139",
+      "max_code": "7317370102634",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 74,
+      "filename": "bucket_074.csv",
+      "min_code": "7317370103334",
+      "max_code": "7503019292129",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 75,
+      "filename": "bucket_075.csv",
+      "min_code": "7503019292136",
+      "max_code": "7613269882725",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 76,
+      "filename": "bucket_076.csv",
+      "min_code": "7613269882749",
+      "max_code": "7640145773129",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 77,
+      "filename": "bucket_077.csv",
+      "min_code": "7640145773167",
+      "max_code": "7804666271605",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 78,
+      "filename": "bucket_078.csv",
+      "min_code": "7804666271681",
+      "max_code": "8000340560815",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 79,
+      "filename": "bucket_079.csv",
+      "min_code": "8000340560839",
+      "max_code": "8002724004182",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 80,
+      "filename": "bucket_080.csv",
+      "min_code": "8002724004205",
+      "max_code": "8006540460948",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 81,
+      "filename": "bucket_081.csv",
+      "min_code": "8006540464786",
+      "max_code": "8016301589283",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 82,
+      "filename": "bucket_082.csv",
+      "min_code": "8016302000008",
+      "max_code": "8029322001016",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 83,
+      "filename": "bucket_083.csv",
+      "min_code": "8029322001023",
+      "max_code": "8051160730162",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 84,
+      "filename": "bucket_084.csv",
+      "min_code": "8051160730209",
+      "max_code": "8410069018281",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 85,
+      "filename": "bucket_085.csv",
+      "min_code": "8410069018298",
+      "max_code": "8412064118508",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 86,
+      "filename": "bucket_086.csv",
+      "min_code": "8412064202061",
+      "max_code": "8422107000882",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 87,
+      "filename": "bucket_087.csv",
+      "min_code": "8422107000899",
+      "max_code": "8431876301465",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 88,
+      "filename": "bucket_088.csv",
+      "min_code": "8431876301526",
+      "max_code": "8436578486847",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 89,
+      "filename": "bucket_089.csv",
+      "min_code": "8436578486861",
+      "max_code": "8480000202949",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 90,
+      "filename": "bucket_090.csv",
+      "min_code": "8480000202963",
+      "max_code": "8607100450876",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 91,
+      "filename": "bucket_091.csv",
+      "min_code": "8607100510433",
+      "max_code": "8711200369201",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 92,
+      "filename": "bucket_092.csv",
+      "min_code": "8711200369331",
+      "max_code": "8718868063151",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 93,
+      "filename": "bucket_093.csv",
+      "min_code": "8718868063168",
+      "max_code": "8850229101123",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 94,
+      "filename": "bucket_094.csv",
+      "min_code": "8850229101727",
+      "max_code": "8908001017206",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 95,
+      "filename": "bucket_095.csv",
+      "min_code": "8908001017213",
+      "max_code": "9088883514440",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 96,
+      "filename": "bucket_096.csv",
+      "min_code": "9088883515539",
+      "max_code": "9329998003253",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 97,
+      "filename": "bucket_097.csv",
+      "min_code": "9329998003260",
+      "max_code": "9556046238040",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 98,
+      "filename": "bucket_098.csv",
+      "min_code": "9556046700011",
+      "max_code": "694019602121002858",
+      "row_count": 43845
+    },
+    {
+      "bucket_id": 99,
+      "filename": "bucket_099.csv",
+      "min_code": "694019902222002789",
+      "max_code": "556236370868632515561280111132506485562501111335036445564501111321464172",
+      "row_count": 43845
+    }
+  ]
+}
