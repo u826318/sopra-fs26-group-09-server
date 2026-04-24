@@ -138,33 +138,6 @@ public class PantryService {
         return saved;
     }
 
-    private List<PantryItem> consolidateHouseholdPantryItems(Long householdId) {
-        List<PantryItem> pantryItems = pantryItemRepository.findByHouseholdId(householdId);
-        Map<String, PantryItem> canonicalItemsByBarcode = new LinkedHashMap<>();
-
-        for (PantryItem item : pantryItems) {
-            String normalizedBarcode = normalizeBarcode(item.getBarcode());
-            if (normalizedBarcode == null) {
-                continue;
-            }
-
-            PantryItem canonical = canonicalItemsByBarcode.get(normalizedBarcode);
-            if (canonical == null) {
-                item.setBarcode(normalizedBarcode);
-                canonicalItemsByBarcode.put(normalizedBarcode, item);
-                continue;
-            }
-
-            canonical.setCount(safeCount(canonical.getCount()) + safeCount(item.getCount()));
-            pantryItemRepository.delete(item);
-        }
-
-        return canonicalItemsByBarcode.values().stream()
-                .map(pantryItemRepository::save)
-                .sorted(Comparator.comparing(PantryItem::getAddedAt, Comparator.nullsLast(Comparator.naturalOrder())))
-                .toList();
-    }
-
     private PantryItem mergeOrCreatePantryItem(
             Long householdId,
             String barcode,
@@ -198,14 +171,6 @@ public class PantryService {
         }
 
         return pantryItemRepository.save(canonical);
-    }
-
-    private String normalizeBarcode(String barcode) {
-        if (barcode == null) {
-            return null;
-        }
-        String trimmedBarcode = barcode.trim();
-        return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
     }
 
     private int safeCount(Integer count) {
