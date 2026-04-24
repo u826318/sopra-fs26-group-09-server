@@ -1,7 +1,10 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +76,7 @@ public class PantryService {
             throw new IllegalArgumentException("User is not a member of this household.");
         }
 
-        return pantryItemRepository.findByHouseholdId(householdId);
+        return consolidateHouseholdPantryItems(householdId);
     }
 
     public PantryItem addItem(Long householdId, PantryItemPostDTO pantryItemPostDTO, Long authenticatedUserId) {
@@ -102,15 +105,16 @@ public class PantryService {
             throw new IllegalArgumentException("User is not a member of this household.");
         }
 
-        PantryItem pantryItem = new PantryItem();
-        pantryItem.setHouseholdId(householdId);
-        pantryItem.setBarcode(pantryItemPostDTO.getBarcode().trim());
-        pantryItem.setName(pantryItemPostDTO.getName().trim());
-        pantryItem.setKcalPerPackage(pantryItemPostDTO.getKcalPerPackage());
-        pantryItem.setCount(pantryItemPostDTO.getQuantity());
-        pantryItem.setAddedAt(Instant.now());
+        String normalizedBarcode = pantryItemPostDTO.getBarcode().trim();
+        String normalizedName = pantryItemPostDTO.getName().trim();
 
-        PantryItem saved = pantryItemRepository.save(pantryItem);
+        PantryItem saved = mergeOrCreatePantryItem(
+                householdId,
+                normalizedBarcode,
+                normalizedName,
+                pantryItemPostDTO.getKcalPerPackage(),
+                pantryItemPostDTO.getQuantity()
+        );
 
         User actor = userRepository.findById(authenticatedUserId).orElse(null);
         PantryUpdateMessage msg = new PantryUpdateMessage();
@@ -132,6 +136,80 @@ public class PantryService {
         pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
 
         return saved;
+    }
+
+    private List<PantryItem> consolidateHouseholdPantryItems(Long householdId) {
+        List<PantryItem> pantryItems = pantryItemRepository.findByHouseholdId(householdId);
+        Map<String, PantryItem> canonicalItemsByBarcode = new LinkedHashMap<>();
+
+        for (PantryItem item : pantryItems) {
+            String normalizedBarcode = normalizeBarcode(item.getBarcode());
+            if (normalizedBarcode == null) {
+                continue;
+            }
+
+            PantryItem canonical = canonicalItemsByBarcode.get(normalizedBarcode);
+            if (canonical == null) {
+                item.setBarcode(normalizedBarcode);
+                canonicalItemsByBarcode.put(normalizedBarcode, item);
+                continue;
+            }
+
+            canonical.setCount(safeCount(canonical.getCount()) + safeCount(item.getCount()));
+            pantryItemRepository.delete(item);
+        }
+
+        return canonicalItemsByBarcode.values().stream()
+                .map(pantryItemRepository::save)
+                .sorted(Comparator.comparing(PantryItem::getAddedAt, Comparator.nullsLast(Comparator.naturalOrder())))
+                .toList();
+    }
+
+    private PantryItem mergeOrCreatePantryItem(
+            Long householdId,
+            String barcode,
+            String name,
+            Double kcalPerPackage,
+            Integer quantity
+    ) {
+        List<PantryItem> matchingItems = pantryItemRepository.findByHouseholdIdAndBarcode(householdId, barcode);
+
+        if (matchingItems.isEmpty()) {
+            PantryItem pantryItem = new PantryItem();
+            pantryItem.setHouseholdId(householdId);
+            pantryItem.setBarcode(barcode);
+            pantryItem.setName(name);
+            pantryItem.setKcalPerPackage(kcalPerPackage);
+            pantryItem.setCount(quantity);
+            pantryItem.setAddedAt(Instant.now());
+            return pantryItemRepository.save(pantryItem);
+        }
+
+        PantryItem canonical = matchingItems.get(0);
+        canonical.setBarcode(barcode);
+        canonical.setName(name);
+        canonical.setKcalPerPackage(kcalPerPackage);
+        canonical.setCount(safeCount(canonical.getCount()) + quantity);
+
+        for (int i = 1; i < matchingItems.size(); i++) {
+            PantryItem duplicate = matchingItems.get(i);
+            canonical.setCount(safeCount(canonical.getCount()) + safeCount(duplicate.getCount()));
+            pantryItemRepository.delete(duplicate);
+        }
+
+        return pantryItemRepository.save(canonical);
+    }
+
+    private String normalizeBarcode(String barcode) {
+        if (barcode == null) {
+            return null;
+        }
+        String trimmedBarcode = barcode.trim();
+        return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
+    }
+
+    private int safeCount(Integer count) {
+        return count == null ? 0 : count;
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
