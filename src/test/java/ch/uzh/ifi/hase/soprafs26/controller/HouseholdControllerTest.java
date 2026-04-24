@@ -471,6 +471,7 @@ class HouseholdControllerTest {
         dto.setConsumedQuantity(1);
         dto.setConsumedCalories(100.0);
         dto.setUserId(1L);
+        dto.setUsername("alice");
 
         given(householdService.getConsumptionLogs(eq(10L), eq(1L), isNull()))
                 .willReturn(List.of(dto));
@@ -480,7 +481,9 @@ class HouseholdControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].productName", is("Rice")))
-                .andExpect(jsonPath("$[0].consumedCalories", is(100.0)));
+                .andExpect(jsonPath("$[0].consumedCalories", is(100.0)))
+                .andExpect(jsonPath("$[0].userId", is(1)))
+                .andExpect(jsonPath("$[0].username", is("alice")));
     }
 
     @Test
