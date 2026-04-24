@@ -610,4 +610,31 @@ class PantryServiceTest {
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
+    @Test
+    void getPantryItems_joinedMemberSeesSameSharedItems() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setBarcode("7613035974685");
+        item.setName("Chocolate Bar");
+        item.setKcalPerPackage(250.0);
+        item.setCount(2);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(new HouseholdMemberId(1L, 1L))).thenReturn(true);
+        when(mockHouseholdMemberRepo.existsById(new HouseholdMemberId(2L, 1L))).thenReturn(true);
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item));
+
+        List<PantryItem> ownerView = pantryService.getPantryItems(1L, 1L);
+        List<PantryItem> joinedMemberView = pantryService.getPantryItems(1L, 2L);
+
+        assertEquals(1, ownerView.size());
+        assertEquals(1, joinedMemberView.size());
+        assertEquals(ownerView.get(0).getName(), joinedMemberView.get(0).getName());
+        assertEquals(ownerView.get(0).getBarcode(), joinedMemberView.get(0).getBarcode());
+        assertEquals(ownerView.get(0).getCount(), joinedMemberView.get(0).getCount());
+    }
 }
