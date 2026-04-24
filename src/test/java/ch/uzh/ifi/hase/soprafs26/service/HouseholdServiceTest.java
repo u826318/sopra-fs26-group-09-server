@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,30 +15,22 @@ import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.service.PantryBroadcastService;
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
-import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
+import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdBudgetRepository;
@@ -44,12 +38,9 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdMemberGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
-
-import org.springframework.data.domain.Pageable;
 
 
 class HouseholdServiceTest {
@@ -89,6 +80,18 @@ class HouseholdServiceTest {
         });
         when(householdRepository.findByInviteCode(anyString())).thenReturn(Optional.empty());
         when(householdMemberRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+    }
+
+    @Test
+    void joinHouseholdByInviteCode_invalidCode_throwsNotFound() {
+    when(householdRepository.findByInviteCode("INVALID")).thenReturn(Optional.empty());
+
+    ResponseStatusException ex = assertThrows(
+            ResponseStatusException.class,
+            () -> householdService.joinHouseholdByInviteCode("INVALID", 1L)
+    );
+
+    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
 
     // ── createHousehold ──────────────────────────────────────────────────────
