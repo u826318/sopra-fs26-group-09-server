@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs26.config;
 
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -29,7 +30,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins(ALLOWED_ORIGINS)
-                .addInterceptors(new AuthHandshakeInterceptor(userRepository));
+                .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new StompAuthChannelInterceptor(userRepository));
     }
 
     @Override
