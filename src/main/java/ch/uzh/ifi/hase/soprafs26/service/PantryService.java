@@ -1,10 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.time.Instant;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +73,7 @@ public class PantryService {
             throw new IllegalArgumentException("User is not a member of this household.");
         }
 
-        return consolidateHouseholdPantryItems(householdId);
+        return pantryItemRepository.findByHouseholdId(householdId);
     }
 
     public PantryItem addItem(Long householdId, PantryItemPostDTO pantryItemPostDTO, Long authenticatedUserId) {
@@ -145,32 +142,38 @@ public class PantryService {
             Double kcalPerPackage,
             Integer quantity
     ) {
-        List<PantryItem> matchingItems = pantryItemRepository.findByHouseholdIdAndBarcode(householdId, barcode);
+        String normalizedBarcode = normalizeBarcode(barcode);
 
-        if (matchingItems.isEmpty()) {
-            PantryItem pantryItem = new PantryItem();
-            pantryItem.setHouseholdId(householdId);
-            pantryItem.setBarcode(barcode);
-            pantryItem.setName(name);
-            pantryItem.setKcalPerPackage(kcalPerPackage);
-            pantryItem.setCount(quantity);
-            pantryItem.setAddedAt(Instant.now());
-            return pantryItemRepository.save(pantryItem);
+        List<PantryItem> matchingItems = pantryItemRepository
+                .findByHouseholdIdAndBarcode(householdId, normalizedBarcode);
+
+        PantryItem matchingItem = matchingItems.isEmpty() ? null : matchingItems.get(0);
+
+        if (matchingItem != null) {
+            matchingItem.setName(name);
+            matchingItem.setKcalPerPackage(kcalPerPackage);
+            matchingItem.setCount(safeCount(matchingItem.getCount()) + safeCount(quantity));
+            return pantryItemRepository.save(matchingItem);
         }
 
-        PantryItem canonical = matchingItems.get(0);
-        canonical.setBarcode(barcode);
-        canonical.setName(name);
-        canonical.setKcalPerPackage(kcalPerPackage);
-        canonical.setCount(safeCount(canonical.getCount()) + quantity);
+        PantryItem pantryItem = new PantryItem();
+        pantryItem.setHouseholdId(householdId);
+        pantryItem.setBarcode(normalizedBarcode);
+        pantryItem.setName(name);
+        pantryItem.setKcalPerPackage(kcalPerPackage);
+        pantryItem.setCount(safeCount(quantity));
+        pantryItem.setAddedAt(Instant.now());
 
-        for (int i = 1; i < matchingItems.size(); i++) {
-            PantryItem duplicate = matchingItems.get(i);
-            canonical.setCount(safeCount(canonical.getCount()) + safeCount(duplicate.getCount()));
-            pantryItemRepository.delete(duplicate);
+        return pantryItemRepository.save(pantryItem);
+    }
+
+    private String normalizeBarcode(String barcode) {
+        if (barcode == null) {
+            return null;
         }
 
-        return pantryItemRepository.save(canonical);
+        String trimmedBarcode = barcode.trim();
+        return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
     }
 
     private int safeCount(Integer count) {
