@@ -3,8 +3,10 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
@@ -65,7 +67,7 @@ public class PantryService {
 
     public List<PantryItem> getPantryItems(Long householdId, Long authenticatedUserId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -94,7 +96,7 @@ public class PantryService {
         }
 
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -102,15 +104,16 @@ public class PantryService {
             throw new IllegalArgumentException("User is not a member of this household.");
         }
 
-        PantryItem pantryItem = new PantryItem();
-        pantryItem.setHouseholdId(householdId);
-        pantryItem.setBarcode(pantryItemPostDTO.getBarcode().trim());
-        pantryItem.setName(pantryItemPostDTO.getName().trim());
-        pantryItem.setKcalPerPackage(pantryItemPostDTO.getKcalPerPackage());
-        pantryItem.setCount(pantryItemPostDTO.getQuantity());
-        pantryItem.setAddedAt(Instant.now());
+        String normalizedBarcode = pantryItemPostDTO.getBarcode().trim();
+        String normalizedName = pantryItemPostDTO.getName().trim();
 
-        PantryItem saved = pantryItemRepository.save(pantryItem);
+        PantryItem saved = mergeOrCreatePantryItem(
+                householdId,
+                normalizedBarcode,
+                normalizedName,
+                pantryItemPostDTO.getKcalPerPackage(),
+                pantryItemPostDTO.getQuantity()
+        );
 
         User actor = userRepository.findById(authenticatedUserId).orElse(null);
         PantryUpdateMessage msg = new PantryUpdateMessage();
@@ -134,13 +137,57 @@ public class PantryService {
         return saved;
     }
 
+    private PantryItem mergeOrCreatePantryItem(
+            Long householdId,
+            String barcode,
+            String name,
+            Double kcalPerPackage,
+            Integer quantity
+    ) {
+        String normalizedBarcode = normalizeBarcode(barcode);
+
+        List<PantryItem> matchingItems = pantryItemRepository
+                .findByHouseholdIdAndBarcode(householdId, normalizedBarcode);
+
+        PantryItem matchingItem = matchingItems.isEmpty() ? null : matchingItems.get(0);
+
+        if (matchingItem != null) {
+            matchingItem.setName(name);
+            matchingItem.setKcalPerPackage(kcalPerPackage);
+            matchingItem.setCount(safeCount(matchingItem.getCount()) + safeCount(quantity));
+            return pantryItemRepository.save(matchingItem);
+        }
+
+        PantryItem pantryItem = new PantryItem();
+        pantryItem.setHouseholdId(householdId);
+        pantryItem.setBarcode(normalizedBarcode);
+        pantryItem.setName(name);
+        pantryItem.setKcalPerPackage(kcalPerPackage);
+        pantryItem.setCount(safeCount(quantity));
+        pantryItem.setAddedAt(Instant.now());
+
+        return pantryItemRepository.save(pantryItem);
+    }
+
+    private String normalizeBarcode(String barcode) {
+        if (barcode == null) {
+            return null;
+        }
+        String trimmedBarcode = barcode.trim();
+        return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
+    }
+
+    private int safeCount(Integer count) {
+        return count == null ? 0 : count;
+    }
+
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -149,7 +196,7 @@ public class PantryService {
         }
 
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Pantry item not found in this household."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
         if (quantity > pantryItem.getCount()) {
             throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
@@ -186,6 +233,58 @@ public class PantryService {
         User actor = userRepository.findById(authenticatedUserId).orElse(null);
         PantryUpdateMessage msg = new PantryUpdateMessage();
         msg.setEventType("ITEM_CONSUMED");
+        msg.setHouseholdId(householdId);
+        msg.setTriggeredByUserId(authenticatedUserId);
+        msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);
+        msg.setTimestamp(Instant.now().toString());
+        msg.setNewTotalCalories(calculateTotalCalories(householdId));
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
+
+        return result;
+    }
+
+    public ConsumeResult removeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
+
+        if (quantity > pantryItem.getCount()) {
+            throw new IllegalArgumentException("Removed quantity exceeds available quantity.");
+        }
+
+        int remainingCount = pantryItem.getCount() - quantity;
+
+        ConsumeResult result = new ConsumeResult();
+        result.setItemId(pantryItem.getId());
+        result.setConsumedCalories(0.0);
+
+        if (remainingCount == 0) {
+            pantryItemRepository.delete(pantryItem);
+            result.setRemainingCount(0);
+            result.setRemoved(true);
+        }
+        else {
+            pantryItem.setCount(remainingCount);
+            pantryItemRepository.save(pantryItem);
+            result.setRemainingCount(remainingCount);
+            result.setRemoved(false);
+        }
+
+        User actor = userRepository.findById(authenticatedUserId).orElse(null);
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("ITEM_REMOVED");
         msg.setHouseholdId(householdId);
         msg.setTriggeredByUserId(authenticatedUserId);
         msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);
