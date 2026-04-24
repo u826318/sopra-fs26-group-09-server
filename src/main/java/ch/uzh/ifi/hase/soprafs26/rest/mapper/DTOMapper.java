@@ -51,6 +51,7 @@ public interface DTOMapper {
 	@Mapping(source = "inviteCode", target = "inviteCode")
 	@Mapping(source = "ownerId", target = "ownerId")
 	@Mapping(source = "createdAt", target = "createdAt")
+	@Mapping(source = "inviteCodeExpiresAt", target = "inviteCodeExpiresAt")
 	HouseholdGetDTO convertEntityToHouseholdGetDTO(Household household);
 
 	@Mapping(source = "id", target = "id")

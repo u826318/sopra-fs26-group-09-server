@@ -9,6 +9,7 @@ public class HouseholdGetDTO {
     private String inviteCode;
     private Long ownerId;
     private Instant createdAt;
+    private Instant inviteCodeExpiresAt;
     private String role;
 
     public Long getHouseholdId() {
@@ -49,6 +50,14 @@ public class HouseholdGetDTO {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Instant getInviteCodeExpiresAt() {
+        return inviteCodeExpiresAt;
+    }
+
+    public void setInviteCodeExpiresAt(Instant inviteCodeExpiresAt) {
+        this.inviteCodeExpiresAt = inviteCodeExpiresAt;
     }
 
     public String getRole() {

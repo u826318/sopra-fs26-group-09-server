@@ -216,4 +216,48 @@ class PantryControllerTest {
                 .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
         }
 
+        @Test
+        void removePantryItem_success_returnsOk() throws Exception {
+        PantryService.ConsumeResult result = new PantryService.ConsumeResult();
+        result.setItemId(10L);
+        result.setRemainingCount(2);
+        result.setConsumedCalories(0.0);
+        result.setRemoved(false);
+
+        when(pantryService.removeItem(1L, 10L, 1, 99L)).thenReturn(result);
+
+        String requestBody = """
+                {
+                        "quantity": 1
+                }
+                """;
+
+        mockMvc.perform(post("/households/1/pantry/10/remove")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemId").value(10))
+                .andExpect(jsonPath("$.remainingCount").value(2))
+                .andExpect(jsonPath("$.consumedCalories").value(0.0))
+                .andExpect(jsonPath("$.removed").value(false));
+        }
+
+        @Test
+        void removePantryItem_invalidQuantity_returnsBadRequest() throws Exception {
+        when(pantryService.removeItem(1L, 10L, 0, 99L))
+                .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
+
+        String requestBody = """
+                {
+                        "quantity": 0
+                }
+                """;
+
+        mockMvc.perform(post("/households/1/pantry/10/remove")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
+        }
+
 }

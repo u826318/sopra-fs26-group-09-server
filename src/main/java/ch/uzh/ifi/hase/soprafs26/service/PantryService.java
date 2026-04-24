@@ -3,8 +3,10 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
@@ -65,7 +67,7 @@ public class PantryService {
 
     public List<PantryItem> getPantryItems(Long householdId, Long authenticatedUserId) {
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -94,7 +96,7 @@ public class PantryService {
         }
 
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -186,7 +188,7 @@ public class PantryService {
         }
 
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -195,7 +197,7 @@ public class PantryService {
         }
 
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Pantry item not found in this household."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
         if (quantity > pantryItem.getCount()) {
             throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
@@ -248,7 +250,7 @@ public class PantryService {
         }
 
         Household household = householdRepository.findById(householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Household not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
 
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
@@ -257,7 +259,7 @@ public class PantryService {
         }
 
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
-                .orElseThrow(() -> new IllegalArgumentException("Pantry item not found in this household."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
         if (quantity > pantryItem.getCount()) {
             throw new IllegalArgumentException("Removed quantity exceeds available quantity.");
@@ -283,7 +285,7 @@ public class PantryService {
 
         User actor = userRepository.findById(authenticatedUserId).orElse(null);
         PantryUpdateMessage msg = new PantryUpdateMessage();
-        msg.setEventType("ITEM_REMOVED");
+        msg.setEventType(result.isRemoved() ? "ITEM_REMOVED" : "ITEM_UPDATED");
         msg.setHouseholdId(householdId);
         msg.setTriggeredByUserId(authenticatedUserId);
         msg.setTriggeredByUsername(actor != null ? actor.getUsername() : null);

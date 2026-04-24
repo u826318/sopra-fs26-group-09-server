@@ -31,6 +31,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import ch.uzh.ifi.hase.soprafs26.service.PantryBroadcastService;
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMember;
@@ -70,6 +71,9 @@ class HouseholdServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PantryBroadcastService pantryBroadcastService;
 
     @InjectMocks
     private HouseholdService householdService;

@@ -37,6 +37,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdMemberGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.ComparisonToBudgetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdStatsGetDTO.DailyBreakdownDTO;
+import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 
 @Service
 @Transactional
@@ -63,19 +64,22 @@ public class HouseholdService {
     private final HouseholdBudgetRepository householdBudgetRepository;
     private final PantryItemRepository pantryItemRepository;
     private final UserRepository userRepository;
+    private final PantryBroadcastService pantryBroadcastService;
 
     public HouseholdService(HouseholdRepository householdRepository,
             HouseholdMemberRepository householdMemberRepository,
             ConsumptionLogRepository consumptionLogRepository,
             HouseholdBudgetRepository householdBudgetRepository,
             PantryItemRepository pantryItemRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            PantryBroadcastService pantryBroadcastService) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
         this.consumptionLogRepository = consumptionLogRepository;
         this.householdBudgetRepository = householdBudgetRepository;
         this.pantryItemRepository = pantryItemRepository;
         this.userRepository = userRepository;
+        this.pantryBroadcastService = pantryBroadcastService;
     }
 
     public Household createHousehold(String name, Long ownerId) {
@@ -149,6 +153,12 @@ public class HouseholdService {
         householdMemberRepository.deleteByIdHouseholdId(householdId);
         householdRepository.delete(household);
         householdRepository.flush();
+
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("HOUSEHOLD_DELETED");
+        msg.setHouseholdId(householdId);
+        msg.setTimestamp(Instant.now().toString());
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
     }
 
     public Household regenerateInviteCode(Long householdId, Long requesterUserId) {
@@ -227,14 +237,21 @@ public class HouseholdService {
         try {
             budget = householdBudgetRepository.save(budget);
             householdBudgetRepository.flush();
-            return budget;
         } catch (DataIntegrityViolationException e) {
             // Concurrent insert: another request already created the budget row, update it instead
             budget = householdBudgetRepository.findByHouseholdId(householdId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Budget conflict."));
             budget.setDailyCalorieTarget(dailyCalorieTarget);
-            return householdBudgetRepository.save(budget);
+            budget = householdBudgetRepository.save(budget);
         }
+
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("BUDGET_UPDATED");
+        msg.setHouseholdId(householdId);
+        msg.setTimestamp(Instant.now().toString());
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
+
+        return budget;
     }
 
     public HouseholdStatsGetDTO getStats(Long householdId, String startDateStr, String endDateStr, Long requesterUserId) {
