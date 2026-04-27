@@ -2,14 +2,19 @@ package ch.uzh.ifi.hase.soprafs26.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.entity.UserHealthGoal;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserHealthGoalGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserHealthGoalPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLoginDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserLogoutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs26.service.UserHealthGoalService;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
 import java.util.ArrayList;
@@ -26,9 +31,11 @@ import java.util.List;
 public class UserController {
 
 	private final UserService userService;
+	private final UserHealthGoalService userHealthGoalService;
 
-	UserController(UserService userService) {
+	UserController(UserService userService, UserHealthGoalService userHealthGoalService) {
 		this.userService = userService;
+		this.userHealthGoalService = userHealthGoalService;
 	}
 
 	@GetMapping("/users/me")
@@ -91,5 +98,33 @@ public class UserController {
 
 	private UserAuthDTO toAuthDTO(User user) {
 		return DTOMapper.INSTANCE.convertEntityToUserAuthDTO(user);
+	}
+
+	@PutMapping("/users/{id}/health-goal")
+	@ResponseStatus(HttpStatus.OK)
+	public UserHealthGoalGetDTO putHealthGoal(
+			@RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+			@PathVariable Long id,
+			@RequestBody UserHealthGoalPutDTO dto) {
+		if (!authenticatedUserId.equals(id)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied.");
+		}
+		return toHealthGoalGetDTO(userHealthGoalService.upsertGoal(id, dto));
+	}
+
+	private UserHealthGoalGetDTO toHealthGoalGetDTO(UserHealthGoal goal) {
+		UserHealthGoalGetDTO dto = new UserHealthGoalGetDTO();
+		dto.setGoalId(goal.getGoalId());
+		dto.setUserId(goal.getUserId());
+		dto.setGoalType(goal.getGoalType());
+		dto.setTargetRate(goal.getTargetRate());
+		dto.setAge(goal.getAge());
+		dto.setSex(goal.getSex());
+		dto.setHeight(goal.getHeight());
+		dto.setWeight(goal.getWeight());
+		dto.setActivityLevel(goal.getActivityLevel());
+		dto.setRecommendedDailyCalories(goal.getRecommendedDailyCalories());
+		dto.setUpdatedAt(goal.getUpdatedAt());
+		return dto;
 	}
 }
