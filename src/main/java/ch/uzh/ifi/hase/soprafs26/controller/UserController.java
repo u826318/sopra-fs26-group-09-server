@@ -100,6 +100,17 @@ public class UserController {
 		return DTOMapper.INSTANCE.convertEntityToUserAuthDTO(user);
 	}
 
+	@GetMapping("/users/{id}/health-goal")
+	@ResponseStatus(HttpStatus.OK)
+	public UserHealthGoalGetDTO getHealthGoal(
+			@RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+			@PathVariable Long id) {
+		if (!authenticatedUserId.equals(id)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied.");
+		}
+		return toHealthGoalGetDTO(userHealthGoalService.getGoal(id));
+	}
+
 	@PutMapping("/users/{id}/health-goal")
 	@ResponseStatus(HttpStatus.OK)
 	public UserHealthGoalGetDTO putHealthGoal(
