@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -284,30 +285,109 @@ public class OpenFoodFactsService {
       return null;
     }
 
-    String normalizedText = text.toLowerCase().replace(',', '.').trim();
+    String normalizedText = text.toLowerCase(Locale.ROOT).replace(',', '.').trim();
 
-    java.util.regex.Matcher multipliedMatcher = java.util.regex.Pattern
-        .compile("([0-9]+(?:\\.[0-9]+)?)\\s*[x×]\\s*([0-9]+(?:\\.[0-9]+)?)\\s*(kg|mg|g|ml|cl|l)\\b")
-        .matcher(normalizedText);
-    if (multipliedMatcher.find()) {
-      Double count = parseDoubleOrNull(multipliedMatcher.group(1));
-      Double amount = parseDoubleOrNull(multipliedMatcher.group(2));
-      String unit = multipliedMatcher.group(3);
-      if (count != null && amount != null) {
-        return toQuantityInfo(count * amount, unit);
-      }
+    MultipliedQuantity multipliedQuantity = parseMultipliedQuantity(normalizedText);
+    if (multipliedQuantity != null) {
+      return toQuantityInfo(multipliedQuantity.totalAmount, multipliedQuantity.unit);
     }
 
-    java.util.regex.Matcher matcher = java.util.regex.Pattern
-        .compile("([0-9]+(?:\\.[0-9]+)?)\\s*(kg|mg|g|ml|cl|l)\\b")
-        .matcher(normalizedText);
+    QuantityToken quantityToken = findQuantityToken(normalizedText, 0);
+    return quantityToken == null ? null : toQuantityInfo(quantityToken.amount, quantityToken.unit);
+  }
 
-    if (!matcher.find()) {
+  private MultipliedQuantity parseMultipliedQuantity(String text) {
+    int index = 0;
+    while (index < text.length()) {
+      NumberToken count = findNumberToken(text, index);
+      if (count == null) {
+        return null;
+      }
+
+      int cursor = skipWhitespace(text, count.endIndex);
+      if (cursor < text.length() && (text.charAt(cursor) == 'x' || text.charAt(cursor) == '×')) {
+        QuantityToken quantityToken = findQuantityToken(text, skipWhitespace(text, cursor + 1));
+        if (quantityToken != null) {
+          return new MultipliedQuantity(count.value * quantityToken.amount, quantityToken.unit);
+        }
+      }
+
+      index = Math.max(count.endIndex, index + 1);
+    }
+    return null;
+  }
+
+  private QuantityToken findQuantityToken(String text, int startIndex) {
+    int index = Math.max(0, startIndex);
+    while (index < text.length()) {
+      NumberToken number = findNumberToken(text, index);
+      if (number == null) {
+        return null;
+      }
+
+      int unitStart = skipWhitespace(text, number.endIndex);
+      UnitToken unit = readUnitToken(text, unitStart);
+      if (unit != null) {
+        return new QuantityToken(number.value, unit.value);
+      }
+
+      index = Math.max(number.endIndex, index + 1);
+    }
+    return null;
+  }
+
+  private NumberToken findNumberToken(String text, int startIndex) {
+    int index = Math.max(0, startIndex);
+    while (index < text.length() && !Character.isDigit(text.charAt(index))) {
+      index++;
+    }
+    if (index >= text.length()) {
       return null;
     }
 
-    Double amount = parseDoubleOrNull(matcher.group(1));
-    return amount == null ? null : toQuantityInfo(amount, matcher.group(2));
+    int cursor = index;
+    boolean hasDecimalSeparator = false;
+    while (cursor < text.length()) {
+      char current = text.charAt(cursor);
+      if (Character.isDigit(current)) {
+        cursor++;
+        continue;
+      }
+      if (current == '.' && !hasDecimalSeparator) {
+        hasDecimalSeparator = true;
+        cursor++;
+        continue;
+      }
+      break;
+    }
+
+    Double value = parseDoubleOrNull(text.substring(index, cursor));
+    return value == null ? null : new NumberToken(value, cursor);
+  }
+
+  private UnitToken readUnitToken(String text, int startIndex) {
+    String[] units = {"kg", "mg", "ml", "cl", "g", "l"};
+    for (String unit : units) {
+      int endIndex = startIndex + unit.length();
+      if (endIndex <= text.length()
+          && text.startsWith(unit, startIndex)
+          && isUnitBoundary(text, endIndex)) {
+        return new UnitToken(unit, endIndex);
+      }
+    }
+    return null;
+  }
+
+  private boolean isUnitBoundary(String text, int index) {
+    return index >= text.length() || !Character.isLetter(text.charAt(index));
+  }
+
+  private int skipWhitespace(String text, int startIndex) {
+    int index = startIndex;
+    while (index < text.length() && Character.isWhitespace(text.charAt(index))) {
+      index++;
+    }
+    return index;
   }
 
   private QuantityInfo toQuantityInfo(Double amount, String unit) {
@@ -373,6 +453,46 @@ public class OpenFoodFactsService {
     }
 
     return Math.round(value * 100.0) / 100.0;
+  }
+
+  private static class NumberToken {
+    private final Double value;
+    private final int endIndex;
+
+    private NumberToken(Double value, int endIndex) {
+      this.value = value;
+      this.endIndex = endIndex;
+    }
+  }
+
+  private static class UnitToken {
+    private final String value;
+    private final int endIndex;
+
+    private UnitToken(String value, int endIndex) {
+      this.value = value;
+      this.endIndex = endIndex;
+    }
+  }
+
+  private static class QuantityToken {
+    private final Double amount;
+    private final String unit;
+
+    private QuantityToken(Double amount, String unit) {
+      this.amount = amount;
+      this.unit = unit;
+    }
+  }
+
+  private static class MultipliedQuantity {
+    private final Double totalAmount;
+    private final String unit;
+
+    private MultipliedQuantity(Double totalAmount, String unit) {
+      this.totalAmount = totalAmount;
+      this.unit = unit;
+    }
   }
 
   private static class QuantityInfo {

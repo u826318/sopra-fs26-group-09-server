@@ -890,11 +890,8 @@ public class LocalProductDatasetService {
       return null;
     }
 
-    java.util.regex.Matcher matcher = java.util.regex.Pattern
-        .compile("([0-9]+(?:[.,][0-9]+)?)")
-        .matcher(text);
-
-    return matcher.find() ? matcher.group(1) : null;
+    NumberToken number = findNumberToken(text, 0);
+    return number == null ? null : number.rawValue;
   }
 
   private String extractQuantityUnit(String quantityText) {
@@ -903,11 +900,72 @@ public class LocalProductDatasetService {
       return null;
     }
 
-    java.util.regex.Matcher matcher = java.util.regex.Pattern
-        .compile("(?i)(kg|mg|g|ml|cl|l)\\b")
-        .matcher(text);
+    UnitToken unit = findUnitToken(text);
+    return unit == null ? null : unit.value;
+  }
 
-    return matcher.find() ? matcher.group(1) : null;
+  private NumberToken findNumberToken(String text, int startIndex) {
+    int index = Math.max(0, startIndex);
+    while (index < text.length() && !Character.isDigit(text.charAt(index))) {
+      index++;
+    }
+    if (index >= text.length()) {
+      return null;
+    }
+
+    int cursor = index;
+    boolean hasDecimalSeparator = false;
+    while (cursor < text.length()) {
+      char current = text.charAt(cursor);
+      if (Character.isDigit(current)) {
+        cursor++;
+        continue;
+      }
+      if ((current == '.' || current == ',') && !hasDecimalSeparator) {
+        hasDecimalSeparator = true;
+        cursor++;
+        continue;
+      }
+      break;
+    }
+
+    return new NumberToken(text.substring(index, cursor));
+  }
+
+  private UnitToken findUnitToken(String text) {
+    String normalized = text.toLowerCase(Locale.ROOT);
+    String[] units = {"kg", "mg", "ml", "cl", "g", "l"};
+    for (int index = 0; index < normalized.length(); index++) {
+      for (String unit : units) {
+        int endIndex = index + unit.length();
+        if (endIndex <= normalized.length()
+            && normalized.startsWith(unit, index)
+            && isUnitBoundary(normalized, endIndex)) {
+          return new UnitToken(text.substring(index, endIndex));
+        }
+      }
+    }
+    return null;
+  }
+
+  private boolean isUnitBoundary(String text, int index) {
+    return index >= text.length() || !Character.isLetter(text.charAt(index));
+  }
+
+  private static class NumberToken {
+    private final String rawValue;
+
+    private NumberToken(String rawValue) {
+      this.rawValue = rawValue;
+    }
+  }
+
+  private static class UnitToken {
+    private final String value;
+
+    private UnitToken(String value) {
+      this.value = value;
+    }
   }
 
   private String normalizeUnit(String unitText) {

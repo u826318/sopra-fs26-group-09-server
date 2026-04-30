@@ -90,6 +90,7 @@ class OpenFoodFactsServiceTest {
         assertEquals(List.of("zurich", "bern"), result.getPurchasePlaces());
         assertNotNull(result.getNutriments());
         assertEquals(510, ((Number) result.getNutriments().get("energy-kcal_100g")).intValue());
+        assertEquals(510.0, result.getCaloriesPerPackage(), 0.001);
         assertEquals(-2, ((Number) result.getNutriScoreData().get("score")).intValue());
         assertNotNull(result.getRawProduct());
         assertEquals("Chocolate Bar", result.getRawProduct().get("product_name"));
@@ -217,6 +218,52 @@ class OpenFoodFactsServiceTest {
         assertEquals(1, ((Number) resolvedResult.getNutriScoreData().get("score")).intValue());
 
         Mockito.verify(restTemplate).exchange(contains("page_size=12"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class));
+    }
+
+    @Test
+    void lookupByBarcode_multipliedGramQuantity_estimatesCaloriesPerPackage() {
+        String body = """
+                {
+                  "status": 1,
+                  "product": {
+                    "code": "333",
+                    "product_name": "Snack Pack",
+                    "quantity": "2 x 125 g",
+                    "nutriments": {"energy-kcal_100g": 400}
+                  }
+                }
+                """;
+
+        Mockito.when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+
+        ProductDTO result = openFoodFactsService.lookupByBarcode("333");
+
+        assertEquals("Snack Pack", result.getName());
+        assertEquals(1000.0, result.getCaloriesPerPackage(), 0.001);
+    }
+
+    @Test
+    void lookupByBarcode_decimalLiterQuantity_estimatesCaloriesPerPackage() {
+        String body = """
+                {
+                  "status": 1,
+                  "product": {
+                    "code": "444",
+                    "product_name": "Juice Bottle",
+                    "quantity": "1,5 l",
+                    "nutriments": {"energy-kcal_100ml": 50}
+                  }
+                }
+                """;
+
+        Mockito.when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+
+        ProductDTO result = openFoodFactsService.lookupByBarcode("444");
+
+        assertEquals("Juice Bottle", result.getName());
+        assertEquals(750.0, result.getCaloriesPerPackage(), 0.001);
     }
 
     @Test
