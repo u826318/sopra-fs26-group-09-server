@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -467,6 +469,123 @@ class PantryServiceTest {
         assertEquals("Chocolate Bar", result.getName());
         assertEquals(250.0, result.getKcalPerPackage(), 0.001);
         verify(mockPantryRepo, times(1)).save(existing);
+    }
+
+    @Test
+    void bulkAddItems_success_savesEachRowAndBroadcastsPerRow() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItemPostDTO first = new PantryItemPostDTO();
+        first.setBarcode("111");
+        first.setName("A");
+        first.setKcalPerPackage(100.0);
+        first.setQuantity(1);
+
+        PantryItemPostDTO second = new PantryItemPostDTO();
+        second.setBarcode("222");
+        second.setName("B");
+        second.setKcalPerPackage(200.0);
+        second.setQuantity(2);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByHouseholdIdAndBarcode(eq(1L), any())).thenReturn(List.of());
+        AtomicLong nextId = new AtomicLong(10L);
+        when(mockPantryRepo.save(any(PantryItem.class))).thenAnswer(inv -> {
+            PantryItem p = inv.getArgument(0);
+            if (p.getId() == null) {
+                p.setId(nextId.getAndIncrement());
+            }
+            return p;
+        });
+
+        List<PantryItem> results = pantryService.bulkAddItems(1L, List.of(first, second), 99L);
+
+        assertEquals(2, results.size());
+        assertEquals("111", results.get(0).getBarcode());
+        assertEquals("222", results.get(1).getBarcode());
+        verify(mockPantryRepo, times(2)).save(any(PantryItem.class));
+        verify(mockBroadcastService, times(2)).broadcastPantryUpdate(eq(1L), any(PantryUpdateMessage.class));
+    }
+
+    @Test
+    void bulkAddItems_throwsWhenListEmpty() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.bulkAddItems(1L, List.of(), 99L));
+
+        assertEquals("Bulk add payload must contain at least one item.", ex.getMessage());
+        verify(mockHouseholdRepo, never()).findById(anyLong());
+        verify(mockPantryRepo, never()).save(any(PantryItem.class));
+    }
+
+    @Test
+    void bulkAddItems_throwsWhenListNull() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.bulkAddItems(1L, null, 99L));
+
+        assertEquals("Bulk add payload must contain at least one item.", ex.getMessage());
+        verify(mockHouseholdRepo, never()).findById(anyLong());
+    }
+
+    @Test
+    void bulkAddItems_throwsWhenTooManyItems() {
+        List<PantryItemPostDTO> oversized = new ArrayList<>(PantryService.MAX_ITEMS_PER_BULK_REQUEST + 1);
+        for (int i = 0; i < PantryService.MAX_ITEMS_PER_BULK_REQUEST + 1; i++) {
+            PantryItemPostDTO dto = new PantryItemPostDTO();
+            dto.setBarcode("b" + i);
+            dto.setName("n");
+            dto.setKcalPerPackage(1.0);
+            dto.setQuantity(1);
+            oversized.add(dto);
+        }
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.bulkAddItems(1L, oversized, 99L));
+
+        assertEquals("Cannot add more than " + PantryService.MAX_ITEMS_PER_BULK_REQUEST
+                + " items in one request.", ex.getMessage());
+        verify(mockHouseholdRepo, never()).findById(anyLong());
+    }
+
+    @Test
+    void bulkAddItems_validatesAllRowsBeforeHouseholdLookup() {
+        PantryItemPostDTO bad = new PantryItemPostDTO();
+        bad.setBarcode("1");
+        bad.setName("x");
+        bad.setKcalPerPackage(1.0);
+        bad.setQuantity(0);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.bulkAddItems(1L, List.of(bad), 99L));
+
+        verify(mockHouseholdRepo, never()).findById(anyLong());
+    }
+
+    @Test
+    void bulkAddItems_throwsWhenNotMember() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1");
+        dto.setName("A");
+        dto.setKcalPerPackage(10.0);
+        dto.setQuantity(1);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.bulkAddItems(1L, List.of(dto), 99L));
+
+        assertEquals("User is not a member of this household.", ex.getMessage());
+        verify(mockPantryRepo, never()).save(any(PantryItem.class));
     }
 
     @Test

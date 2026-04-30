@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemResponseDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryBulkAddPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryOverviewGetDTO;
@@ -38,6 +39,22 @@ public class PantryController {
 
         PantryItem pantryItem = pantryService.addItem(householdId, pantryItemPostDTO, authenticatedUserId);
         return DTOMapper.INSTANCE.convertEntityToPantryItemGetDTO(pantryItem);
+    }
+
+    @PostMapping("/households/{householdId}/pantry/bulk-add")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PantryItemGetDTO> bulkAddPantryItems(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @RequestBody PantryBulkAddPostDTO bulkBody) {
+
+        List<PantryItem> saved = pantryService.bulkAddItems(
+                householdId,
+                bulkBody != null ? bulkBody.getItems() : null,
+                authenticatedUserId);
+        return saved.stream()
+                .map(DTOMapper.INSTANCE::convertEntityToPantryItemGetDTO)
+                .toList();
     }
 
     @PostMapping("/households/{householdId}/pantry/{itemId}/consume")

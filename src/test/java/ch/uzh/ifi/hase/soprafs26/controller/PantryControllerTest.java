@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,10 +211,74 @@ class PantryControllerTest {
                 """;
 
         mockMvc.perform(post("/households/1/pantry")
-                        .contentType("application/json")
-                        .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
+                                .contentType("application/json")
+                                .content(requestBody))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
+        }
+
+        @Test
+        void bulkAddPantryItems_success_returnsOkWithItems() throws Exception {
+                PantryItem item1 = new PantryItem();
+                item1.setId(10L);
+                item1.setHouseholdId(1L);
+                item1.setBarcode("111");
+                item1.setName("A");
+                item1.setKcalPerPackage(100.0);
+                item1.setCount(1);
+                item1.setAddedAt(Instant.parse("2026-03-29T10:15:30Z"));
+
+                PantryItem item2 = new PantryItem();
+                item2.setId(11L);
+                item2.setHouseholdId(1L);
+                item2.setBarcode("222");
+                item2.setName("B");
+                item2.setKcalPerPackage(200.0);
+                item2.setCount(2);
+                item2.setAddedAt(Instant.parse("2026-03-29T11:15:30Z"));
+
+                when(pantryService.bulkAddItems(eq(1L), anyList(), eq(99L))).thenReturn(List.of(item1, item2));
+
+                String requestBody = """
+                        {
+                                "items": [
+                                        {
+                                                "barcode": "111",
+                                                "name": "A",
+                                                "kcalPerPackage": 100.0,
+                                                "quantity": 1
+                                        },
+                                        {
+                                                "barcode": "222",
+                                                "name": "B",
+                                                "kcalPerPackage": 200.0,
+                                                "quantity": 2
+                                        }
+                                ]
+                        }
+                        """;
+
+                mockMvc.perform(post("/households/1/pantry/bulk-add")
+                                .contentType("application/json")
+                                .content(requestBody))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.length()").value(2))
+                        .andExpect(jsonPath("$[0].id").value(10))
+                        .andExpect(jsonPath("$[0].barcode").value("111"))
+                        .andExpect(jsonPath("$[1].id").value(11))
+                        .andExpect(jsonPath("$[1].count").value(2));
+        }
+
+        @Test
+        void bulkAddPantryItems_emptyItems_returnsBadRequest() throws Exception {
+                when(pantryService.bulkAddItems(eq(1L), anyList(), eq(99L)))
+                        .thenThrow(new IllegalArgumentException("Bulk add payload must contain at least one item."));
+
+                mockMvc.perform(post("/households/1/pantry/bulk-add")
+                                .contentType("application/json")
+                                .content("{ \"items\": [] }"))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("Bulk add payload must contain at least one item."));
         }
 
         @Test

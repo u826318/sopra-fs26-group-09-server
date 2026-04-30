@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,11 @@ import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 @Service
 @Transactional
 public class PantryService {
+
+    /**
+     * Upper bound for {@link #bulkAddItems(Long, List, Long)} to avoid oversized payloads.
+     */
+    public static final int MAX_ITEMS_PER_BULK_REQUEST = 100;
 
     private final PantryItemRepository pantryItemRepository;
     private final ConsumptionLogRepository consumptionLogRepository;
@@ -79,21 +85,7 @@ public class PantryService {
     }
 
     public PantryItem addItem(Long householdId, PantryItemPostDTO pantryItemPostDTO, Long authenticatedUserId) {
-        if (pantryItemPostDTO == null) {
-            throw new IllegalArgumentException("Pantry item payload must not be empty.");
-        }
-        if (pantryItemPostDTO.getQuantity() == null || pantryItemPostDTO.getQuantity() <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero.");
-        }
-        if (pantryItemPostDTO.getBarcode() == null || pantryItemPostDTO.getBarcode().trim().isEmpty()) {
-            throw new IllegalArgumentException("Barcode must not be empty.");
-        }
-        if (pantryItemPostDTO.getName() == null || pantryItemPostDTO.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Product name must not be empty.");
-        }
-        if (pantryItemPostDTO.getKcalPerPackage() == null || pantryItemPostDTO.getKcalPerPackage() < 0) {
-            throw new IllegalArgumentException("Calories per package must be zero or greater.");
-        }
+        validatePantryItemPayload(pantryItemPostDTO);
 
         Household household = householdRepository.findById(householdId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
@@ -115,6 +107,77 @@ public class PantryService {
                 pantryItemPostDTO.getQuantity()
         );
 
+        broadcastItemAdded(householdId, saved, authenticatedUserId);
+
+        return saved;
+    }
+
+    /**
+     * Adds multiple pantry lines in one request. Validated up-front; all persistence happens in this transaction.
+     * Each persisted row triggers the same {@code ITEM_ADDED} WebSocket broadcast as {@link #addItem}.
+     */
+    public List<PantryItem> bulkAddItems(Long householdId, List<PantryItemPostDTO> items,
+            Long authenticatedUserId) {
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("Bulk add payload must contain at least one item.");
+        }
+        if (items.size() > MAX_ITEMS_PER_BULK_REQUEST) {
+            throw new IllegalArgumentException(
+                    "Cannot add more than " + MAX_ITEMS_PER_BULK_REQUEST + " items in one request.");
+        }
+
+        for (PantryItemPostDTO dto : items) {
+            if (dto == null) {
+                throw new IllegalArgumentException("Bulk add items must not contain null entries.");
+            }
+            validatePantryItemPayload(dto);
+        }
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        List<PantryItem> savedItems = new ArrayList<>(items.size());
+        for (PantryItemPostDTO dto : items) {
+            String normalizedBarcode = dto.getBarcode().trim();
+            String normalizedName = dto.getName().trim();
+            PantryItem saved = mergeOrCreatePantryItem(
+                    householdId,
+                    normalizedBarcode,
+                    normalizedName,
+                    dto.getKcalPerPackage(),
+                    dto.getQuantity());
+            savedItems.add(saved);
+            broadcastItemAdded(householdId, saved, authenticatedUserId);
+        }
+
+        return savedItems;
+    }
+
+    private void validatePantryItemPayload(PantryItemPostDTO pantryItemPostDTO) {
+        if (pantryItemPostDTO == null) {
+            throw new IllegalArgumentException("Pantry item payload must not be empty.");
+        }
+        if (pantryItemPostDTO.getQuantity() == null || pantryItemPostDTO.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+        if (pantryItemPostDTO.getBarcode() == null || pantryItemPostDTO.getBarcode().trim().isEmpty()) {
+            throw new IllegalArgumentException("Barcode must not be empty.");
+        }
+        if (pantryItemPostDTO.getName() == null || pantryItemPostDTO.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Product name must not be empty.");
+        }
+        if (pantryItemPostDTO.getKcalPerPackage() == null || pantryItemPostDTO.getKcalPerPackage() < 0) {
+            throw new IllegalArgumentException("Calories per package must be zero or greater.");
+        }
+    }
+
+    private void broadcastItemAdded(Long householdId, PantryItem saved, Long authenticatedUserId) {
         User actor = userRepository.findById(authenticatedUserId).orElse(null);
         PantryUpdateMessage msg = new PantryUpdateMessage();
         msg.setEventType("ITEM_ADDED");
@@ -133,8 +196,6 @@ public class PantryService {
         payload.setAddedAt(saved.getAddedAt().toString());
         msg.setItem(payload);
         pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
-
-        return saved;
     }
 
     private PantryItem mergeOrCreatePantryItem(
