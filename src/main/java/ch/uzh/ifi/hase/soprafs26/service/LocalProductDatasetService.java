@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class LocalProductDatasetService {
@@ -49,7 +50,7 @@ public class LocalProductDatasetService {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  private volatile List<BucketRange> buckets;
+  private final AtomicReference<List<BucketRange>> buckets = new AtomicReference<>();
   private volatile String lastManifestDiagnostic = "Manifest has not been loaded yet.";
 
   @PostConstruct
@@ -60,7 +61,7 @@ public class LocalProductDatasetService {
   }
 
   public String getLastDiagnostics() {
-    List<BucketRange> currentBuckets = buckets;
+    List<BucketRange> currentBuckets = buckets.get();
     int bucketCount = currentBuckets == null ? 0 : currentBuckets.size();
     return "bucketCount=" + bucketCount + "; " + lastManifestDiagnostic;
   }
@@ -115,7 +116,7 @@ public class LocalProductDatasetService {
   }
 
   private List<BucketRange> getBuckets() {
-    List<BucketRange> currentBuckets = buckets;
+    List<BucketRange> currentBuckets = buckets.get();
     if (currentBuckets != null && !currentBuckets.isEmpty()) {
       debug("[LOCAL_FALLBACK] manifest already loaded in memory. bucketCount={}", currentBuckets.size());
       return currentBuckets;
@@ -126,22 +127,23 @@ public class LocalProductDatasetService {
     }
 
     synchronized (this) {
-      if (buckets != null && !buckets.isEmpty()) {
-        debug("[LOCAL_FALLBACK] manifest already loaded in memory after lock. bucketCount={}", buckets.size());
-        return buckets;
+      List<BucketRange> lockedBuckets = buckets.get();
+      if (lockedBuckets != null && !lockedBuckets.isEmpty()) {
+        debug("[LOCAL_FALLBACK] manifest already loaded in memory after lock. bucketCount={}", lockedBuckets.size());
+        return lockedBuckets;
       }
 
-      if (buckets != null && buckets.isEmpty()) {
+      if (lockedBuckets != null && lockedBuckets.isEmpty()) {
         debug("[LOCAL_FALLBACK] previous manifest load inside lock produced 0 bucket ranges. Retrying manifest discovery now.");
       }
 
       List<BucketRange> loadedBuckets = loadManifestSafely();
       if (loadedBuckets.isEmpty()) {
         debug("[LOCAL_FALLBACK] manifest discovery returned 0 valid bucket ranges. The empty result will NOT be cached; the next lookup will retry. Check manifest placement and JSON shape.");
-        buckets = null;
+        buckets.set(null);
       }
       else {
-        buckets = loadedBuckets;
+        buckets.set(List.copyOf(loadedBuckets));
       }
 
       return loadedBuckets;
@@ -1422,13 +1424,34 @@ public class LocalProductDatasetService {
   }
 
   private static void debug(String template, Object... args) {
-    log.warn(template, args);
-    System.err.println(formatForFallbackConsole(template, args));
+    Object[] safeArgs = sanitizeLogArgs(args);
+    log.warn(withoutPlaceholders(template));
+    System.err.println(formatForFallbackConsole(template, safeArgs));
 
-    Throwable throwable = trailingThrowable(args);
+    Throwable throwable = trailingThrowable(safeArgs);
     if (throwable != null) {
-      System.err.println(throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
+      System.err.println(throwable.getClass().getSimpleName() + ": " + sanitizeLogValue(throwable.getMessage()));
     }
+  }
+
+  private static Object[] sanitizeLogArgs(Object[] args) {
+    if (args == null || args.length == 0) {
+      return args;
+    }
+    Object[] sanitized = new Object[args.length];
+    for (int i = 0; i < args.length; i++) {
+      Object arg = args[i];
+      sanitized[i] = arg instanceof String value ? sanitizeLogValue(value) : arg;
+    }
+    return sanitized;
+  }
+
+  private static String sanitizeLogValue(String value) {
+    return value == null ? null : value.replace('\n', '_').replace('\r', '_');
+  }
+
+  private static String withoutPlaceholders(String template) {
+    return template == null ? "" : template.replace("{}", "<value>");
   }
 
   private static String formatForFallbackConsole(String template, Object... args) {

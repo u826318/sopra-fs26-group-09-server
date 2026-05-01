@@ -602,13 +602,34 @@ public class OpenFoodFactsService {
   }
 
   private static void debug(String template, Object... args) {
-    log.warn(template, args);
-    System.err.println(formatForFallbackConsole(template, args));
+    Object[] safeArgs = sanitizeLogArgs(args);
+    log.warn(withoutPlaceholders(template));
+    System.err.println(formatForFallbackConsole(template, safeArgs));
 
-    Throwable throwable = trailingThrowable(args);
+    Throwable throwable = trailingThrowable(safeArgs);
     if (throwable != null) {
-      System.err.println(throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
+      System.err.println(throwable.getClass().getSimpleName() + ": " + sanitizeLogValue(throwable.getMessage()));
     }
+  }
+
+  private static Object[] sanitizeLogArgs(Object[] args) {
+    if (args == null || args.length == 0) {
+      return args;
+    }
+    Object[] sanitized = new Object[args.length];
+    for (int i = 0; i < args.length; i++) {
+      Object arg = args[i];
+      sanitized[i] = arg instanceof String value ? sanitizeLogValue(value) : arg;
+    }
+    return sanitized;
+  }
+
+  private static String sanitizeLogValue(String value) {
+    return value == null ? null : value.replace('\n', '_').replace('\r', '_');
+  }
+
+  private static String withoutPlaceholders(String template) {
+    return template == null ? "" : template.replace("{}", "<value>");
   }
 
   private static String formatForFallbackConsole(String template, Object... args) {
