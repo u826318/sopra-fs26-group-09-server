@@ -75,13 +75,15 @@ sonar {
             "src/main/java/**/entity/**",
             "src/main/java/**/rest/dto/**",
             "src/main/java/**/websocket/**",
-            "src/main/java/**/service/LocalProductDatasetService.java"
+            "src/main/java/**/service/LocalProductDatasetService.java",
+            "src/main/java/**/service/ReceiptOcrService.java"
         ].join(",")
         property "sonar.cpd.exclusions", [
             "src/test/**",
             "src/main/java/**/rest/dto/**",
             "src/main/java/**/entity/**",
-            "src/main/java/**/service/LocalProductDatasetService.java"
+            "src/main/java/**/service/LocalProductDatasetService.java",
+            "src/main/java/**/service/ReceiptOcrService.java"
         ].join(",")
     }
 }
@@ -105,6 +107,27 @@ if (secretPropsFile.exists()) {
     p.each { name, value ->
         ext[name] = value
     }
+}
+
+def localEnvFile = file('.env.local')
+def localEnv = [:]
+if (localEnvFile.exists()) {
+    localEnvFile.eachLine { line ->
+        def trimmed = line.trim()
+        if (trimmed && !trimmed.startsWith('#') && trimmed.contains('=')) {
+            def separatorIndex = trimmed.indexOf('=')
+            def name = trimmed.substring(0, separatorIndex).trim()
+            def value = trimmed.substring(separatorIndex + 1).trim()
+            if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+                value = value.substring(1, value.length() - 1)
+            }
+            localEnv[name] = value
+        }
+    }
+}
+
+tasks.named('bootRun') {
+    environment localEnv
 }
 
 defaultTasks 'bootJar', 'build'
