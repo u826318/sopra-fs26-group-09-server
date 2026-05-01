@@ -607,7 +607,7 @@ public class OpenFoodFactsService {
 
     Throwable throwable = trailingThrowable(args);
     if (throwable != null) {
-      throwable.printStackTrace(System.err);
+      System.err.println(throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
     }
   }
 
