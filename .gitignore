@@ -39,6 +39,10 @@ hs_err_pid*
 
 # don't track the local.properties -> contains secrets
 local.properties
+.env
+.env.local
+.env.*.local
+!.env.example
 
 .vscode
 .xcode*
