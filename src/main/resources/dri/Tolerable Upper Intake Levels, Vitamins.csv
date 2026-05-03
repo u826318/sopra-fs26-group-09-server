@@ -1,0 +1,331 @@
+standard,nutrient_key,display_name,category,sex,life_stage,age_min_months,age_max_months,target_value,target_min_value,target_max_value,unit,reference_type,source,notes
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,ANY,INFANT,0,6,600,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,cell footnote: e
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,ANY,INFANT,0,6,25,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,ANY,INFANT,0,6,ND,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,ANY,INFANT,7,12,600,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a; normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,ANY,INFANT,7,12,38,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c; normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,NIACIN,Niacin,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c; normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,FOLATE,Folate,VITAMIN,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c; normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,CHOLINE,Choline,VITAMIN,ANY,INFANT,7,12,ND,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d; normalized pasted 6–12 mo row to 7–12 mo to avoid overlap with 0–6 mo
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,ANY,CHILD,12,36,600,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,ANY,CHILD,12,36,400,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,ANY,CHILD,12,36,63,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,ANY,CHILD,12,36,200,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,ANY,CHILD,12,36,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,ANY,CHILD,12,36,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,ANY,CHILD,12,36,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,ANY,CHILD,12,36,10,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,ANY,CHILD,12,36,30,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,ANY,CHILD,12,36,300,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,ANY,CHILD,12,36,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,ANY,CHILD,12,36,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,ANY,CHILD,12,36,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,ANY,CHILD,12,36,1.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,ANY,CHILD,48,96,900,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,ANY,CHILD,48,96,650,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,ANY,CHILD,48,96,75,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,ANY,CHILD,48,96,300,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,ANY,CHILD,48,96,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,ANY,CHILD,48,96,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,ANY,CHILD,48,96,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,ANY,CHILD,48,96,15,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,ANY,CHILD,48,96,40,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,ANY,CHILD,48,96,400,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,ANY,CHILD,48,96,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,ANY,CHILD,48,96,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,ANY,CHILD,48,96,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,ANY,CHILD,48,96,1.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,NORMAL,108,156,1700,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,NORMAL,108,156,1200,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,NORMAL,108,156,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,NORMAL,108,156,600,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,NORMAL,108,156,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,NORMAL,108,156,20,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,NORMAL,108,156,60,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,NORMAL,108,156,600,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,NORMAL,108,156,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,NORMAL,108,156,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,NORMAL,108,156,2.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,NORMAL,168,216,2800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,NORMAL,168,216,1800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,NORMAL,168,216,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,NORMAL,168,216,800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,NORMAL,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,NORMAL,168,216,30,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,NORMAL,168,216,80,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,NORMAL,168,216,800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,NORMAL,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,NORMAL,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,NORMAL,168,216,3.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,NORMAL,228,360,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,NORMAL,228,360,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,NORMAL,228,360,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,NORMAL,228,360,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,NORMAL,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,NORMAL,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,NORMAL,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,NORMAL,228,360,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,NORMAL,228,360,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,NORMAL,228,360,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,NORMAL,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,NORMAL,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,NORMAL,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,NORMAL,228,360,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,NORMAL,372,600,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,NORMAL,372,600,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,NORMAL,372,600,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,NORMAL,372,600,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,NORMAL,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,NORMAL,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,NORMAL,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,NORMAL,372,600,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,NORMAL,372,600,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,NORMAL,372,600,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,NORMAL,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,NORMAL,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,NORMAL,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,NORMAL,372,600,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,NORMAL,612,840,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,NORMAL,612,840,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,NORMAL,612,840,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,NORMAL,612,840,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,NORMAL,612,840,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,NORMAL,612,840,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,NORMAL,612,840,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,NORMAL,612,840,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,NORMAL,612,840,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,NORMAL,612,840,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,NORMAL,612,840,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,NORMAL,612,840,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,NORMAL,612,840,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,NORMAL,612,840,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,NORMAL,852,9999,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,NORMAL,852,9999,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,NORMAL,852,9999,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,NORMAL,852,9999,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,NORMAL,852,9999,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,NORMAL,852,9999,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,NORMAL,852,9999,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,NORMAL,852,9999,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,NORMAL,852,9999,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,NORMAL,852,9999,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,NORMAL,852,9999,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,NORMAL,852,9999,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,NORMAL,852,9999,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,NORMAL,852,9999,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,NORMAL,108,156,1700,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,NORMAL,108,156,1200,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,NORMAL,108,156,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,NORMAL,108,156,600,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,NORMAL,108,156,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,NORMAL,108,156,20,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,NORMAL,108,156,60,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,NORMAL,108,156,600,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,NORMAL,108,156,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,NORMAL,108,156,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,NORMAL,108,156,2.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,NORMAL,168,216,2800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,NORMAL,168,216,1800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,NORMAL,168,216,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,NORMAL,168,216,800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,NORMAL,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,NORMAL,168,216,30,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,NORMAL,168,216,80,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,NORMAL,168,216,800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,NORMAL,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,NORMAL,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,NORMAL,168,216,3.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,NORMAL,228,360,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,NORMAL,228,360,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,NORMAL,228,360,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,NORMAL,228,360,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,NORMAL,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,NORMAL,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,NORMAL,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,NORMAL,228,360,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,NORMAL,228,360,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,NORMAL,228,360,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,NORMAL,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,NORMAL,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,NORMAL,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,NORMAL,228,360,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,NORMAL,372,600,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,NORMAL,372,600,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,NORMAL,372,600,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,NORMAL,372,600,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,NORMAL,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,NORMAL,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,NORMAL,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,NORMAL,372,600,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,NORMAL,372,600,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,NORMAL,372,600,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,NORMAL,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,NORMAL,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,NORMAL,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,NORMAL,372,600,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,NORMAL,612,840,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,NORMAL,612,840,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,NORMAL,612,840,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,NORMAL,612,840,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,NORMAL,612,840,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,NORMAL,612,840,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,NORMAL,612,840,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,NORMAL,612,840,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,NORMAL,612,840,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,NORMAL,612,840,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,NORMAL,612,840,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,NORMAL,612,840,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,NORMAL,612,840,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,NORMAL,612,840,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,NORMAL,852,9999,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,NORMAL,852,9999,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,NORMAL,852,9999,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,NORMAL,852,9999,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,NORMAL,852,9999,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,NORMAL,852,9999,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,NORMAL,852,9999,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,NORMAL,852,9999,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,PREGNANT,168,216,2800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,PREGNANT,168,216,1800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,PREGNANT,168,216,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,PREGNANT,168,216,800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,PREGNANT,168,216,30,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,PREGNANT,168,216,80,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,PREGNANT,168,216,800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,PREGNANT,168,216,3.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,PREGNANT,228,360,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,PREGNANT,228,360,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,PREGNANT,228,360,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,PREGNANT,228,360,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,PREGNANT,228,360,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,PREGNANT,228,360,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,PREGNANT,228,360,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,PREGNANT,228,360,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,PREGNANT,372,600,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,PREGNANT,372,600,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,PREGNANT,372,600,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,PREGNANT,372,600,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,PREGNANT,372,600,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,PREGNANT,372,600,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,PREGNANT,372,600,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,PREGNANT,372,600,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,LACTATING,168,216,2800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,LACTATING,168,216,1800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,LACTATING,168,216,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,LACTATING,168,216,800,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,LACTATING,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,LACTATING,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,LACTATING,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,LACTATING,168,216,30,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,LACTATING,168,216,80,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,LACTATING,168,216,800,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,LACTATING,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,LACTATING,168,216,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,LACTATING,168,216,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,LACTATING,168,216,3.0,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,LACTATING,228,360,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,LACTATING,228,360,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,LACTATING,228,360,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,LACTATING,228,360,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,LACTATING,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,LACTATING,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,LACTATING,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,LACTATING,228,360,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,LACTATING,228,360,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,LACTATING,228,360,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,LACTATING,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,LACTATING,228,360,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,LACTATING,228,360,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,LACTATING,228,360,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,LACTATING,372,600,3000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: a
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,LACTATING,372,600,2000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,LACTATING,372,600,100,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,LACTATING,372,600,1000,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,"header footnote: b,c"
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,LACTATING,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,LACTATING,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,LACTATING,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,LACTATING,372,600,35,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,LACTATING,372,600,100,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,LACTATING,372,600,1000,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: c
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,LACTATING,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,LACTATING,372,600,ND,,,mg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,LACTATING,372,600,ND,,,μg,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,LACTATING,372,600,3.5,,,g,UL,DRI tolerable upper intake level vitamins table provided by user,
+DRI_US_CA,CAROTENOIDS,Carotenoids,VITAMIN,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level vitamins table provided by user,header footnote: d

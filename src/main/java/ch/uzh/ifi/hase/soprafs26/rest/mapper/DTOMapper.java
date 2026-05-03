@@ -5,12 +5,14 @@ import org.mapstruct.factory.Mappers;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.entity.UserPersonalProfile;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPersonalProfileGetDTO;
 
 /**
  * DTOMapper
@@ -62,5 +64,9 @@ public interface DTOMapper {
 	@Mapping(source = "count", target = "count")
 	@Mapping(source = "addedAt", target = "addedAt")
 	PantryItemGetDTO convertEntityToPantryItemGetDTO(PantryItem pantryItem);
-
+	
+	@Mapping(source = "id", target = "id")
+	@Mapping(source = "user.Id", target = "userId")
+	@Mapping(source = "birthDate", target = "birthDate")
+	UserPersonalProfileGetDTO convertEntityToUserPersonalProfileGetDTO(UserPersonalProfile userPersonalProfile);
 }

@@ -1,0 +1,463 @@
+standard,nutrient_key,display_name,category,sex,life_stage,age_min_months,age_max_months,target_value,target_min_value,target_max_value,unit,reference_type,source,notes
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a; cell footnote: f
+DRI_US_CA,BORON,Boron,MINERAL,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,ANY,INFANT,0,6,1000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: g
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,ANY,INFANT,0,6,0.7,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,ANY,INFANT,0,6,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,ANY,INFANT,0,6,ND,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,ANY,INFANT,0,6,ND,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,ANY,INFANT,0,6,45,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,ANY,INFANT,0,6,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,ANY,INFANT,0,6,4,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,ANY,INFANT,0,6,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,ANY,INFANT,0,6,ND,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a; normalized 7–12 mo infant row
+DRI_US_CA,BORON,Boron,MINERAL,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,CALCIUM,Calcium,MINERAL,ANY,INFANT,7,12,1500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: g; normalized 7–12 mo infant row
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,COPPER,Copper,MINERAL,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,ANY,INFANT,7,12,0.9,,,mg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,IODINE,Iodine,MINERAL,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,IRON,Iron,MINERAL,ANY,INFANT,7,12,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b; normalized 7–12 mo infant row
+DRI_US_CA,MANGANESE,Manganese,MINERAL,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,ANY,INFANT,7,12,ND,,,μg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,NICKEL,Nickel,MINERAL,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,ANY,INFANT,7,12,ND,,,g,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h; normalized 7–12 mo infant row
+DRI_US_CA,SELENIUM,Selenium,MINERAL,ANY,INFANT,7,12,60,,,μg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,SILICON,Silicon,MINERAL,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c; normalized 7–12 mo infant row
+DRI_US_CA,SULFATE,Sulfate,MINERAL,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,ANY,INFANT,7,12,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d; normalized 7–12 mo infant row
+DRI_US_CA,ZINC,Zinc,MINERAL,ANY,INFANT,7,12,5,,,mg,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,SODIUM,Sodium,MINERAL,ANY,INFANT,7,12,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h; normalized 7–12 mo infant row
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,ANY,INFANT,7,12,ND,,,g,UL,DRI tolerable upper intake level elements table provided by user,normalized 7–12 mo infant row
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,ANY,CHILD,12,36,3,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,ANY,CHILD,12,36,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,ANY,CHILD,12,36,1000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,ANY,CHILD,12,36,1.3,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,ANY,CHILD,12,36,200,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,ANY,CHILD,12,36,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,ANY,CHILD,12,36,65,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,ANY,CHILD,12,36,2,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,ANY,CHILD,12,36,300,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,ANY,CHILD,12,36,0.2,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,ANY,CHILD,12,36,3,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,ANY,CHILD,12,36,90,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,ANY,CHILD,12,36,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,ANY,CHILD,12,36,7,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,ANY,CHILD,12,36,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,ANY,CHILD,12,36,2.3,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,ANY,CHILD,48,96,6,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,ANY,CHILD,48,96,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,ANY,CHILD,48,96,3000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,ANY,CHILD,48,96,2.2,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,ANY,CHILD,48,96,300,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,ANY,CHILD,48,96,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,ANY,CHILD,48,96,110,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,ANY,CHILD,48,96,3,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,ANY,CHILD,48,96,600,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,ANY,CHILD,48,96,0.3,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,ANY,CHILD,48,96,3,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,ANY,CHILD,48,96,150,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,ANY,CHILD,48,96,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,ANY,CHILD,48,96,12,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,ANY,CHILD,48,96,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,ANY,CHILD,48,96,2.9,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,MALE,NORMAL,108,156,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,NORMAL,108,156,3000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,MALE,NORMAL,108,156,5000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,NORMAL,108,156,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,MALE,NORMAL,108,156,600,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,MALE,NORMAL,108,156,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,NORMAL,108,156,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,NORMAL,108,156,6,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,NORMAL,108,156,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,MALE,NORMAL,108,156,0.6,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,NORMAL,108,156,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,NORMAL,108,156,280,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,MALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,MALE,NORMAL,108,156,23,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,NORMAL,108,156,3.4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,MALE,NORMAL,168,216,17,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,NORMAL,168,216,3000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,MALE,NORMAL,168,216,8000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,NORMAL,168,216,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,MALE,NORMAL,168,216,900,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,MALE,NORMAL,168,216,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,NORMAL,168,216,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,NORMAL,168,216,9,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,NORMAL,168,216,1700,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,MALE,NORMAL,168,216,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,NORMAL,168,216,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,NORMAL,168,216,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,MALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,MALE,NORMAL,168,216,34,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,NORMAL,168,216,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,MALE,NORMAL,228,360,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,NORMAL,228,360,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,MALE,NORMAL,228,360,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,NORMAL,228,360,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,MALE,NORMAL,228,360,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,MALE,NORMAL,228,360,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,NORMAL,228,360,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,NORMAL,228,360,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,NORMAL,228,360,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,MALE,NORMAL,228,360,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,NORMAL,228,360,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,NORMAL,228,360,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,MALE,NORMAL,228,360,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,MALE,NORMAL,228,360,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,NORMAL,228,360,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,MALE,NORMAL,372,600,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,NORMAL,372,600,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,MALE,NORMAL,372,600,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,NORMAL,372,600,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,MALE,NORMAL,372,600,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,MALE,NORMAL,372,600,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,NORMAL,372,600,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,NORMAL,372,600,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,NORMAL,372,600,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,MALE,NORMAL,372,600,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,NORMAL,372,600,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,NORMAL,372,600,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,MALE,NORMAL,372,600,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,MALE,NORMAL,372,600,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,NORMAL,372,600,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,MALE,NORMAL,612,840,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,NORMAL,612,840,2000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,MALE,NORMAL,612,840,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,NORMAL,612,840,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,MALE,NORMAL,612,840,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,MALE,NORMAL,612,840,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,NORMAL,612,840,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,NORMAL,612,840,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,NORMAL,612,840,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,MALE,NORMAL,612,840,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,NORMAL,612,840,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,NORMAL,612,840,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,MALE,NORMAL,612,840,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,MALE,NORMAL,612,840,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,NORMAL,612,840,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,MALE,NORMAL,852,9999,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,NORMAL,852,9999,2000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,MALE,NORMAL,852,9999,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,NORMAL,852,9999,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,MALE,NORMAL,852,9999,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,MALE,NORMAL,852,9999,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,NORMAL,852,9999,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,NORMAL,852,9999,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,NORMAL,852,9999,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,MALE,NORMAL,852,9999,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,NORMAL,852,9999,3,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,NORMAL,852,9999,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,MALE,NORMAL,852,9999,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,MALE,NORMAL,852,9999,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,NORMAL,852,9999,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,NORMAL,108,156,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,NORMAL,108,156,3000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,NORMAL,108,156,5000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,NORMAL,108,156,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,NORMAL,108,156,600,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,NORMAL,108,156,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,NORMAL,108,156,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,NORMAL,108,156,6,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,NORMAL,108,156,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,NORMAL,108,156,0.6,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,NORMAL,108,156,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,NORMAL,108,156,280,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,NORMAL,108,156,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,NORMAL,108,156,23,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,NORMAL,108,156,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,NORMAL,108,156,3.4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,NORMAL,168,216,17,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,NORMAL,168,216,3000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,NORMAL,168,216,8000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,NORMAL,168,216,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,NORMAL,168,216,900,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,NORMAL,168,216,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,NORMAL,168,216,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,NORMAL,168,216,9,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,NORMAL,168,216,1700,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,NORMAL,168,216,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,NORMAL,168,216,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,NORMAL,168,216,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,NORMAL,168,216,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,NORMAL,168,216,34,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,NORMAL,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,NORMAL,168,216,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,NORMAL,228,360,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,NORMAL,228,360,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,NORMAL,228,360,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,NORMAL,228,360,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,NORMAL,228,360,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,NORMAL,228,360,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,NORMAL,228,360,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,NORMAL,228,360,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,NORMAL,228,360,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,NORMAL,228,360,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,NORMAL,228,360,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,NORMAL,228,360,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,NORMAL,228,360,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,NORMAL,228,360,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,NORMAL,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,NORMAL,228,360,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,NORMAL,372,600,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,NORMAL,372,600,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,NORMAL,372,600,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,NORMAL,372,600,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,NORMAL,372,600,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,NORMAL,372,600,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,NORMAL,372,600,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,NORMAL,372,600,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,NORMAL,372,600,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,NORMAL,372,600,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,NORMAL,372,600,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,NORMAL,372,600,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,NORMAL,372,600,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,NORMAL,372,600,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,NORMAL,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,NORMAL,372,600,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,NORMAL,612,840,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,NORMAL,612,840,2000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,NORMAL,612,840,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,NORMAL,612,840,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,NORMAL,612,840,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,NORMAL,612,840,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,NORMAL,612,840,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,NORMAL,612,840,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,NORMAL,612,840,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,NORMAL,612,840,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,NORMAL,612,840,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,NORMAL,612,840,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,NORMAL,612,840,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,NORMAL,612,840,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,NORMAL,612,840,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,NORMAL,612,840,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,NORMAL,852,9999,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,NORMAL,852,9999,2000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,NORMAL,852,9999,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,NORMAL,852,9999,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,NORMAL,852,9999,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,NORMAL,852,9999,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,NORMAL,852,9999,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,NORMAL,852,9999,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,NORMAL,852,9999,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,NORMAL,852,9999,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,NORMAL,852,9999,3,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,NORMAL,852,9999,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,NORMAL,852,9999,1.8,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,NORMAL,852,9999,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,NORMAL,852,9999,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,NORMAL,852,9999,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,PREGNANT,168,216,17,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,PREGNANT,168,216,3000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,PREGNANT,168,216,8000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,PREGNANT,168,216,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,PREGNANT,168,216,900,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,PREGNANT,168,216,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,PREGNANT,168,216,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,PREGNANT,168,216,9,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,PREGNANT,168,216,1700,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,PREGNANT,168,216,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,PREGNANT,168,216,3.5,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,PREGNANT,168,216,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,PREGNANT,168,216,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,PREGNANT,168,216,34,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,PREGNANT,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,PREGNANT,168,216,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,PREGNANT,228,360,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,PREGNANT,228,360,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,PREGNANT,228,360,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,PREGNANT,228,360,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,PREGNANT,228,360,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,PREGNANT,228,360,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,PREGNANT,228,360,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,PREGNANT,228,360,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,PREGNANT,228,360,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,PREGNANT,228,360,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,PREGNANT,228,360,3.5,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,PREGNANT,228,360,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,PREGNANT,228,360,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,PREGNANT,228,360,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,PREGNANT,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,PREGNANT,228,360,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,PREGNANT,372,600,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,PREGNANT,372,600,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,PREGNANT,372,600,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,PREGNANT,372,600,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,PREGNANT,372,600,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,PREGNANT,372,600,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,PREGNANT,372,600,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,PREGNANT,372,600,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,PREGNANT,372,600,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,PREGNANT,372,600,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,PREGNANT,372,600,3.5,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,PREGNANT,372,600,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,PREGNANT,372,600,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,PREGNANT,372,600,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,PREGNANT,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,PREGNANT,372,600,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,LACTATING,168,216,17,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,LACTATING,168,216,3000,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,LACTATING,168,216,8000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,LACTATING,168,216,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,LACTATING,168,216,900,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,LACTATING,168,216,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,LACTATING,168,216,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,LACTATING,168,216,9,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,LACTATING,168,216,1700,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,LACTATING,168,216,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,LACTATING,168,216,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,LACTATING,168,216,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,LACTATING,168,216,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,LACTATING,168,216,34,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,LACTATING,168,216,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,LACTATING,168,216,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,LACTATING,228,360,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,LACTATING,228,360,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,LACTATING,228,360,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,LACTATING,228,360,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,LACTATING,228,360,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,LACTATING,228,360,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,LACTATING,228,360,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,LACTATING,228,360,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,LACTATING,228,360,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,LACTATING,228,360,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,LACTATING,228,360,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,LACTATING,228,360,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,LACTATING,228,360,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,LACTATING,228,360,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,LACTATING,228,360,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,LACTATING,228,360,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,ARSENIC,Arsenic,MINERAL,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: a
+DRI_US_CA,BORON,Boron,MINERAL,FEMALE,LACTATING,372,600,20,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,LACTATING,372,600,2500,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,LACTATING,372,600,10000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,LACTATING,372,600,10,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,LACTATING,372,600,1100,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,IRON,Iron,MINERAL,FEMALE,LACTATING,372,600,45,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,LACTATING,372,600,350,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: b
+DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,LACTATING,372,600,11,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,LACTATING,372,600,2000,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,NICKEL,Nickel,MINERAL,FEMALE,LACTATING,372,600,1.0,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,LACTATING,372,600,4,,,g,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,cell footnote: h
+DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,LACTATING,372,600,400,,,μg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SILICON,Silicon,MINERAL,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: c
+DRI_US_CA,SULFATE,Sulfate,MINERAL,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,VANADIUM,Vanadium,MINERAL,FEMALE,LACTATING,372,600,ND,,,mg,UL,DRI tolerable upper intake level elements table provided by user,header footnote: d
+DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,LACTATING,372,600,40,,,mg,UL,DRI tolerable upper intake level elements table provided by user,
+DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,LACTATING,372,600,ND,,,,UL,DRI tolerable upper intake level elements table provided by user,header footnote: e; cell footnote: h
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,LACTATING,372,600,3.6,,,g,UL,DRI tolerable upper intake level elements table provided by user,

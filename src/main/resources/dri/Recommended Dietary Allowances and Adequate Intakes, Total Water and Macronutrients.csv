@@ -1,0 +1,155 @@
+standard,nutrient_key,display_name,category,sex,life_stage,age_min_months,age_max_months,target_value,target_min_value,target_max_value,unit,reference_type,source,notes
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,ANY,INFANT,0,6,0.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,ANY,INFANT,0,6,60,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,ANY,INFANT,0,6,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,ANY,INFANT,0,6,31,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,ANY,INFANT,0,6,4.4,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,ANY,INFANT,0,6,0.5,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,ANY,INFANT,0,6,9.1,,,g,AI,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,ANY,INFANT,7,12,0.8,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a; normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,ANY,INFANT,7,12,95,,,g,AI,DRI macronutrients and water table provided by user,normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,ANY,INFANT,7,12,,,,g,ND,DRI macronutrients and water table provided by user,normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,FAT,Fat,MACRO,ANY,INFANT,7,12,30,,,g,AI,DRI macronutrients and water table provided by user,normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,ANY,INFANT,7,12,4.6,,,g,AI,DRI macronutrients and water table provided by user,normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,ANY,INFANT,7,12,0.5,,,g,AI,DRI macronutrients and water table provided by user,normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,PROTEIN,Protein,MACRO,ANY,INFANT,7,12,11,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b; normalized pasted 6?€?12 mo row to 7?€?12 mo to avoid overlap with 0?€?6 mo
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,ANY,CHILD,12,36,1.3,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,ANY,CHILD,12,36,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,ANY,CHILD,12,36,19,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,ANY,CHILD,12,36,,,,g,ND,DRI macronutrients and water table provided by user,cell footnote: c
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,ANY,CHILD,12,36,7,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,ANY,CHILD,12,36,0.7,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,ANY,CHILD,12,36,13,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,ANY,CHILD,48,96,1.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,ANY,CHILD,48,96,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,ANY,CHILD,48,96,25,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,ANY,CHILD,48,96,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,ANY,CHILD,48,96,10,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,ANY,CHILD,48,96,0.9,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,ANY,CHILD,48,96,19,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,MALE,NORMAL,108,156,2.4,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,MALE,NORMAL,108,156,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,MALE,NORMAL,108,156,31,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,MALE,NORMAL,108,156,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,MALE,NORMAL,108,156,12,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,MALE,NORMAL,108,156,1.2,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,MALE,NORMAL,108,156,34,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,MALE,NORMAL,168,216,3.3,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,MALE,NORMAL,168,216,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,MALE,NORMAL,168,216,38,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,MALE,NORMAL,168,216,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,MALE,NORMAL,168,216,16,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,MALE,NORMAL,168,216,1.6,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,MALE,NORMAL,168,216,52,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,MALE,NORMAL,228,360,3.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,MALE,NORMAL,228,360,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,MALE,NORMAL,228,360,38,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,MALE,NORMAL,228,360,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,MALE,NORMAL,228,360,17,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,MALE,NORMAL,228,360,1.6,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,MALE,NORMAL,228,360,56,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,MALE,NORMAL,372,600,3.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,MALE,NORMAL,372,600,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,MALE,NORMAL,372,600,38,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,MALE,NORMAL,372,600,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,MALE,NORMAL,372,600,17,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,MALE,NORMAL,372,600,1.6,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,MALE,NORMAL,372,600,56,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,MALE,NORMAL,612,840,3.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,MALE,NORMAL,612,840,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,MALE,NORMAL,612,840,30,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,MALE,NORMAL,612,840,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,MALE,NORMAL,612,840,14,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,MALE,NORMAL,612,840,1.6,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,MALE,NORMAL,612,840,56,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,MALE,NORMAL,852,9999,3.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,MALE,NORMAL,852,9999,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,MALE,NORMAL,852,9999,30,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,MALE,NORMAL,852,9999,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,MALE,NORMAL,852,9999,14,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,MALE,NORMAL,852,9999,1.6,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,MALE,NORMAL,852,9999,56,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,NORMAL,108,156,2.1,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,NORMAL,108,156,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,NORMAL,108,156,26,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,NORMAL,108,156,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,NORMAL,108,156,10,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,NORMAL,108,156,1,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,NORMAL,108,156,34,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,NORMAL,168,216,2.3,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,NORMAL,168,216,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,NORMAL,168,216,26,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,NORMAL,168,216,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,NORMAL,168,216,11,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,NORMAL,168,216,1.1,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,NORMAL,168,216,46,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,NORMAL,228,360,2.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,NORMAL,228,360,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,NORMAL,228,360,25,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,NORMAL,228,360,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,NORMAL,228,360,12,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,NORMAL,228,360,1.1,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,NORMAL,228,360,46,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,NORMAL,372,600,2.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,NORMAL,372,600,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,NORMAL,372,600,25,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,NORMAL,372,600,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,NORMAL,372,600,12,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,NORMAL,372,600,1.1,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,NORMAL,372,600,46,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,NORMAL,612,840,2.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,NORMAL,612,840,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,NORMAL,612,840,21,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,NORMAL,612,840,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,NORMAL,612,840,11,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,NORMAL,612,840,1.1,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,NORMAL,612,840,46,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,NORMAL,852,9999,2.7,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,NORMAL,852,9999,130,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,NORMAL,852,9999,21,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,NORMAL,852,9999,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,NORMAL,852,9999,11,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,NORMAL,852,9999,1.1,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,NORMAL,852,9999,46,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,PREGNANT,168,216,3,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,PREGNANT,168,216,175,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,PREGNANT,168,216,28,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,PREGNANT,168,216,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,PREGNANT,168,216,13,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,PREGNANT,168,216,1.4,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,PREGNANT,168,216,71,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,PREGNANT,228,360,3,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,PREGNANT,228,360,175,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,PREGNANT,228,360,28,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,PREGNANT,228,360,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,PREGNANT,228,360,13,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,PREGNANT,228,360,1.4,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,PREGNANT,228,360,71,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,PREGNANT,372,600,3,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,PREGNANT,372,600,175,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,PREGNANT,372,600,28,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,PREGNANT,372,600,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,PREGNANT,372,600,13,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,PREGNANT,372,600,1.4,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,PREGNANT,372,600,71,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,LACTATING,168,216,3.8,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,LACTATING,168,216,210,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,LACTATING,168,216,29,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,LACTATING,168,216,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,LACTATING,168,216,13,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,LACTATING,168,216,1.3,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,LACTATING,168,216,71,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,LACTATING,228,360,3.8,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,LACTATING,228,360,210,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,LACTATING,228,360,29,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,LACTATING,228,360,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,LACTATING,228,360,13,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,LACTATING,228,360,1.3,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,LACTATING,228,360,71,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
+DRI_US_CA,TOTAL_WATER,Total Water,WATER,FEMALE,LACTATING,372,600,3.8,,,L,AI,DRI macronutrients and water table provided by user,header footnote: a
+DRI_US_CA,CARBOHYDRATE,Carbohydrate,MACRO,FEMALE,LACTATING,372,600,210,,,g,RDA,DRI macronutrients and water table provided by user,
+DRI_US_CA,TOTAL_FIBER,Total Fiber,MACRO,FEMALE,LACTATING,372,600,29,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,FAT,Fat,MACRO,FEMALE,LACTATING,372,600,,,,g,ND,DRI macronutrients and water table provided by user,
+DRI_US_CA,LINOLEIC_ACID,Linoleic Acid,MACRO,FEMALE,LACTATING,372,600,13,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,ALPHA_LINOLENIC_ACID,??-Linolenic Acid,MACRO,FEMALE,LACTATING,372,600,1.3,,,g,AI,DRI macronutrients and water table provided by user,
+DRI_US_CA,PROTEIN,Protein,MACRO,FEMALE,LACTATING,372,600,71,,,g,RDA,DRI macronutrients and water table provided by user,header footnote: b
