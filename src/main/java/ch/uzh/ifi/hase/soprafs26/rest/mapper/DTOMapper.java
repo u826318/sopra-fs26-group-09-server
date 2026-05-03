@@ -66,7 +66,8 @@ public interface DTOMapper {
 	PantryItemGetDTO convertEntityToPantryItemGetDTO(PantryItem pantryItem);
 	
 	@Mapping(source = "id", target = "id")
-	@Mapping(source = "user.Id", target = "userId")
+	@Mapping(source = "user.id", target = "userId")
 	@Mapping(source = "birthDate", target = "birthDate")
+	@Mapping(source = "lifeStageGroup", target = "lifeStageGroup")
 	UserPersonalProfileGetDTO convertEntityToUserPersonalProfileGetDTO(UserPersonalProfile userPersonalProfile);
 }

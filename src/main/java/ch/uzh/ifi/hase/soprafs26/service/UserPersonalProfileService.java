@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.temporal.ChronoUnit;
 
+import ch.uzh.ifi.hase.soprafs26.entity.LifeStageGroup;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.entity.UserPersonalProfile;
 import ch.uzh.ifi.hase.soprafs26.repository.UserPersonalProfileRepository;
@@ -49,7 +50,8 @@ public class UserPersonalProfileService {
     public UserPersonalProfile createOrUpdatePersonalProfile(
         Long userId,
         Long authenticatedUserId,
-        LocalDate birthDate
+        LocalDate birthDate,
+        LifeStageGroup lifeStageGroup
     ) {
         validateUserPersonalProfileAccess(userId, authenticatedUserId);
         validateBirthDate(birthDate);
@@ -61,10 +63,13 @@ public class UserPersonalProfileService {
 
         profile.setUser(user);
         profile.setBirthDate(birthDate);
+        profile.setLifeStageGroup(lifeStageGroup);
+        
 
         int ageMonths = calculateAgeInMonths(profile.getBirthDate());
 
         log.info("Calculated age in months for user {}: {}", userId, ageMonths);
+        log.info("Life stage for user {}: {}", userId, lifeStageGroup);
 
         
         return userPersonalProfileRepository.save(profile);

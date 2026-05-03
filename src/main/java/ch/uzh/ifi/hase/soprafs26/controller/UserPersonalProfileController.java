@@ -45,7 +45,8 @@ public class UserPersonalProfileController {
         UserPersonalProfile profile = userPersonalProfileService.createOrUpdatePersonalProfile(
             userId,
             authenticatedUserId,
-            userPersonalProfilePostDTO.getBirthDate()
+            userPersonalProfilePostDTO.getBirthDate(),
+            userPersonalProfilePostDTO.getLifeStageGroup()
         );
 
         return DTOMapper.INSTANCE.convertEntityToUserPersonalProfileGetDTO(profile);

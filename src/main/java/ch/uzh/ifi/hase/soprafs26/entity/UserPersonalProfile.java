@@ -5,6 +5,8 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -14,8 +16,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "user_personal_profiles")
 public class UserPersonalProfile implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -27,6 +27,10 @@ public class UserPersonalProfile implements Serializable {
 
     @Column(nullable = false)
     private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LifeStageGroup lifeStageGroup;
 
     public Long getId() {
         return id;
@@ -50,5 +54,13 @@ public class UserPersonalProfile implements Serializable {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public LifeStageGroup getLifeStageGroup() {
+        return lifeStageGroup;
+    }
+
+    public void setLifeStageGroup(LifeStageGroup lifeStageGroup) {
+        this.lifeStageGroup = lifeStageGroup;
     }
 }
