@@ -736,6 +736,71 @@ class HouseholdServiceTest {
         assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
     }
 
+    // ── removeMember ────────────────────────────────────────────────────────
+
+    @Test
+    void removeMember_owner_success() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(2L, 10L)))).thenReturn(true);
+
+        householdService.removeMember(10L, 2L, 1L);
+
+        verify(householdMemberRepository).deleteById(eq(new HouseholdMemberId(2L, 10L)));
+    }
+
+    @Test
+    void removeMember_nonOwner_throws403() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(2L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.removeMember(10L, 3L, 1L));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+    }
+
+    @Test
+    void removeMember_ownerRemovingSelf_throws400() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.removeMember(10L, 1L, 1L));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void removeMember_targetNotMember_throws404() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(99L, 10L)))).thenReturn(false);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.removeMember(10L, 99L, 1L));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void removeMember_householdNotFound_throws404() {
+        when(householdRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.removeMember(99L, 2L, 1L));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
     @Test
     void getMembers_unknownUser_usesPlaceholderUsername() {
         Household household = new Household();

@@ -154,6 +154,15 @@ public class HouseholdController {
         return householdService.getMembers(householdId, authenticatedUserId);
     }
 
+    @DeleteMapping("/households/{householdId}/members/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeMember(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @PathVariable Long userId) {
+        householdService.removeMember(householdId, userId, authenticatedUserId);
+    }
+
     @GetMapping("/households/{householdId}/consumption-logs")
     @ResponseStatus(HttpStatus.OK)
     public List<ConsumptionLogGetDTO> getConsumptionLogs(

@@ -459,6 +459,29 @@ class HouseholdControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    // ── DELETE /households/{id}/members/{userId} ─────────────────────────────
+
+    @Test
+    void removeMember_owner_returns204() throws Exception {
+        mockMvc.perform(delete("/households/10/members/2").header("Authorization", TEST_TOKEN))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void removeMember_nonOwner_returns403() throws Exception {
+        org.mockito.Mockito.doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can remove members."))
+                .when(householdService).removeMember(eq(10L), eq(2L), eq(1L));
+
+        mockMvc.perform(delete("/households/10/members/2").header("Authorization", TEST_TOKEN))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void removeMember_noToken_returns401() throws Exception {
+        mockMvc.perform(delete("/households/10/members/2"))
+                .andExpect(status().isUnauthorized());
+    }
+
     // ── GET /households/{id}/consumption-logs ────────────────────────────────
 
     @Test

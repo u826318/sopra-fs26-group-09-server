@@ -9,6 +9,7 @@ public class PantryUpdateMessage {
     private String timestamp;
     private PantryItemPayload item;
     private Double newTotalCalories;
+    private Long removedUserId;
 
     public String getEventType() { return eventType; }
     public void setEventType(String eventType) { this.eventType = eventType; }
@@ -30,6 +31,9 @@ public class PantryUpdateMessage {
 
     public Double getNewTotalCalories() { return newTotalCalories; }
     public void setNewTotalCalories(Double newTotalCalories) { this.newTotalCalories = newTotalCalories; }
+
+    public Long getRemovedUserId() { return removedUserId; }
+    public void setRemovedUserId(Long removedUserId) { this.removedUserId = removedUserId; }
 
     public static class PantryItemPayload {
         private Long itemId;

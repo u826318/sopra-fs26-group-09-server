@@ -423,6 +423,34 @@ public class HouseholdService {
         }).toList();
     }
 
+    public void removeMember(Long householdId, Long targetUserId, Long requesterUserId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
+
+        if (!household.getOwnerId().equals(requesterUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can remove members.");
+        }
+
+        if (targetUserId.equals(requesterUserId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The owner cannot remove themselves from the household.");
+        }
+
+        HouseholdMemberId memberId = new HouseholdMemberId(targetUserId, householdId);
+        if (!householdMemberRepository.existsById(memberId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not a member of this household.");
+        }
+
+        householdMemberRepository.deleteById(memberId);
+        householdMemberRepository.flush();
+
+        PantryUpdateMessage msg = new PantryUpdateMessage();
+        msg.setEventType("MEMBER_REMOVED");
+        msg.setHouseholdId(householdId);
+        msg.setRemovedUserId(targetUserId);
+        msg.setTimestamp(Instant.now().toString());
+        pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
+    }
+
     private String generateInviteCode() {
         StringBuilder sb = new StringBuilder(INVITE_CODE_LENGTH);
         for (int i = 0; i < INVITE_CODE_LENGTH; i++) {
