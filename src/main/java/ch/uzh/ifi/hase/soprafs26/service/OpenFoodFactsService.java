@@ -34,6 +34,24 @@ public class OpenFoodFactsService {
   private static final String OFF_BASE = "https://world.openfoodfacts.org";
   private static final String USER_AGENT = "sopra-fs26-group-09-virtual-pantry/0.1 (OpenFoodFacts portal)";
   private static final int MAX_LIMIT = 12;
+  private static final String OFF_PRODUCT_FIELDS = String.join(",",
+      "code",
+      "product_name",
+      "abbreviated_product_name",
+      "brands",
+      "quantity",
+      "serving_size",
+      "image_front_url",
+      "image_url",
+      "url",
+      "nutrition_grades",
+      "nutriscore_data",
+      "nutriments",
+      "stores",
+      "stores_tags",
+      "purchase_places",
+      "purchase_places_tags"
+  );
 
   private final RestTemplate restTemplate = new RestTemplate();
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -104,7 +122,11 @@ public class OpenFoodFactsService {
   }
 
   private ProductDTO lookupByBarcodeFromOpenFoodFacts(String sanitizedBarcode) {
-    String url = OFF_BASE + "/api/v2/product/" + urlEncode(sanitizedBarcode);
+    String url = OFF_BASE
+        + "/api/v2/product/"
+        + urlEncode(sanitizedBarcode)
+        + "?fields="
+        + urlEncode(OFF_PRODUCT_FIELDS);
     debug("[OFF_LOOKUP] calling OpenFoodFacts. barcode='{}', url='{}'", sanitizedBarcode, url);
     String body = getWithUserAgent(url);
     debug("[OFF_LOOKUP] OpenFoodFacts HTTP body received. barcode='{}', bodyLength={}", sanitizedBarcode, body.length());
@@ -170,7 +192,11 @@ public class OpenFoodFactsService {
 
     int safeLimit = Math.max(1, Math.min(limit, MAX_LIMIT));
     String url = OFF_BASE + "/cgi/search.pl?search_terms=" + urlEncode(sanitizedQuery)
-        + "&search_simple=1&action=process&json=1&page_size=" + safeLimit;
+        + "&search_simple=1"
+        + "&action=process"
+        + "&json=1"
+        + "&page_size=" + safeLimit
+        + "&fields=" + urlEncode(OFF_PRODUCT_FIELDS);
 
     String body = getWithUserAgent(url);
 
