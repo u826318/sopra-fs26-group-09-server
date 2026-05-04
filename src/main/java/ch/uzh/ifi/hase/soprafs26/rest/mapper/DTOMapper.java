@@ -7,12 +7,14 @@ import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.entity.UserPersonalProfile;
+import ch.uzh.ifi.hase.soprafs26.entity.DailyNutrientIntake;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserAuthDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPersonalProfileGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.DailyNutrientIntakeGetDTO;
 
 /**
  * DTOMapper
@@ -70,4 +72,9 @@ public interface DTOMapper {
 	@Mapping(source = "birthDate", target = "birthDate")
 	@Mapping(source = "lifeStageGroup", target = "lifeStageGroup")
 	UserPersonalProfileGetDTO convertEntityToUserPersonalProfileGetDTO(UserPersonalProfile userPersonalProfile);
+
+	@Mapping(source = "id", target = "id")
+	@Mapping(source = "userId", target = "userId")
+	@Mapping(source = "intakeDate", target = "intakeDate")
+	DailyNutrientIntakeGetDTO convertEntityToDailyNutrientIntakeGetDTO(DailyNutrientIntake dailyNutrientIntake);
 }
