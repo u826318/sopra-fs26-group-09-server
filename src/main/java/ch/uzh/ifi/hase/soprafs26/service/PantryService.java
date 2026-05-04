@@ -37,6 +37,8 @@ public class PantryService {
     private final HouseholdMemberRepository householdMemberRepository;
     private final UserRepository userRepository;
     private final PantryBroadcastService pantryBroadcastService;
+    private final PantryItemMicronutrientService pantryItemMicronutrientService;
+    private final DailyNutrientIntakeService dailyNutrientIntakeService;
 
     public PantryService(
             PantryItemRepository pantryItemRepository,
@@ -44,7 +46,9 @@ public class PantryService {
             HouseholdRepository householdRepository,
             HouseholdMemberRepository householdMemberRepository,
             UserRepository userRepository,
-            PantryBroadcastService pantryBroadcastService
+            PantryBroadcastService pantryBroadcastService,
+            PantryItemMicronutrientService pantryItemMicronutrientService,
+            DailyNutrientIntakeService dailyNutrientIntakeService
     ) {
         this.pantryItemRepository = pantryItemRepository;
         this.consumptionLogRepository = consumptionLogRepository;
@@ -52,6 +56,8 @@ public class PantryService {
         this.householdMemberRepository = householdMemberRepository;
         this.userRepository = userRepository;
         this.pantryBroadcastService = pantryBroadcastService;
+        this.pantryItemMicronutrientService = pantryItemMicronutrientService;
+        this.dailyNutrientIntakeService = dailyNutrientIntakeService;
     }
 
     /**
@@ -106,6 +112,10 @@ public class PantryService {
                 pantryItemPostDTO.getKcalPerPackage(),
                 pantryItemPostDTO.getQuantity()
         );
+        pantryItemMicronutrientService.upsertMicronutrientsPerPackage(
+                saved,
+                pantryItemPostDTO.getPackageQuantity(),
+                pantryItemPostDTO.getNutriments());
 
         broadcastItemAdded(householdId, saved, authenticatedUserId);
 
@@ -152,6 +162,10 @@ public class PantryService {
                     normalizedName,
                     dto.getKcalPerPackage(),
                     dto.getQuantity());
+            pantryItemMicronutrientService.upsertMicronutrientsPerPackage(
+                    saved,
+                    dto.getPackageQuantity(),
+                    dto.getNutriments());
             savedItems.add(saved);
             broadcastItemAdded(householdId, saved, authenticatedUserId);
         }
@@ -275,6 +289,11 @@ public class PantryService {
         log.setConsumedCalories(consumedCalories);
         log.setConsumedAt(Instant.now());
         consumptionLogRepository.save(log);
+        dailyNutrientIntakeService.recordConsumedPantryItem(
+                authenticatedUserId,
+                pantryItem,
+                quantity,
+                log.getConsumedAt());
 
         ConsumeResult result = new ConsumeResult();
         result.setItemId(pantryItem.getId());

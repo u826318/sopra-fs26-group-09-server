@@ -1,11 +1,15 @@
 package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
+import java.util.Map;
+
 public class PantryItemPostDTO {
 
     private String barcode;
     private String name;
     private Double kcalPerPackage;
     private Integer quantity;
+    private String packageQuantity;
+    private Map<String, Object> nutriments;
 
     public String getBarcode() {
         return barcode;
@@ -37,5 +41,21 @@ public class PantryItemPostDTO {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getPackageQuantity() {
+        return packageQuantity;
+    }
+
+    public void setPackageQuantity(String packageQuantity) {
+        this.packageQuantity = packageQuantity;
+    }
+
+    public Map<String, Object> getNutriments() {
+        return nutriments;
+    }
+
+    public void setNutriments(Map<String, Object> nutriments) {
+        this.nutriments = nutriments;
     }
 }
