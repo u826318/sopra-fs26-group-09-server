@@ -1,6 +1,4 @@
 ﻿standard,nutrient_key,display_name,category,life_stage_group,age_min_months,age_max_months,unit,rda_value,ai_value,ul_value,source_files
-DRI_US_CA,CALCIUM,Calcium,MINERAL,INFANT,0,6,μg,,200000,1000000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CALCIUM,Calcium,MINERAL,INFANT,7,12,μg,,260000,1500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CALCIUM,Calcium,MINERAL,CHILD,13,36,μg,700000,,2500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CALCIUM,Calcium,MINERAL,CHILD,37,96,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CALCIUM,Calcium,MINERAL,MALE,97,156,μg,1300000,,3000000,rec_elements.csv; upper_elements.csv
@@ -18,11 +16,9 @@ DRI_US_CA,CALCIUM,Calcium,MINERAL,FEMALE,841,9999,μg,1200000,,2000000,rec_eleme
 DRI_US_CA,CALCIUM,Calcium,MINERAL,PREGNANT,157,216,μg,1300000,,3000000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CALCIUM,Calcium,MINERAL,PREGNANT,217,360,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CALCIUM,Calcium,MINERAL,PREGNANT,361,600,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CALCIUM,Calcium,MINERAL,LACTATING,157,216,μg,1300000,,3000000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CALCIUM,Calcium,MINERAL,LACTATING,217,360,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CALCIUM,Calcium,MINERAL,LACTATING,361,600,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHLORIDE,Chloride,MINERAL,INFANT,0,6,μg,,180000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHLORIDE,Chloride,MINERAL,INFANT,7,12,μg,,570000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CALCIUM,Calcium,MINERAL,BREASTFEEDING,157,216,μg,1300000,,3000000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CALCIUM,Calcium,MINERAL,BREASTFEEDING,217,360,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CALCIUM,Calcium,MINERAL,BREASTFEEDING,361,600,μg,1000000,,2500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHLORIDE,Chloride,MINERAL,CHILD,13,36,μg,,1500000,2300000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHLORIDE,Chloride,MINERAL,CHILD,37,96,μg,,1900000,2900000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHLORIDE,Chloride,MINERAL,MALE,97,156,μg,,2300000,3400000,rec_elements.csv; upper_elements.csv
@@ -40,11 +36,9 @@ DRI_US_CA,CHLORIDE,Chloride,MINERAL,FEMALE,841,9999,μg,,1800000,3600000,rec_ele
 DRI_US_CA,CHLORIDE,Chloride,MINERAL,PREGNANT,157,216,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHLORIDE,Chloride,MINERAL,PREGNANT,217,360,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHLORIDE,Chloride,MINERAL,PREGNANT,361,600,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHLORIDE,Chloride,MINERAL,LACTATING,157,216,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHLORIDE,Chloride,MINERAL,LACTATING,217,360,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHLORIDE,Chloride,MINERAL,LACTATING,361,600,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHROMIUM,Chromium,MINERAL,INFANT,0,6,μg,,0.2,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHROMIUM,Chromium,MINERAL,INFANT,7,12,μg,,5.5,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,BREASTFEEDING,157,216,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,BREASTFEEDING,217,360,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CHLORIDE,Chloride,MINERAL,BREASTFEEDING,361,600,μg,,2300000,3600000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHROMIUM,Chromium,MINERAL,CHILD,13,36,μg,,11,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHROMIUM,Chromium,MINERAL,CHILD,37,96,μg,,15,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHROMIUM,Chromium,MINERAL,MALE,97,156,μg,,25,ND,rec_elements.csv; upper_elements.csv
@@ -62,11 +56,9 @@ DRI_US_CA,CHROMIUM,Chromium,MINERAL,FEMALE,841,9999,μg,,20,ND,rec_elements.csv;
 DRI_US_CA,CHROMIUM,Chromium,MINERAL,PREGNANT,157,216,μg,,29,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHROMIUM,Chromium,MINERAL,PREGNANT,217,360,μg,,30,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,CHROMIUM,Chromium,MINERAL,PREGNANT,361,600,μg,,30,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHROMIUM,Chromium,MINERAL,LACTATING,157,216,μg,,44,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHROMIUM,Chromium,MINERAL,LACTATING,217,360,μg,,45,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,CHROMIUM,Chromium,MINERAL,LACTATING,361,600,μg,,45,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,COPPER,Copper,MINERAL,INFANT,0,6,μg,,200,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,COPPER,Copper,MINERAL,INFANT,7,12,μg,,220,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,BREASTFEEDING,157,216,μg,,44,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,BREASTFEEDING,217,360,μg,,45,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,CHROMIUM,Chromium,MINERAL,BREASTFEEDING,361,600,μg,,45,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,COPPER,Copper,MINERAL,CHILD,13,36,μg,340,,1000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,COPPER,Copper,MINERAL,CHILD,37,96,μg,440,,3000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,COPPER,Copper,MINERAL,MALE,97,156,μg,700,,5000,rec_elements.csv; upper_elements.csv
@@ -84,11 +76,9 @@ DRI_US_CA,COPPER,Copper,MINERAL,FEMALE,841,9999,μg,900,,10000,rec_elements.csv;
 DRI_US_CA,COPPER,Copper,MINERAL,PREGNANT,157,216,μg,1000,,8000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,COPPER,Copper,MINERAL,PREGNANT,217,360,μg,1000,,10000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,COPPER,Copper,MINERAL,PREGNANT,361,600,μg,1000,,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,COPPER,Copper,MINERAL,LACTATING,157,216,μg,1300,,8000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,COPPER,Copper,MINERAL,LACTATING,217,360,μg,1300,,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,COPPER,Copper,MINERAL,LACTATING,361,600,μg,1300,,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,FLUORIDE,Fluoride,MINERAL,INFANT,0,6,μg,,10,700,rec_elements.csv; upper_elements.csv
-DRI_US_CA,FLUORIDE,Fluoride,MINERAL,INFANT,7,12,μg,,500,900,rec_elements.csv; upper_elements.csv
+DRI_US_CA,COPPER,Copper,MINERAL,BREASTFEEDING,157,216,μg,1300,,8000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,COPPER,Copper,MINERAL,BREASTFEEDING,217,360,μg,1300,,10000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,COPPER,Copper,MINERAL,BREASTFEEDING,361,600,μg,1300,,10000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,FLUORIDE,Fluoride,MINERAL,CHILD,13,36,μg,,700,1300,rec_elements.csv; upper_elements.csv
 DRI_US_CA,FLUORIDE,Fluoride,MINERAL,CHILD,37,96,μg,,1000,2200,rec_elements.csv; upper_elements.csv
 DRI_US_CA,FLUORIDE,Fluoride,MINERAL,MALE,97,156,μg,,2000,10000,rec_elements.csv; upper_elements.csv
@@ -106,11 +96,9 @@ DRI_US_CA,FLUORIDE,Fluoride,MINERAL,FEMALE,841,9999,μg,,3000,10000,rec_elements
 DRI_US_CA,FLUORIDE,Fluoride,MINERAL,PREGNANT,157,216,μg,,3000,10000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,FLUORIDE,Fluoride,MINERAL,PREGNANT,217,360,μg,,3000,10000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,FLUORIDE,Fluoride,MINERAL,PREGNANT,361,600,μg,,3000,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,FLUORIDE,Fluoride,MINERAL,LACTATING,157,216,μg,,3000,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,FLUORIDE,Fluoride,MINERAL,LACTATING,217,360,μg,,3000,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,FLUORIDE,Fluoride,MINERAL,LACTATING,361,600,μg,,3000,10000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IODINE,Iodine,MINERAL,INFANT,0,6,μg,,110,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IODINE,Iodine,MINERAL,INFANT,7,12,μg,,130,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,BREASTFEEDING,157,216,μg,,3000,10000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,BREASTFEEDING,217,360,μg,,3000,10000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,FLUORIDE,Fluoride,MINERAL,BREASTFEEDING,361,600,μg,,3000,10000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IODINE,Iodine,MINERAL,CHILD,13,36,μg,90,,200,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IODINE,Iodine,MINERAL,CHILD,37,96,μg,90,,300,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IODINE,Iodine,MINERAL,MALE,97,156,μg,120,,600,rec_elements.csv; upper_elements.csv
@@ -128,11 +116,9 @@ DRI_US_CA,IODINE,Iodine,MINERAL,FEMALE,841,9999,μg,150,,1100,rec_elements.csv; 
 DRI_US_CA,IODINE,Iodine,MINERAL,PREGNANT,157,216,μg,220,,900,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IODINE,Iodine,MINERAL,PREGNANT,217,360,μg,220,,1100,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IODINE,Iodine,MINERAL,PREGNANT,361,600,μg,220,,1100,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IODINE,Iodine,MINERAL,LACTATING,157,216,μg,290,,900,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IODINE,Iodine,MINERAL,LACTATING,217,360,μg,290,,1100,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IODINE,Iodine,MINERAL,LACTATING,361,600,μg,290,,1100,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IRON,Iron,MINERAL,INFANT,0,6,μg,,270,40000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IRON,Iron,MINERAL,INFANT,7,12,μg,11000,,40000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,IODINE,Iodine,MINERAL,BREASTFEEDING,157,216,μg,290,,900,rec_elements.csv; upper_elements.csv
+DRI_US_CA,IODINE,Iodine,MINERAL,BREASTFEEDING,217,360,μg,290,,1100,rec_elements.csv; upper_elements.csv
+DRI_US_CA,IODINE,Iodine,MINERAL,BREASTFEEDING,361,600,μg,290,,1100,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IRON,Iron,MINERAL,CHILD,13,36,μg,7000,,40000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IRON,Iron,MINERAL,CHILD,37,96,μg,10000,,40000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IRON,Iron,MINERAL,MALE,97,156,μg,8000,,40000,rec_elements.csv; upper_elements.csv
@@ -150,11 +136,9 @@ DRI_US_CA,IRON,Iron,MINERAL,FEMALE,841,9999,μg,8000,,45000,rec_elements.csv; up
 DRI_US_CA,IRON,Iron,MINERAL,PREGNANT,157,216,μg,27000,,45000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IRON,Iron,MINERAL,PREGNANT,217,360,μg,27000,,45000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,IRON,Iron,MINERAL,PREGNANT,361,600,μg,27000,,45000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IRON,Iron,MINERAL,LACTATING,157,216,μg,10000,,45000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IRON,Iron,MINERAL,LACTATING,217,360,μg,9000,,45000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,IRON,Iron,MINERAL,LACTATING,361,600,μg,9000,,45000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,INFANT,0,6,μg,,30000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,INFANT,7,12,μg,,75000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,IRON,Iron,MINERAL,BREASTFEEDING,157,216,μg,10000,,45000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,IRON,Iron,MINERAL,BREASTFEEDING,217,360,μg,9000,,45000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,IRON,Iron,MINERAL,BREASTFEEDING,361,600,μg,9000,,45000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,CHILD,13,36,μg,80000,,65000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,CHILD,37,96,μg,130000,,110000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,MALE,97,156,μg,240000,,350000,rec_elements.csv; upper_elements.csv
@@ -172,11 +156,9 @@ DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,FEMALE,841,9999,μg,320000,,350000,rec_ele
 DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,PREGNANT,157,216,μg,400000,,350000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,PREGNANT,217,360,μg,350000,,350000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,PREGNANT,361,600,μg,360000,,350000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,LACTATING,157,216,μg,360000,,350000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,LACTATING,217,360,μg,310000,,350000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,LACTATING,361,600,μg,320000,,350000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MANGANESE,Manganese,MINERAL,INFANT,0,6,μg,,3,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MANGANESE,Manganese,MINERAL,INFANT,7,12,μg,,600,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,BREASTFEEDING,157,216,μg,360000,,350000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,BREASTFEEDING,217,360,μg,310000,,350000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MAGNESIUM,Magnesium,MINERAL,BREASTFEEDING,361,600,μg,320000,,350000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MANGANESE,Manganese,MINERAL,CHILD,13,36,μg,,1200,2000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MANGANESE,Manganese,MINERAL,CHILD,37,96,μg,,1500,3000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MANGANESE,Manganese,MINERAL,MALE,97,156,μg,,1900,6000,rec_elements.csv; upper_elements.csv
@@ -194,11 +176,9 @@ DRI_US_CA,MANGANESE,Manganese,MINERAL,FEMALE,841,9999,μg,,1800,11000,rec_elemen
 DRI_US_CA,MANGANESE,Manganese,MINERAL,PREGNANT,157,216,μg,,2000,9000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MANGANESE,Manganese,MINERAL,PREGNANT,217,360,μg,,2000,11000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MANGANESE,Manganese,MINERAL,PREGNANT,361,600,μg,,2000,11000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MANGANESE,Manganese,MINERAL,LACTATING,157,216,μg,,2600,9000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MANGANESE,Manganese,MINERAL,LACTATING,217,360,μg,,2600,11000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MANGANESE,Manganese,MINERAL,LACTATING,361,600,μg,,2600,11000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,INFANT,0,6,μg,,2,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,INFANT,7,12,μg,,3,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MANGANESE,Manganese,MINERAL,BREASTFEEDING,157,216,μg,,2600,9000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MANGANESE,Manganese,MINERAL,BREASTFEEDING,217,360,μg,,2600,11000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MANGANESE,Manganese,MINERAL,BREASTFEEDING,361,600,μg,,2600,11000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,CHILD,13,36,μg,17,,300,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,CHILD,37,96,μg,22,,600,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,MALE,97,156,μg,34,,1100,rec_elements.csv; upper_elements.csv
@@ -216,11 +196,9 @@ DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,FEMALE,841,9999,μg,45,,2000,rec_element
 DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,PREGNANT,157,216,μg,50,,1700,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,PREGNANT,217,360,μg,50,,2000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,PREGNANT,361,600,μg,50,,2000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,LACTATING,157,216,μg,50,,1700,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,LACTATING,217,360,μg,50,,2000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,LACTATING,361,600,μg,50,,2000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,INFANT,0,6,μg,,100000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,INFANT,7,12,μg,,275000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,BREASTFEEDING,157,216,μg,50,,1700,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,BREASTFEEDING,217,360,μg,50,,2000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,MOLYBDENUM,Molybdenum,MINERAL,BREASTFEEDING,361,600,μg,50,,2000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,CHILD,13,36,μg,460000,,3000000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,CHILD,37,96,μg,500000,,3000000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,MALE,97,156,μg,1250000,,4000000,rec_elements.csv; upper_elements.csv
@@ -238,11 +216,9 @@ DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,FEMALE,841,9999,μg,700000,,3000000,rec_
 DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,PREGNANT,157,216,μg,1250000,,3500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,PREGNANT,217,360,μg,700000,,3500000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,PREGNANT,361,600,μg,700000,,3500000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,LACTATING,157,216,μg,1250000,,4000000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,LACTATING,217,360,μg,700000,,4000000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,LACTATING,361,600,μg,700000,,4000000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,POTASSIUM,Potassium,MINERAL,INFANT,0,6,μg,,400000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,POTASSIUM,Potassium,MINERAL,INFANT,7,12,μg,,860000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,BREASTFEEDING,157,216,μg,1250000,,4000000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,BREASTFEEDING,217,360,μg,700000,,4000000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,PHOSPHORUS,Phosphorus,MINERAL,BREASTFEEDING,361,600,μg,700000,,4000000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,POTASSIUM,Potassium,MINERAL,CHILD,13,36,μg,,2000000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,POTASSIUM,Potassium,MINERAL,CHILD,37,96,μg,,2300000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,POTASSIUM,Potassium,MINERAL,MALE,97,156,μg,,2500000,ND,rec_elements.csv; upper_elements.csv
@@ -260,11 +236,9 @@ DRI_US_CA,POTASSIUM,Potassium,MINERAL,FEMALE,841,9999,μg,,2600000,ND,rec_elemen
 DRI_US_CA,POTASSIUM,Potassium,MINERAL,PREGNANT,157,216,μg,,2600000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,POTASSIUM,Potassium,MINERAL,PREGNANT,217,360,μg,,2900000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,POTASSIUM,Potassium,MINERAL,PREGNANT,361,600,μg,,2900000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,POTASSIUM,Potassium,MINERAL,LACTATING,157,216,μg,,2500000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,POTASSIUM,Potassium,MINERAL,LACTATING,217,360,μg,,2800000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,POTASSIUM,Potassium,MINERAL,LACTATING,361,600,μg,,2800000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SELENIUM,Selenium,MINERAL,INFANT,0,6,μg,,15,45,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SELENIUM,Selenium,MINERAL,INFANT,7,12,μg,,20,60,rec_elements.csv; upper_elements.csv
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,BREASTFEEDING,157,216,μg,,2500000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,BREASTFEEDING,217,360,μg,,2800000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,POTASSIUM,Potassium,MINERAL,BREASTFEEDING,361,600,μg,,2800000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SELENIUM,Selenium,MINERAL,CHILD,13,36,μg,20,,90,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SELENIUM,Selenium,MINERAL,CHILD,37,96,μg,30,,150,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SELENIUM,Selenium,MINERAL,MALE,97,156,μg,40,,280,rec_elements.csv; upper_elements.csv
@@ -282,11 +256,9 @@ DRI_US_CA,SELENIUM,Selenium,MINERAL,FEMALE,841,9999,μg,55,,400,rec_elements.csv
 DRI_US_CA,SELENIUM,Selenium,MINERAL,PREGNANT,157,216,μg,60,,400,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SELENIUM,Selenium,MINERAL,PREGNANT,217,360,μg,60,,400,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SELENIUM,Selenium,MINERAL,PREGNANT,361,600,μg,60,,400,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SELENIUM,Selenium,MINERAL,LACTATING,157,216,μg,70,,400,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SELENIUM,Selenium,MINERAL,LACTATING,217,360,μg,70,,400,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SELENIUM,Selenium,MINERAL,LACTATING,361,600,μg,70,,400,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SODIUM,Sodium,MINERAL,INFANT,0,6,μg,,110000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SODIUM,Sodium,MINERAL,INFANT,7,12,μg,,370000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,SELENIUM,Selenium,MINERAL,BREASTFEEDING,157,216,μg,70,,400,rec_elements.csv; upper_elements.csv
+DRI_US_CA,SELENIUM,Selenium,MINERAL,BREASTFEEDING,217,360,μg,70,,400,rec_elements.csv; upper_elements.csv
+DRI_US_CA,SELENIUM,Selenium,MINERAL,BREASTFEEDING,361,600,μg,70,,400,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SODIUM,Sodium,MINERAL,CHILD,13,36,μg,,800000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SODIUM,Sodium,MINERAL,CHILD,37,96,μg,,1000000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SODIUM,Sodium,MINERAL,MALE,97,156,μg,,1200000,ND,rec_elements.csv; upper_elements.csv
@@ -304,11 +276,9 @@ DRI_US_CA,SODIUM,Sodium,MINERAL,FEMALE,841,9999,μg,,1500000,ND,rec_elements.csv
 DRI_US_CA,SODIUM,Sodium,MINERAL,PREGNANT,157,216,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SODIUM,Sodium,MINERAL,PREGNANT,217,360,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,SODIUM,Sodium,MINERAL,PREGNANT,361,600,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SODIUM,Sodium,MINERAL,LACTATING,157,216,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SODIUM,Sodium,MINERAL,LACTATING,217,360,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,SODIUM,Sodium,MINERAL,LACTATING,361,600,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
-DRI_US_CA,ZINC,Zinc,MINERAL,INFANT,0,6,μg,,2000,4000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,ZINC,Zinc,MINERAL,INFANT,7,12,μg,3000,,5000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,SODIUM,Sodium,MINERAL,BREASTFEEDING,157,216,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,SODIUM,Sodium,MINERAL,BREASTFEEDING,217,360,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
+DRI_US_CA,SODIUM,Sodium,MINERAL,BREASTFEEDING,361,600,μg,,1500000,ND,rec_elements.csv; upper_elements.csv
 DRI_US_CA,ZINC,Zinc,MINERAL,CHILD,13,36,μg,3000,,7000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,ZINC,Zinc,MINERAL,CHILD,37,96,μg,5000,,12000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,ZINC,Zinc,MINERAL,MALE,97,156,μg,8000,,23000,rec_elements.csv; upper_elements.csv
@@ -326,11 +296,9 @@ DRI_US_CA,ZINC,Zinc,MINERAL,FEMALE,841,9999,μg,8000,,40000,rec_elements.csv; up
 DRI_US_CA,ZINC,Zinc,MINERAL,PREGNANT,157,216,μg,12000,,34000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,ZINC,Zinc,MINERAL,PREGNANT,217,360,μg,11000,,40000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,ZINC,Zinc,MINERAL,PREGNANT,361,600,μg,11000,,40000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,ZINC,Zinc,MINERAL,LACTATING,157,216,μg,13000,,34000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,ZINC,Zinc,MINERAL,LACTATING,217,360,μg,12000,,40000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,ZINC,Zinc,MINERAL,LACTATING,361,600,μg,12000,,40000,rec_elements.csv; upper_elements.csv
-DRI_US_CA,BIOTIN,Biotin,VITAMIN,INFANT,0,6,μg,,5,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,BIOTIN,Biotin,VITAMIN,INFANT,7,12,μg,,6,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,ZINC,Zinc,MINERAL,BREASTFEEDING,157,216,μg,13000,,34000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,ZINC,Zinc,MINERAL,BREASTFEEDING,217,360,μg,12000,,40000,rec_elements.csv; upper_elements.csv
+DRI_US_CA,ZINC,Zinc,MINERAL,BREASTFEEDING,361,600,μg,12000,,40000,rec_elements.csv; upper_elements.csv
 DRI_US_CA,BIOTIN,Biotin,VITAMIN,CHILD,13,36,μg,,8,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,BIOTIN,Biotin,VITAMIN,CHILD,37,96,μg,,12,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,BIOTIN,Biotin,VITAMIN,MALE,97,156,μg,,20,ND,rec_vitamins.csv; upper_vitamins.csv
@@ -348,11 +316,9 @@ DRI_US_CA,BIOTIN,Biotin,VITAMIN,FEMALE,841,9999,μg,,30,ND,rec_vitamins.csv; upp
 DRI_US_CA,BIOTIN,Biotin,VITAMIN,PREGNANT,157,216,μg,,30,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,BIOTIN,Biotin,VITAMIN,PREGNANT,217,360,μg,,30,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,BIOTIN,Biotin,VITAMIN,PREGNANT,361,600,μg,,30,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,BIOTIN,Biotin,VITAMIN,LACTATING,157,216,μg,,35,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,BIOTIN,Biotin,VITAMIN,LACTATING,217,360,μg,,35,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,BIOTIN,Biotin,VITAMIN,LACTATING,361,600,μg,,35,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,CHOLINE,Choline,VITAMIN,INFANT,0,6,μg,,125000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,CHOLINE,Choline,VITAMIN,INFANT,7,12,μg,,150000,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,BREASTFEEDING,157,216,μg,,35,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,BREASTFEEDING,217,360,μg,,35,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,BIOTIN,Biotin,VITAMIN,BREASTFEEDING,361,600,μg,,35,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,CHOLINE,Choline,VITAMIN,CHILD,13,36,μg,,200000,1000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,CHOLINE,Choline,VITAMIN,CHILD,37,96,μg,,250000,1000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,CHOLINE,Choline,VITAMIN,MALE,97,156,μg,,375000,2000000,rec_vitamins.csv; upper_vitamins.csv
@@ -370,11 +336,9 @@ DRI_US_CA,CHOLINE,Choline,VITAMIN,FEMALE,841,9999,μg,,425000,3500000,rec_vitami
 DRI_US_CA,CHOLINE,Choline,VITAMIN,PREGNANT,157,216,μg,,450000,3000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,CHOLINE,Choline,VITAMIN,PREGNANT,217,360,μg,,450000,3500000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,CHOLINE,Choline,VITAMIN,PREGNANT,361,600,μg,,450000,3500000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,CHOLINE,Choline,VITAMIN,LACTATING,157,216,μg,,550000,3000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,CHOLINE,Choline,VITAMIN,LACTATING,217,360,μg,,550000,3500000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,CHOLINE,Choline,VITAMIN,LACTATING,361,600,μg,,550000,3500000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,FOLATE,Folate,VITAMIN,INFANT,0,6,μg,,65,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,FOLATE,Folate,VITAMIN,INFANT,7,12,μg,,80,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,CHOLINE,Choline,VITAMIN,BREASTFEEDING,157,216,μg,,550000,3000000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,CHOLINE,Choline,VITAMIN,BREASTFEEDING,217,360,μg,,550000,3500000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,CHOLINE,Choline,VITAMIN,BREASTFEEDING,361,600,μg,,550000,3500000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,FOLATE,Folate,VITAMIN,CHILD,13,36,μg,150,,300,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,FOLATE,Folate,VITAMIN,CHILD,37,96,μg,200,,400,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,FOLATE,Folate,VITAMIN,MALE,97,156,μg,300,,600,rec_vitamins.csv; upper_vitamins.csv
@@ -392,11 +356,9 @@ DRI_US_CA,FOLATE,Folate,VITAMIN,FEMALE,841,9999,μg,400,,1000,rec_vitamins.csv; 
 DRI_US_CA,FOLATE,Folate,VITAMIN,PREGNANT,157,216,μg,600,,800,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,FOLATE,Folate,VITAMIN,PREGNANT,217,360,μg,600,,1000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,FOLATE,Folate,VITAMIN,PREGNANT,361,600,μg,600,,1000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,FOLATE,Folate,VITAMIN,LACTATING,157,216,μg,500,,800,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,FOLATE,Folate,VITAMIN,LACTATING,217,360,μg,500,,1000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,FOLATE,Folate,VITAMIN,LACTATING,361,600,μg,500,,1000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,NIACIN,Niacin,VITAMIN,INFANT,0,6,μg,,2000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,NIACIN,Niacin,VITAMIN,INFANT,7,12,μg,,4000,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,FOLATE,Folate,VITAMIN,BREASTFEEDING,157,216,μg,500,,800,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,FOLATE,Folate,VITAMIN,BREASTFEEDING,217,360,μg,500,,1000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,FOLATE,Folate,VITAMIN,BREASTFEEDING,361,600,μg,500,,1000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,NIACIN,Niacin,VITAMIN,CHILD,13,36,μg,6000,,10000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,NIACIN,Niacin,VITAMIN,CHILD,37,96,μg,8000,,15000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,NIACIN,Niacin,VITAMIN,MALE,97,156,μg,12000,,20000,rec_vitamins.csv; upper_vitamins.csv
@@ -414,11 +376,9 @@ DRI_US_CA,NIACIN,Niacin,VITAMIN,FEMALE,841,9999,μg,14000,,35000,rec_vitamins.cs
 DRI_US_CA,NIACIN,Niacin,VITAMIN,PREGNANT,157,216,μg,18000,,30000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,NIACIN,Niacin,VITAMIN,PREGNANT,217,360,μg,18000,,35000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,NIACIN,Niacin,VITAMIN,PREGNANT,361,600,μg,18000,,35000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,NIACIN,Niacin,VITAMIN,LACTATING,157,216,μg,17000,,30000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,NIACIN,Niacin,VITAMIN,LACTATING,217,360,μg,17000,,35000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,NIACIN,Niacin,VITAMIN,LACTATING,361,600,μg,17000,,35000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,INFANT,0,6,μg,,1700,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,INFANT,7,12,μg,,1800,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,NIACIN,Niacin,VITAMIN,BREASTFEEDING,157,216,μg,17000,,30000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,NIACIN,Niacin,VITAMIN,BREASTFEEDING,217,360,μg,17000,,35000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,NIACIN,Niacin,VITAMIN,BREASTFEEDING,361,600,μg,17000,,35000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,CHILD,13,36,μg,,2000,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,CHILD,37,96,μg,,3000,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,MALE,97,156,μg,,4000,ND,rec_vitamins.csv; upper_vitamins.csv
@@ -436,11 +396,9 @@ DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,FEMALE,841,9999,μg,,5000,ND
 DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,PREGNANT,157,216,μg,,6000,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,PREGNANT,217,360,μg,,6000,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,PREGNANT,361,600,μg,,6000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,LACTATING,157,216,μg,,7000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,LACTATING,217,360,μg,,7000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,LACTATING,361,600,μg,,7000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,INFANT,0,6,μg,,300,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,INFANT,7,12,μg,,400,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,BREASTFEEDING,157,216,μg,,7000,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,BREASTFEEDING,217,360,μg,,7000,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,PANTOTHENIC_ACID,Pantothenic Acid,VITAMIN,BREASTFEEDING,361,600,μg,,7000,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,CHILD,13,36,μg,500,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,CHILD,37,96,μg,600,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,MALE,97,156,μg,900,,ND,rec_vitamins.csv; upper_vitamins.csv
@@ -458,11 +416,9 @@ DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,FEMALE,841,9999,μg,1100,,ND,rec_vitamin
 DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,PREGNANT,157,216,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,PREGNANT,217,360,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,PREGNANT,361,600,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,LACTATING,157,216,μg,1600,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,LACTATING,217,360,μg,1600,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,LACTATING,361,600,μg,1600,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,THIAMIN,Thiamin,VITAMIN,INFANT,0,6,μg,,200,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,THIAMIN,Thiamin,VITAMIN,INFANT,7,12,μg,,300,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,BREASTFEEDING,157,216,μg,1600,,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,BREASTFEEDING,217,360,μg,1600,,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,RIBOFLAVIN,Riboflavin,VITAMIN,BREASTFEEDING,361,600,μg,1600,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,THIAMIN,Thiamin,VITAMIN,CHILD,13,36,μg,500,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,THIAMIN,Thiamin,VITAMIN,CHILD,37,96,μg,600,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,THIAMIN,Thiamin,VITAMIN,MALE,97,156,μg,900,,ND,rec_vitamins.csv; upper_vitamins.csv
@@ -480,11 +436,9 @@ DRI_US_CA,THIAMIN,Thiamin,VITAMIN,FEMALE,841,9999,μg,1100,,ND,rec_vitamins.csv;
 DRI_US_CA,THIAMIN,Thiamin,VITAMIN,PREGNANT,157,216,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,THIAMIN,Thiamin,VITAMIN,PREGNANT,217,360,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,THIAMIN,Thiamin,VITAMIN,PREGNANT,361,600,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,THIAMIN,Thiamin,VITAMIN,LACTATING,157,216,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,THIAMIN,Thiamin,VITAMIN,LACTATING,217,360,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,THIAMIN,Thiamin,VITAMIN,LACTATING,361,600,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,INFANT,0,6,μg,,400,600,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,INFANT,7,12,μg,,500,600,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,BREASTFEEDING,157,216,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,BREASTFEEDING,217,360,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,THIAMIN,Thiamin,VITAMIN,BREASTFEEDING,361,600,μg,1400,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,CHILD,13,36,μg,300,,600,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,CHILD,37,96,μg,400,,900,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,MALE,97,156,μg,600,,1700,rec_vitamins.csv; upper_vitamins.csv
@@ -502,11 +456,9 @@ DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,FEMALE,841,9999,μg,700,,3000,rec_vitamins
 DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,PREGNANT,157,216,μg,750,,2800,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,PREGNANT,217,360,μg,770,,3000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,PREGNANT,361,600,μg,770,,3000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,LACTATING,157,216,μg,1200,,2800,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,LACTATING,217,360,μg,1300,,3000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,LACTATING,361,600,μg,1300,,3000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,INFANT,0,6,μg,,0.4,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,INFANT,7,12,μg,,0.5,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,BREASTFEEDING,157,216,μg,1200,,2800,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,BREASTFEEDING,217,360,μg,1300,,3000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_A,Vitamin A,VITAMIN,BREASTFEEDING,361,600,μg,1300,,3000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,CHILD,13,36,μg,0.9,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,CHILD,37,96,μg,1.2,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,MALE,97,156,μg,1.8,,ND,rec_vitamins.csv; upper_vitamins.csv
@@ -524,11 +476,9 @@ DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,FEMALE,841,9999,μg,2.4,,ND,rec_vitami
 DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,PREGNANT,157,216,μg,2.6,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,PREGNANT,217,360,μg,2.6,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,PREGNANT,361,600,μg,2.6,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,LACTATING,157,216,μg,2.8,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,LACTATING,217,360,μg,2.8,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,LACTATING,361,600,μg,2.8,,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,INFANT,0,6,μg,,100,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,INFANT,7,12,μg,,300,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,BREASTFEEDING,157,216,μg,2.8,,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,BREASTFEEDING,217,360,μg,2.8,,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_B12,Vitamin B12,VITAMIN,BREASTFEEDING,361,600,μg,2.8,,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,CHILD,13,36,μg,500,,30000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,CHILD,37,96,μg,600,,40000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,MALE,97,156,μg,1000,,60000,rec_vitamins.csv; upper_vitamins.csv
@@ -546,11 +496,9 @@ DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,FEMALE,841,9999,μg,1500,,100000,rec_vit
 DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,PREGNANT,157,216,μg,1900,,80000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,PREGNANT,217,360,μg,1900,,100000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,PREGNANT,361,600,μg,1900,,100000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,LACTATING,157,216,μg,2000,,80000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,LACTATING,217,360,μg,2000,,100000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,LACTATING,361,600,μg,2000,,100000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,INFANT,0,6,μg,,40000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,INFANT,7,12,μg,,50000,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,BREASTFEEDING,157,216,μg,2000,,80000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,BREASTFEEDING,217,360,μg,2000,,100000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_B6,Vitamin B6,VITAMIN,BREASTFEEDING,361,600,μg,2000,,100000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,CHILD,13,36,μg,15000,,400000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,CHILD,37,96,μg,25000,,650000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,MALE,97,156,μg,45000,,1200000,rec_vitamins.csv; upper_vitamins.csv
@@ -568,11 +516,9 @@ DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,FEMALE,841,9999,μg,75000,,2000000,rec_vit
 DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,PREGNANT,157,216,μg,80000,,1800000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,PREGNANT,217,360,μg,85000,,2000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,PREGNANT,361,600,μg,85000,,2000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,LACTATING,157,216,μg,115000,,1800000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,LACTATING,217,360,μg,120000,,2000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,LACTATING,361,600,μg,120000,,2000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,INFANT,0,6,μg,,10,25,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,INFANT,7,12,μg,,10,38,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,BREASTFEEDING,157,216,μg,115000,,1800000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,BREASTFEEDING,217,360,μg,120000,,2000000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_C,Vitamin C,VITAMIN,BREASTFEEDING,361,600,μg,120000,,2000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,CHILD,13,36,μg,15,,63,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,CHILD,37,96,μg,15,,75,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,MALE,97,156,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
@@ -590,11 +536,9 @@ DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,FEMALE,841,9999,μg,20,,100,rec_vitamins.c
 DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,PREGNANT,157,216,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,PREGNANT,217,360,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,PREGNANT,361,600,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,LACTATING,157,216,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,LACTATING,217,360,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,LACTATING,361,600,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,INFANT,0,6,μg,,4000,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,INFANT,7,12,μg,,5000,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,BREASTFEEDING,157,216,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,BREASTFEEDING,217,360,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_D,Vitamin D,VITAMIN,BREASTFEEDING,361,600,μg,15,,100,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,CHILD,13,36,μg,6000,,200000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,CHILD,37,96,μg,7000,,300000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,MALE,97,156,μg,11000,,600000,rec_vitamins.csv; upper_vitamins.csv
@@ -612,11 +556,9 @@ DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,FEMALE,841,9999,μg,15000,,1000000,rec_vit
 DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,PREGNANT,157,216,μg,15000,,800000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,PREGNANT,217,360,μg,15000,,1000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,PREGNANT,361,600,μg,15000,,1000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,LACTATING,157,216,μg,19000,,800000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,LACTATING,217,360,μg,19000,,1000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,LACTATING,361,600,μg,19000,,1000000,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,INFANT,0,6,μg,,2,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,INFANT,7,12,μg,,2.5,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,BREASTFEEDING,157,216,μg,19000,,800000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,BREASTFEEDING,217,360,μg,19000,,1000000,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_E,Vitamin E,VITAMIN,BREASTFEEDING,361,600,μg,19000,,1000000,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,CHILD,13,36,μg,,30,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,CHILD,37,96,μg,,55,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,MALE,97,156,μg,,60,ND,rec_vitamins.csv; upper_vitamins.csv
@@ -634,6 +576,6 @@ DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,FEMALE,841,9999,μg,,90,ND,rec_vitamins.cs
 DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,PREGNANT,157,216,μg,,75,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,PREGNANT,217,360,μg,,90,ND,rec_vitamins.csv; upper_vitamins.csv
 DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,PREGNANT,361,600,μg,,90,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,LACTATING,157,216,μg,,75,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,LACTATING,217,360,μg,,90,ND,rec_vitamins.csv; upper_vitamins.csv
-DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,LACTATING,361,600,μg,,90,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,BREASTFEEDING,157,216,μg,,75,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,BREASTFEEDING,217,360,μg,,90,ND,rec_vitamins.csv; upper_vitamins.csv
+DRI_US_CA,VITAMIN_K,Vitamin K,VITAMIN,BREASTFEEDING,361,600,μg,,90,ND,rec_vitamins.csv; upper_vitamins.csv
