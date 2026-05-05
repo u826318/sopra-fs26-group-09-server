@@ -126,7 +126,7 @@ public class OpenFoodFactsService {
         + "/api/v2/product/"
         + urlEncode(sanitizedBarcode)
         + "?fields="
-        + urlEncode(OFF_PRODUCT_FIELDS);
+        + OFF_PRODUCT_FIELDS;
     debug("[OFF_LOOKUP] calling OpenFoodFacts. barcode='{}', url='{}'", sanitizedBarcode, url);
     String body = getWithUserAgent(url);
     debug("[OFF_LOOKUP] OpenFoodFacts HTTP body received. barcode='{}', bodyLength={}", sanitizedBarcode, body.length());
@@ -196,7 +196,7 @@ public class OpenFoodFactsService {
         + "&action=process"
         + "&json=1"
         + "&page_size=" + safeLimit
-        + "&fields=" + urlEncode(OFF_PRODUCT_FIELDS);
+        + "&fields=" + OFF_PRODUCT_FIELDS;
 
     String body = getWithUserAgent(url);
 

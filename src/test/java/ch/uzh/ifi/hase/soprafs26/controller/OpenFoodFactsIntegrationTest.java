@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -45,6 +46,7 @@ class OpenFoodFactsIntegrationTest {
     private static final String TEST_TOKEN = "off-integration-test-token";
     private static final String OFF_USER_AGENT = "sopra-fs26-group-09-virtual-pantry/0.1 (OpenFoodFacts portal)";
     private static final String OFF_BASE = "https://world.openfoodfacts.org";
+    private static final String OFF_FIELDS = "?fields=code,product_name,abbreviated_product_name,brands,quantity,serving_size,image_front_url,image_url,url,nutrition_grades,nutriscore_data,nutriments,stores,stores_tags,purchase_places,purchase_places_tags";
 
     @TestConfiguration
     static class LocalFallbackDisabledTestConfig {
@@ -84,7 +86,7 @@ class OpenFoodFactsIntegrationTest {
 
     @Test
     void lookupByBarcode_authenticatedRequest_returnsMappedProductFromOpenFoodFacts() throws Exception {
-        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/7610848492087"))
+        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/7610848492087" + OFF_FIELDS))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.USER_AGENT, OFF_USER_AGENT))
                 .andRespond(withSuccess("""
@@ -131,7 +133,7 @@ class OpenFoodFactsIntegrationTest {
 
     @Test
     void search_authenticatedRequest_returnsResolvedAndFallbackProducts() throws Exception {
-        mockOffServer.expect(requestTo(OFF_BASE + "/cgi/search.pl?search_terms=milk&search_simple=1&action=process&json=1&page_size=2"))
+        mockOffServer.expect(requestTo(OFF_BASE + "/cgi/search.pl?search_terms=milk&search_simple=1&action=process&json=1&page_size=2&fields=code,product_name,abbreviated_product_name,brands,quantity,serving_size,image_front_url,image_url,url,nutrition_grades,nutriscore_data,nutriments,stores,stores_tags,purchase_places,purchase_places_tags"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.USER_AGENT, OFF_USER_AGENT))
                 .andRespond(withSuccess("""
@@ -152,7 +154,7 @@ class OpenFoodFactsIntegrationTest {
                         }
                         """, MediaType.APPLICATION_JSON));
 
-        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/111"))
+        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/111" + OFF_FIELDS))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.USER_AGENT, OFF_USER_AGENT))
                 .andRespond(withSuccess("""
@@ -161,7 +163,7 @@ class OpenFoodFactsIntegrationTest {
                         }
                         """, MediaType.APPLICATION_JSON));
 
-        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/222"))
+        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/222" + OFF_FIELDS))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.USER_AGENT, OFF_USER_AGENT))
                 .andRespond(withSuccess("""
@@ -218,7 +220,7 @@ class OpenFoodFactsIntegrationTest {
 
     @Test
     void lookupByBarcode_openFoodFactsReportsMissingProduct_returns404() throws Exception {
-        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/0000"))
+        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/0000" + OFF_FIELDS))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.USER_AGENT, OFF_USER_AGENT))
                 .andRespond(withSuccess("""
@@ -236,7 +238,7 @@ class OpenFoodFactsIntegrationTest {
 
     @Test
     void lookupByBarcode_openFoodFactsServerError_returns502() throws Exception {
-        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/5000"))
+        mockOffServer.expect(requestTo(OFF_BASE + "/api/v2/product/5000" + OFF_FIELDS))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.USER_AGENT, OFF_USER_AGENT))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
