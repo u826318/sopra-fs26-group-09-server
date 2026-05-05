@@ -47,6 +47,8 @@ class PantryServiceTest {
     private HouseholdMemberRepository mockHouseholdMemberRepo;
     private UserRepository mockUserRepo;
     private PantryBroadcastService mockBroadcastService;
+    private PantryItemMicronutrientService mockMicronutrientService;
+    private DailyNutrientIntakeService mockDailyNutrientIntakeService;
     private PantryService pantryService;
 
     @BeforeEach
@@ -57,6 +59,8 @@ class PantryServiceTest {
         mockHouseholdMemberRepo = mock(HouseholdMemberRepository.class);
         mockUserRepo = mock(UserRepository.class);
         mockBroadcastService = mock(PantryBroadcastService.class);
+        mockMicronutrientService = mock(PantryItemMicronutrientService.class);
+        mockDailyNutrientIntakeService = mock(DailyNutrientIntakeService.class);
 
         pantryService = new PantryService(
                 mockPantryRepo,
@@ -64,7 +68,9 @@ class PantryServiceTest {
                 mockHouseholdRepo,
                 mockHouseholdMemberRepo,
                 mockUserRepo,
-                mockBroadcastService
+                mockBroadcastService,
+                mockMicronutrientService,
+                mockDailyNutrientIntakeService
         );
 
         when(mockUserRepo.findById(anyLong())).thenReturn(Optional.empty());
