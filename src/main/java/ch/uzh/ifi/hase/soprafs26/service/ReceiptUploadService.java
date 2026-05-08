@@ -39,6 +39,7 @@ public class ReceiptUploadService {
     private static final String HIGH_CONFIDENCE = "HIGH";
     private static final String MEDIUM_CONFIDENCE = "MEDIUM";
     private static final String LOW_CONFIDENCE = "LOW";
+    private static final String COFFEE = "coffee";
     private static final String APPLE_JUICE = "apple juice";
     private static final String ORANGE_JUICE = "orange juice";
     private static final String GREEN_TEA = "green tea";
@@ -67,19 +68,19 @@ public class ReceiptUploadService {
             "kg", "g", "mg", "ml", "cl", "dl", "l", "lb", "lbs", "oz", "pcs", "pc", "ct"
     );
     private static final Set<String> PRODUCT_TYPE_TOKENS = Set.of(
-            "banana", "apple", "avocado", "bread", "butter", "cheese", "chicken", "coffee",
+            "banana", "apple", "avocado", "bread", "butter", "cheese", "chicken", COFFEE,
             "cookie", "cookies", "egg", "eggs", "juice", "milk", "oil", "oats", "pasta",
             "rice", "sauce", "spaghetti", "tomato", "yogurt", "bar", "chips", "cereal",
             "beef", "pork", "fish", "water"
     );
     private static final Set<String> GENERIC_GROCERY_TOKENS = Set.of(
             "apple", "avocado", "banana", "basmati", "baby", "bread", "cheddar", "cheese", "cherry",
-            "chicken", "coffee", "cucumber", "egg", "granola", "herbal", "iced", "juice", "milk", "muesli",
+            "chicken", COFFEE, "cucumber", "egg", "granola", "herbal", "iced", "juice", "milk", "muesli",
             "oats", "oil", "olive", "orange", "pasta", "penne", "potato", "rice", "sauce",
             "spinach", "strawberry", "tea", "tomato", "water", "whole", "wheat", "yogurt"
     );
     private static final Set<String> STAPLE_SEARCH_TOKENS = Set.of(
-            "apple", "basmati", "bread", "cheddar", "cheese", "coffee", "egg", "granola",
+            "apple", "basmati", "bread", "cheddar", "cheese", COFFEE, "egg", "granola",
             "juice", "medium", "milk", "mineral", "natural", "oats", "olive", "orange",
             "black", "green", "herbal", "iced", "tea",
             "pasta", "penne", "rice", "sauce", "sparkling", "spaghetti", "still", "tomato",
@@ -90,7 +91,7 @@ public class ReceiptUploadService {
             "pepper", "potato", "spinach", "tomato", "zucchini", "avocado"
     );
     private static final Set<String> NON_PRODUCE_CONTEXT_TOKENS = Set.of(
-            "bread", "cheddar", "cheese", "coffee", "egg", "juice", "milk", "oats",
+            "bread", "cheddar", "cheese", COFFEE, "egg", "juice", "milk", "oats",
             "oil", "pasta", "rice", "sauce", "yogurt"
     );
     private static final Set<String> PROCESSED_PRODUCT_TOKENS = Set.of(
@@ -117,7 +118,7 @@ public class ReceiptUploadService {
             "noodles", "oats", "pasta", "penne", "rice", "spaghetti", "toast"
     );
     private static final Set<String> DRINK_TOKENS = Set.of(
-            "coffee", "juice", "milk", "mineral", "smoothie", "soda", "sparkling", "still",
+            COFFEE, "juice", "milk", "mineral", "smoothie", "soda", "sparkling", "still",
             "tea", "water"
     );
     private static final Set<String> SAUCE_TOKENS = Set.of(
@@ -780,7 +781,7 @@ public class ReceiptUploadService {
             case "cheese feta" -> "Feta Cheese";
             case "cheese gouda" -> "Gouda Cheese";
             case "cheese parmesan" -> "Parmesan Cheese";
-            case "coffee" -> "Coffee";
+            case COFFEE -> "Coffee";
             case "coffee blnd" -> "Coffee Blend";
             case "egg medium" -> "Medium Eggs";
             case BLACK_TEA -> "Black Tea";
@@ -824,7 +825,7 @@ public class ReceiptUploadService {
             case "cheese gouda" -> estimateByQuantityOrDefault(packageQuantity, 356.0, Set.of("g", "kg"), 712.0);
             case "cheese parmesan" -> estimateByQuantityOrDefault(packageQuantity, 430.0, Set.of("g", "kg"), 860.0);
             case "chicken breast" -> estimateByQuantityOrDefault(packageQuantity, 120.0, Set.of("g", "kg"), 600.0);
-            case "coffee", "coffee blnd" -> estimateByQuantityOrDefault(packageQuantity, 2.0, Set.of("g", "kg"), 5.0);
+            case COFFEE, "coffee blnd" -> estimateByQuantityOrDefault(packageQuantity, 2.0, Set.of("g", "kg"), 5.0);
             case "egg medium" -> estimateEggCalories(originalDescription, 700.0);
             case BLACK_TEA, GREEN_TEA, HERBAL_TEA -> estimateByQuantityOrDefault(packageQuantity, 1.0, Set.of("ml", "l"), 2.0);
             case "granola" -> estimateByQuantityOrDefault(packageQuantity, 450.0, Set.of("g", "kg"), 2250.0);

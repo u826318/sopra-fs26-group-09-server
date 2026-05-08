@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
@@ -217,8 +218,8 @@ class ReceiptUploadServiceTest {
         wholeMilk.setCaloriesPerPackage(640.0);
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("milk"), eq(8))).thenReturn(List.of(wholeMilk));
-        when(openFoodFactsService.search(eq("MLK 1L 3.5%"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("milk", 8)).thenReturn(List.of(wholeMilk));
+        when(openFoodFactsService.search("MLK 1L 3.5%", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -240,8 +241,8 @@ class ReceiptUploadServiceTest {
         eggs.setCaloriesPerPackage(700.0);
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("egg medium"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("medium eggs"), eq(8))).thenReturn(List.of(eggs));
+        when(openFoodFactsService.search("egg medium", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("medium eggs", 8)).thenReturn(List.of(eggs));
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -267,11 +268,11 @@ class ReceiptUploadServiceTest {
         juice.setCaloriesPerPackage(460.0);
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("rice basmati"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("basmati rice"), eq(8))).thenReturn(List.of(rice));
-        when(openFoodFactsService.search(eq("RICE BASMATI 1KG"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("apple juice"), eq(8))).thenReturn(List.of(juice));
-        when(openFoodFactsService.search(eq("APL JUICE 1L"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("rice basmati", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("basmati rice", 8)).thenReturn(List.of(rice));
+        when(openFoodFactsService.search("RICE BASMATI 1KG", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("apple juice", 8)).thenReturn(List.of(juice));
+        when(openFoodFactsService.search("APL JUICE 1L", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -334,16 +335,16 @@ class ReceiptUploadServiceTest {
         ReceiptAnalysisResponseDTO analysis = receiptAnalysis(List.of(oatsItem, cheeseItem, coffeeItem, oilItem));
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("oats"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("OATS 500G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("cheese cheddar"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("cheddar cheese"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("CHS CHDR 200G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("coffee blend"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("coffee"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("COFFEE BLND 250G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("olive oil"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("OLIV OIL 500ML"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("oats", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("OATS 500G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("cheese cheddar", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("cheddar cheese", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("CHS CHDR 200G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("coffee blend", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("coffee", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("COFFEE BLND 250G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("olive oil", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("OLIV OIL 500ML", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -373,21 +374,21 @@ class ReceiptUploadServiceTest {
         ));
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("granola"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("GRANOLA 500G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("orange juice"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("ORANGE JUICE 1L"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("feta cheese"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("FETA CHS 200G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("pasta penne"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("penne pasta"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("PSTA PENNE 500G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("tomato cherry"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("cherry tomato"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("TMTO CHERRY 250G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("spinach baby"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("baby spinach"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("SPINACH BABY 200G"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("granola", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("GRANOLA 500G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("orange juice", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("ORANGE JUICE 1L", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("feta cheese", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("FETA CHS 200G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("pasta penne", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("penne pasta", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("PSTA PENNE 500G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("tomato cherry", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("cherry tomato", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("TMTO CHERRY 250G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("spinach baby", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("baby spinach", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("SPINACH BABY 200G", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -415,18 +416,18 @@ class ReceiptUploadServiceTest {
         ));
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("water mineral"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("mineral water"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("WTR MINERAL 1.5L"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("water sparkling"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("sparkling water"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("WTR SPARKLING 1L"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("water still"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("still water"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("WTR STILL 500ML"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("bread wheat"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("wheat bread"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("BREAD WHT 500G"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("water mineral", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("mineral water", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("WTR MINERAL 1.5L", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("water sparkling", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("sparkling water", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("WTR SPARKLING 1L", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("water still", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("still water", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("WTR STILL 500ML", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("bread wheat", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("wheat bread", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("BREAD WHT 500G", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -458,16 +459,16 @@ class ReceiptUploadServiceTest {
         ));
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("green tea"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("GRN TEA 1L"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("black tea"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("BLK TEA 1L"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("iced tea"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("ICE TEA 500ML"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("milk tea"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("MLK TEA 330ML"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("herbal tea"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("HRBL TEA 750ML"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("green tea", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("GRN TEA 1L", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("black tea", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("BLK TEA 1L", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("iced tea", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("ICE TEA 500ML", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("milk tea", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("MLK TEA 330ML", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("herbal tea", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("HRBL TEA 750ML", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -484,6 +485,75 @@ class ReceiptUploadServiceTest {
     }
 
     @Test
+    void genericFallbackHelpers_coverAdditionalStapleVariants() {
+        assertEquals(
+                "Cereal",
+                ReflectionTestUtils.invokeMethod(receiptUploadService, "buildFriendlyProductName", List.of("cereal"))
+        );
+        assertEquals(
+                1900.0,
+                (Double) ReflectionTestUtils.invokeMethod(
+                        receiptUploadService,
+                        "estimateGenericFallbackCalories",
+                        List.of("cereal"),
+                        "CEREAL 500G"
+                )
+        );
+
+        assertEquals(
+                "Muesli",
+                ReflectionTestUtils.invokeMethod(receiptUploadService, "buildFriendlyProductName", List.of("muesli"))
+        );
+        assertEquals(
+                1900.0,
+                (Double) ReflectionTestUtils.invokeMethod(
+                        receiptUploadService,
+                        "estimateGenericFallbackCalories",
+                        List.of("muesli"),
+                        "MUESLI 500G"
+                )
+        );
+
+        assertEquals(
+                "Gouda Cheese",
+                ReflectionTestUtils.invokeMethod(receiptUploadService, "buildFriendlyProductName", List.of("cheese", "gouda"))
+        );
+        assertEquals(
+                712.0,
+                (Double) ReflectionTestUtils.invokeMethod(
+                        receiptUploadService,
+                        "estimateGenericFallbackCalories",
+                        List.of("cheese", "gouda"),
+                        "CHEESE GOUDA 200G"
+                )
+        );
+
+        assertEquals(
+                "Parmesan Cheese",
+                ReflectionTestUtils.invokeMethod(receiptUploadService, "buildFriendlyProductName", List.of("cheese", "parmesan"))
+        );
+        assertEquals(
+                860.0,
+                (Double) ReflectionTestUtils.invokeMethod(
+                        receiptUploadService,
+                        "estimateGenericFallbackCalories",
+                        List.of("cheese", "parmesan"),
+                        "CHEESE PARMESAN 200G"
+                )
+        );
+
+        assertEquals(
+                150.0,
+                (Double) ReflectionTestUtils.invokeMethod(
+                        receiptUploadService,
+                        "estimateGenericFallbackCalories",
+                        List.of("yogurt", "greek", "natural"),
+                        "YOGURT GREEK NATURAL 150G"
+                )
+        );
+    }
+
+    @Test
     void uploadReceipt_whenCategoryFallbackNeedsProduceAndDrinkEstimates_usesQuantityAwareDefaults() {
         mockMembership(true);
 
@@ -493,12 +563,12 @@ class ReceiptUploadServiceTest {
         ReceiptAnalysisResponseDTO analysis = receiptAnalysis(List.of(appleItem, orangeItem, avocadoItem));
 
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
-        when(openFoodFactsService.search(eq("apple"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("APL 200G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("orange"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("ORNG 300G"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("avocado"), eq(8))).thenReturn(List.of());
-        when(openFoodFactsService.search(eq("AVOC 150G"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search("apple", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("APL 200G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("orange", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("ORNG 300G", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("avocado", 8)).thenReturn(List.of());
+        when(openFoodFactsService.search("AVOC 150G", 8)).thenReturn(List.of());
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
