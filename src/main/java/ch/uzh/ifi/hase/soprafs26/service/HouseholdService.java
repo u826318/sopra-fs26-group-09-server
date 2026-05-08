@@ -294,7 +294,9 @@ public class HouseholdService {
             Instant dayEnd = current.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
             double dayCalories = logs.stream()
                     .filter(log -> !log.getConsumedAt().isBefore(dayStart) && log.getConsumedAt().isBefore(dayEnd))
-                    .mapToDouble(ConsumptionLog::getConsumedCalories)
+                    .map(ConsumptionLog::getConsumedCalories)
+                    .filter(java.util.Objects::nonNull)
+                    .mapToDouble(Double::doubleValue)
                     .sum();
             dailyBreakdown.add(new DailyBreakdownDTO(current.toString(), dayCalories));
             current = current.plusDays(1);

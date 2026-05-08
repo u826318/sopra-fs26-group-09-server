@@ -31,7 +31,7 @@ public class ConsumptionLog implements Serializable {
     @Column(nullable = false)
     private Integer consumedQuantity;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double consumedCalories;
 
     @Column(nullable = false, updatable = false)
