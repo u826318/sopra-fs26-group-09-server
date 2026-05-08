@@ -474,6 +474,30 @@ class HouseholdServiceTest {
     }
 
     @Test
+    void getStats_ignoresLogsWithUnknownCalories() {
+        ConsumptionLog knownLog = new ConsumptionLog();
+        knownLog.setConsumedCalories(900.0);
+        knownLog.setConsumedAt(Instant.parse("2026-04-10T12:00:00Z"));
+
+        ConsumptionLog unknownLog = new ConsumptionLog();
+        unknownLog.setConsumedCalories(null);
+        unknownLog.setConsumedAt(Instant.parse("2026-04-10T16:00:00Z"));
+
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(true);
+        when(consumptionLogRepository.findByHouseholdIdAndConsumedAtBetween(any(), any(), any()))
+                .thenReturn(List.of(knownLog, unknownLog));
+        when(householdBudgetRepository.findByHouseholdId(10L)).thenReturn(Optional.empty());
+
+        HouseholdStatsGetDTO result = householdService.getStats(10L, "2026-04-10", "2026-04-10", 1L);
+
+        assertEquals(900.0, result.getTotalCaloriesConsumed());
+        assertEquals(900.0, result.getAverageDailyCalories());
+        assertEquals(1, result.getDailyBreakdown().size());
+        assertEquals(900.0, result.getDailyBreakdown().get(0).getCaloriesConsumed());
+    }
+
+    @Test
     void getStats_endBeforeStart_throwsBadRequest() {
         when(householdRepository.existsById(10L)).thenReturn(true);
         when(householdMemberRepository.existsById(any())).thenReturn(true);

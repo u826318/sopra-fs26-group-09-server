@@ -219,7 +219,7 @@ public class ReceiptAbbreviationService {
   }
 
   private boolean isMostlyNumeric(String token) {
-    if (token.matches("\\d+[a-z]+") || token.matches("[a-z]+\\d+")) {
+    if (hasLeadingDigitsThenLetters(token) || hasLeadingLettersThenDigits(token)) {
       return true;
     }
     int digitCount = 0;
@@ -250,6 +250,64 @@ public class ReceiptAbbreviationService {
       char character = Character.toLowerCase(trimmed.charAt(i));
       normalized.append(Character.isLetterOrDigit(character) ? character : ' ');
     }
-    return normalized.toString().replaceAll("\\s+", " ").trim();
+    return collapseWhitespace(normalized);
+  }
+
+  private boolean hasLeadingDigitsThenLetters(String token) {
+    int index = 0;
+    while (index < token.length() && Character.isDigit(token.charAt(index))) {
+      index++;
+    }
+    if (index == 0 || index == token.length()) {
+      return false;
+    }
+    while (index < token.length()) {
+      if (!Character.isLetter(token.charAt(index))) {
+        return false;
+      }
+      index++;
+    }
+    return true;
+  }
+
+  private boolean hasLeadingLettersThenDigits(String token) {
+    int index = 0;
+    while (index < token.length() && Character.isLetter(token.charAt(index))) {
+      index++;
+    }
+    if (index == 0 || index == token.length()) {
+      return false;
+    }
+    while (index < token.length()) {
+      if (!Character.isDigit(token.charAt(index))) {
+        return false;
+      }
+      index++;
+    }
+    return true;
+  }
+
+  private String collapseWhitespace(CharSequence value) {
+    StringBuilder collapsed = new StringBuilder(value.length());
+    boolean previousWasWhitespace = true;
+    for (int i = 0; i < value.length(); i++) {
+      char character = value.charAt(i);
+      if (Character.isWhitespace(character)) {
+        if (!previousWasWhitespace) {
+          collapsed.append(' ');
+          previousWasWhitespace = true;
+        }
+      }
+      else {
+        collapsed.append(character);
+        previousWasWhitespace = false;
+      }
+    }
+
+    int length = collapsed.length();
+    if (length > 0 && collapsed.charAt(length - 1) == ' ') {
+      collapsed.setLength(length - 1);
+    }
+    return collapsed.toString();
   }
 }

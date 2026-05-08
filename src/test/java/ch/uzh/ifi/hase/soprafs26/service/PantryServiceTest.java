@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
@@ -362,6 +363,70 @@ class PantryServiceTest {
                 org.mockito.ArgumentMatchers.eq(1L),
                 org.mockito.ArgumentMatchers.argThat(msg -> "ITEM_CONSUMED".equals(msg.getEventType()))
         );
+    }
+
+    @Test
+    void consumeItem_withKcalOverride_updatesPantryItemAndPersistsOverriddenCalories() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setKcalPerPackage(100.0);
+        item.setCount(4);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 180.0, false, 99L);
+
+        assertEquals(2, result.getRemainingCount());
+        assertEquals(360.0, result.getConsumedCalories(), 0.001);
+        assertEquals(180.0, item.getKcalPerPackage(), 0.001);
+        verify(mockPantryRepo, times(2)).save(item);
+
+        ArgumentCaptor<ConsumptionLog> logCaptor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(logCaptor.capture());
+        assertEquals(360.0, logCaptor.getValue().getConsumedCalories(), 0.001);
+    }
+
+    @Test
+    void consumeItem_withSkipCalorieLogging_recordsUnknownCaloriesAndDoesNotOverwritePantryItem() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setKcalPerPackage(null);
+        item.setCount(3);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 1, 250.0, true, 99L);
+
+        assertEquals(2, result.getRemainingCount());
+        assertNull(result.getConsumedCalories());
+        assertNull(item.getKcalPerPackage());
+
+        ArgumentCaptor<ConsumptionLog> logCaptor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(logCaptor.capture());
+        assertNull(logCaptor.getValue().getConsumedCalories());
+        verify(mockPantryRepo, times(1)).save(item);
+    }
+
+    @Test
+    void consumeItem_throwsException_whenKcalOverrideIsNegative() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.consumeItem(1L, 10L, 1, -1.0, false, 99L)
+        );
+
+        assertEquals("Calories per package must not be negative.", exception.getMessage());
     }
 
     @Test

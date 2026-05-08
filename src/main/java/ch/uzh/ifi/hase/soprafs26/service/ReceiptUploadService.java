@@ -957,12 +957,10 @@ public class ReceiptUploadService {
             return defaultCalories;
         }
 
-        Matcher matcher = Pattern.compile("(\\d+)\\s*(pcs|pc|ct)\\b", Pattern.CASE_INSENSITIVE).matcher(value);
-        if (!matcher.find()) {
+        Integer count = extractCountQuantity(value);
+        if (count == null) {
             return defaultCalories;
         }
-
-        int count = Integer.parseInt(matcher.group(1));
         return roundScore(count * 70.0);
     }
 
@@ -988,7 +986,7 @@ public class ReceiptUploadService {
     }
 
     private String toTitleCase(String value) {
-        String[] words = value.split("\\s+");
+        List<String> words = splitWords(value);
         StringBuilder builder = new StringBuilder();
         for (String word : words) {
             if (word.isEmpty()) {
@@ -1003,6 +1001,60 @@ public class ReceiptUploadService {
             }
         }
         return builder.toString();
+    }
+
+    private Integer extractCountQuantity(String value) {
+        List<String> words = splitWords(value);
+        for (int i = 0; i < words.size() - 1; i++) {
+            Integer amount = parseInteger(words.get(i));
+            if (amount != null && isCountUnit(words.get(i + 1))) {
+                return amount;
+            }
+        }
+        return null;
+    }
+
+    private List<String> splitWords(String value) {
+        List<String> words = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char character = value.charAt(i);
+            if (Character.isWhitespace(character)) {
+                if (current.length() > 0) {
+                    words.add(current.toString());
+                    current.setLength(0);
+                }
+            }
+            else {
+                current.append(character);
+            }
+        }
+        if (current.length() > 0) {
+            words.add(current.toString());
+        }
+        return words;
+    }
+
+    private Integer parseInteger(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        for (int i = 0; i < value.length(); i++) {
+            if (!Character.isDigit(value.charAt(i))) {
+                return null;
+            }
+        }
+        try {
+            return Integer.parseInt(value);
+        }
+        catch (NumberFormatException exception) {
+            return null;
+        }
+    }
+
+    private boolean isCountUnit(String value) {
+        String normalized = value.toLowerCase(Locale.ROOT);
+        return normalized.equals("pcs") || normalized.equals("pc") || normalized.equals("ct");
     }
 
     private String extractPackageQuantity(String originalDescription) {
