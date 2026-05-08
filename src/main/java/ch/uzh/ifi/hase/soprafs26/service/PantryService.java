@@ -258,8 +258,21 @@ public class PantryService {
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
+        return consumeItem(householdId, itemId, quantity, null, false, authenticatedUserId);
+    }
+
+    public ConsumeResult consumeItem(
+            Long householdId,
+            Long itemId,
+            Integer quantity,
+            Double kcalPerPackageOverride,
+            boolean skipCalorieLogging,
+            Long authenticatedUserId) {
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+        if (kcalPerPackageOverride != null && kcalPerPackageOverride < 0) {
+            throw new IllegalArgumentException("Calories per package must not be negative.");
         }
 
         Household household = householdRepository.findById(householdId)
@@ -278,8 +291,17 @@ public class PantryService {
             throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
         }
 
+        if (!skipCalorieLogging && kcalPerPackageOverride != null) {
+            pantryItem.setKcalPerPackage(kcalPerPackageOverride);
+            pantryItemRepository.save(pantryItem);
+        }
+
         int remainingCount = pantryItem.getCount() - quantity;
-        double consumedCalories = pantryItem.getKcalPerPackage() * quantity;
+        Double knownCaloriesPerPackage = pantryItem.getKcalPerPackage();
+        Double consumedCalories = null;
+        if (!skipCalorieLogging && knownCaloriesPerPackage != null && knownCaloriesPerPackage > 0) {
+            consumedCalories = knownCaloriesPerPackage * quantity;
+        }
 
         ConsumptionLog log = new ConsumptionLog();
         log.setHouseholdId(householdId);

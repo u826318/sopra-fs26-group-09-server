@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import java.util.Map;
+import java.util.List;
 
 public class ReceiptMatchedItemDTO {
   private String description;
@@ -11,7 +12,12 @@ public class ReceiptMatchedItemDTO {
   private Map<String, Object> rawItem;
   private String matchStatus;
   private String matchSource;
+  private String matchConfidence;
+  private Double matchScore;
+  private String normalizedDescription;
   private ProductDTO matchedProduct;
+  private List<ReceiptProductCandidateDTO> candidateProducts;
+  private ReceiptPantryItemSuggestionDTO suggestedPantryItem;
 
   public String getDescription() {
     return description;
@@ -83,5 +89,45 @@ public class ReceiptMatchedItemDTO {
 
   public void setMatchedProduct(ProductDTO matchedProduct) {
     this.matchedProduct = matchedProduct;
+  }
+
+  public String getMatchConfidence() {
+    return matchConfidence;
+  }
+
+  public void setMatchConfidence(String matchConfidence) {
+    this.matchConfidence = matchConfidence;
+  }
+
+  public Double getMatchScore() {
+    return matchScore;
+  }
+
+  public void setMatchScore(Double matchScore) {
+    this.matchScore = matchScore;
+  }
+
+  public String getNormalizedDescription() {
+    return normalizedDescription;
+  }
+
+  public void setNormalizedDescription(String normalizedDescription) {
+    this.normalizedDescription = normalizedDescription;
+  }
+
+  public List<ReceiptProductCandidateDTO> getCandidateProducts() {
+    return candidateProducts;
+  }
+
+  public void setCandidateProducts(List<ReceiptProductCandidateDTO> candidateProducts) {
+    this.candidateProducts = candidateProducts;
+  }
+
+  public ReceiptPantryItemSuggestionDTO getSuggestedPantryItem() {
+    return suggestedPantryItem;
+  }
+
+  public void setSuggestedPantryItem(ReceiptPantryItemSuggestionDTO suggestedPantryItem) {
+    this.suggestedPantryItem = suggestedPantryItem;
   }
 }
