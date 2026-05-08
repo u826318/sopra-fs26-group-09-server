@@ -395,8 +395,116 @@ class ReceiptUploadServiceTest {
         assertEquals(450.0, response.getItems().get(1).getSuggestedPantryItem().getKcalPerPackage());
         assertEquals(530.0, response.getItems().get(2).getSuggestedPantryItem().getKcalPerPackage());
         assertEquals(1800.0, response.getItems().get(3).getSuggestedPantryItem().getKcalPerPackage());
-        assertEquals(137.5, response.getItems().get(4).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals(45.0, response.getItems().get(4).getSuggestedPantryItem().getKcalPerPackage());
         assertEquals(46.0, response.getItems().get(5).getSuggestedPantryItem().getKcalPerPackage());
+    }
+
+    @Test
+    void uploadReceipt_whenWaterAndBreadVariantsFallback_estimatesExpectedCalories() {
+        mockMembership(true);
+
+        ReceiptLineItemDTO mineralWaterItem = receiptItem("WTR MINERAL 1.5L", null);
+        ReceiptLineItemDTO sparklingWaterItem = receiptItem("WTR SPARKLING 1L", null);
+        ReceiptLineItemDTO stillWaterItem = receiptItem("WTR STILL 500ML", null);
+        ReceiptLineItemDTO wheatBreadItem = receiptItem("BREAD WHT 500G", null);
+        ReceiptAnalysisResponseDTO analysis = receiptAnalysis(List.of(
+                mineralWaterItem,
+                sparklingWaterItem,
+                stillWaterItem,
+                wheatBreadItem
+        ));
+
+        when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
+        when(openFoodFactsService.search(eq("water mineral"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("mineral water"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("WTR MINERAL 1.5L"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("water sparkling"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("sparkling water"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("WTR SPARKLING 1L"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("water still"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("still water"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("WTR STILL 500ML"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("bread wheat"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("wheat bread"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("BREAD WHT 500G"), eq(8))).thenReturn(List.of());
+
+        ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
+
+        assertEquals("Mineral Water", response.getItems().get(0).getMatchedProduct().getName());
+        assertEquals(0.0, response.getItems().get(0).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Sparkling Water", response.getItems().get(1).getMatchedProduct().getName());
+        assertEquals(0.0, response.getItems().get(1).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Still Water", response.getItems().get(2).getMatchedProduct().getName());
+        assertEquals(0.0, response.getItems().get(2).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Wheat Bread", response.getItems().get(3).getMatchedProduct().getName());
+        assertEquals(1225.0, response.getItems().get(3).getSuggestedPantryItem().getKcalPerPackage());
+    }
+
+    @Test
+    void uploadReceipt_whenTeaVariantsFallback_distinguishesNamesAndCalories() {
+        mockMembership(true);
+
+        ReceiptLineItemDTO greenTeaItem = receiptItem("GRN TEA 1L", null);
+        ReceiptLineItemDTO blackTeaItem = receiptItem("BLK TEA 1L", null);
+        ReceiptLineItemDTO icedTeaItem = receiptItem("ICE TEA 500ML", null);
+        ReceiptLineItemDTO milkTeaItem = receiptItem("MLK TEA 330ML", null);
+        ReceiptLineItemDTO herbalTeaItem = receiptItem("HRBL TEA 750ML", null);
+        ReceiptAnalysisResponseDTO analysis = receiptAnalysis(List.of(
+                greenTeaItem,
+                blackTeaItem,
+                icedTeaItem,
+                milkTeaItem,
+                herbalTeaItem
+        ));
+
+        when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
+        when(openFoodFactsService.search(eq("green tea"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("GRN TEA 1L"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("black tea"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("BLK TEA 1L"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("iced tea"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("ICE TEA 500ML"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("milk tea"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("MLK TEA 330ML"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("herbal tea"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("HRBL TEA 750ML"), eq(8))).thenReturn(List.of());
+
+        ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
+
+        assertEquals("Green Tea", response.getItems().get(0).getMatchedProduct().getName());
+        assertEquals(10.0, response.getItems().get(0).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Black Tea", response.getItems().get(1).getMatchedProduct().getName());
+        assertEquals(10.0, response.getItems().get(1).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Iced Tea", response.getItems().get(2).getMatchedProduct().getName());
+        assertEquals(150.0, response.getItems().get(2).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Milk Tea", response.getItems().get(3).getMatchedProduct().getName());
+        assertEquals(148.5, response.getItems().get(3).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals("Herbal Tea", response.getItems().get(4).getMatchedProduct().getName());
+        assertEquals(7.5, response.getItems().get(4).getSuggestedPantryItem().getKcalPerPackage());
+    }
+
+    @Test
+    void uploadReceipt_whenCategoryFallbackNeedsProduceAndDrinkEstimates_usesQuantityAwareDefaults() {
+        mockMembership(true);
+
+        ReceiptLineItemDTO appleItem = receiptItem("APL 200G", null);
+        ReceiptLineItemDTO orangeItem = receiptItem("ORNG 300G", null);
+        ReceiptLineItemDTO avocadoItem = receiptItem("AVOC 150G", null);
+        ReceiptAnalysisResponseDTO analysis = receiptAnalysis(List.of(appleItem, orangeItem, avocadoItem));
+
+        when(receiptOcrService.analyzeReceipt(any())).thenReturn(analysis);
+        when(openFoodFactsService.search(eq("apple"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("APL 200G"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("orange"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("ORNG 300G"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("avocado"), eq(8))).thenReturn(List.of());
+        when(openFoodFactsService.search(eq("AVOC 150G"), eq(8))).thenReturn(List.of());
+
+        ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
+
+        assertEquals(104.0, response.getItems().get(0).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals(141.0, response.getItems().get(1).getSuggestedPantryItem().getKcalPerPackage());
+        assertEquals(240.0, response.getItems().get(2).getSuggestedPantryItem().getKcalPerPackage());
     }
 
     @Test

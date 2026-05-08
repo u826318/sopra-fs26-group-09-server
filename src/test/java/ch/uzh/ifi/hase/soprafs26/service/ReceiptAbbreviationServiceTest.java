@@ -35,6 +35,13 @@ class ReceiptAbbreviationServiceTest {
     assertEquals("tomato sauce", receiptAbbreviationService.normalize("TMTO SAUCE 500G"));
     assertEquals("yogurt strawberry", receiptAbbreviationService.normalize("YOG STRW 150G"));
     assertEquals("apple juice", receiptAbbreviationService.normalize("APL JUICE 1L"));
+    assertEquals("green tea", receiptAbbreviationService.normalize("GRN TEA 20 CT"));
+    assertEquals("black tea", receiptAbbreviationService.normalize("BLK TEA 20 CT"));
+    assertEquals("iced tea", receiptAbbreviationService.normalize("ICE TEA 500ML"));
+    assertEquals("milk tea", receiptAbbreviationService.normalize("MLK TEA 330ML"));
+    assertEquals("herbal tea", receiptAbbreviationService.normalize("HRBL TEA 20 CT"));
+    assertEquals("orange", receiptAbbreviationService.normalize("ORNG 300G"));
+    assertEquals("wheat bread", receiptAbbreviationService.normalize("BREAD WHT 500G"));
     assertEquals("cheese cheddar", receiptAbbreviationService.normalize("CHS CHDR 200G"));
     assertEquals("coffee blend", receiptAbbreviationService.normalize("COFFEE BLND 250G"));
     assertEquals("olive oil", receiptAbbreviationService.normalize("OLIV OIL 500ML"));

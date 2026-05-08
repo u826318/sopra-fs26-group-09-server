@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,13 +39,33 @@ public class ReceiptUploadService {
     private static final String HIGH_CONFIDENCE = "HIGH";
     private static final String MEDIUM_CONFIDENCE = "MEDIUM";
     private static final String LOW_CONFIDENCE = "LOW";
+    private static final String APPLE_JUICE = "apple juice";
+    private static final String ORANGE_JUICE = "orange juice";
+    private static final String GREEN_TEA = "green tea";
+    private static final String BLACK_TEA = "black tea";
+    private static final String ICED_TEA = "iced tea";
+    private static final String MILK_TEA = "milk tea";
+    private static final String HERBAL_TEA = "herbal tea";
+    private static final String MINERAL_WATER = "mineral water";
+    private static final String SPARKLING_WATER = "sparkling water";
+    private static final String STILL_WATER = "still water";
+    private static final String BASMATI_RICE = "basmati rice";
+    private static final String CHEDDAR_CHEESE = "cheddar cheese";
+    private static final String WHOLE_BREAD = "whole bread";
+    private static final String WHEAT_BREAD = "wheat bread";
+    private static final String CHERRY_TOMATO = "cherry tomato";
+    private static final String BABY_SPINACH = "baby spinach";
+    private static final String GREEK_YOGURT = "greek yogurt";
+    private static final String STRAWBERRY_YOGURT = "strawberry yogurt";
+    private static final String PENNE_PASTA = "penne pasta";
+    private static final String SPAGHETTI_PASTA = "spaghetti pasta";
     private static final int DESCRIPTION_SEARCH_LIMIT = 8;
     private static final int MAX_CANDIDATES = 5;
     private static final double HIGH_CONFIDENCE_THRESHOLD = 0.78;
     private static final double MEDIUM_CONFIDENCE_THRESHOLD = 0.48;
-    private static final Pattern PACKAGE_QUANTITY_PATTERN = Pattern.compile(
-            "(\\d+(?:[.,]\\d+)?)\\s*(kg|g|mg|ml|cl|dl|l|lb|lbs|oz|pcs|pc|ct)\\b",
-            Pattern.CASE_INSENSITIVE);
+    private static final Set<String> PACKAGE_QUANTITY_UNITS = Set.of(
+            "kg", "g", "mg", "ml", "cl", "dl", "l", "lb", "lbs", "oz", "pcs", "pc", "ct"
+    );
     private static final Set<String> PRODUCT_TYPE_TOKENS = Set.of(
             "banana", "apple", "avocado", "bread", "butter", "cheese", "chicken", "coffee",
             "cookie", "cookies", "egg", "eggs", "juice", "milk", "oil", "oats", "pasta",
@@ -55,14 +73,15 @@ public class ReceiptUploadService {
             "beef", "pork", "fish", "water"
     );
     private static final Set<String> GENERIC_GROCERY_TOKENS = Set.of(
-            "apple", "banana", "basmati", "baby", "bread", "cheddar", "cheese", "cherry",
-            "chicken", "coffee", "cucumber", "egg", "granola", "juice", "milk", "muesli",
+            "apple", "avocado", "banana", "basmati", "baby", "bread", "cheddar", "cheese", "cherry",
+            "chicken", "coffee", "cucumber", "egg", "granola", "herbal", "iced", "juice", "milk", "muesli",
             "oats", "oil", "olive", "orange", "pasta", "penne", "potato", "rice", "sauce",
-            "spinach", "strawberry", "tomato", "water", "whole", "wheat", "yogurt"
+            "spinach", "strawberry", "tea", "tomato", "water", "whole", "wheat", "yogurt"
     );
     private static final Set<String> STAPLE_SEARCH_TOKENS = Set.of(
             "apple", "basmati", "bread", "cheddar", "cheese", "coffee", "egg", "granola",
             "juice", "medium", "milk", "mineral", "natural", "oats", "olive", "orange",
+            "black", "green", "herbal", "iced", "tea",
             "pasta", "penne", "rice", "sauce", "sparkling", "spaghetti", "still", "tomato",
             "water", "whole", "wheat", "yogurt"
     );
@@ -353,21 +372,26 @@ public class ReceiptUploadService {
 
         return switch (normalized) {
             case "egg medium" -> "medium eggs";
-            case "water mineral" -> "mineral water";
-            case "water sparkling" -> "sparkling water";
-            case "water still" -> "still water";
-            case "bread whole" -> "whole bread";
-            case "bread wheat" -> "wheat bread";
-            case "cheese cheddar" -> "cheddar cheese";
-            case "tomato cherry" -> "cherry tomato";
-            case "spinach baby" -> "baby spinach";
-            case "rice basmati" -> "basmati rice";
-            case "juice apple" -> "apple juice";
-            case "juice orange" -> "orange juice";
-            case "yogurt greek" -> "greek yogurt";
-            case "yogurt strawberry" -> "strawberry yogurt";
-            case "pasta penne" -> "penne pasta";
-            case "pasta spaghetti" -> "spaghetti pasta";
+            case "tea black" -> BLACK_TEA;
+            case "tea green" -> GREEN_TEA;
+            case "tea herbal" -> HERBAL_TEA;
+            case "tea iced" -> ICED_TEA;
+            case "tea milk" -> MILK_TEA;
+            case "water mineral" -> MINERAL_WATER;
+            case "water sparkling" -> SPARKLING_WATER;
+            case "water still" -> STILL_WATER;
+            case "bread whole" -> WHOLE_BREAD;
+            case "bread wheat" -> WHEAT_BREAD;
+            case "cheese cheddar" -> CHEDDAR_CHEESE;
+            case "tomato cherry" -> CHERRY_TOMATO;
+            case "spinach baby" -> BABY_SPINACH;
+            case "rice basmati" -> BASMATI_RICE;
+            case "juice apple" -> APPLE_JUICE;
+            case "juice orange" -> ORANGE_JUICE;
+            case "yogurt greek" -> GREEK_YOGURT;
+            case "yogurt strawberry" -> STRAWBERRY_YOGURT;
+            case "pasta penne" -> PENNE_PASTA;
+            case "pasta spaghetti" -> SPAGHETTI_PASTA;
             default -> normalized;
         };
     }
@@ -465,7 +489,8 @@ public class ReceiptUploadService {
     }
 
     private ReceiptProductCandidateDTO buildGenericFallbackCandidate(String searchQuery, String originalDescription) {
-        List<String> queryTokens = meaningfulTokens(searchQuery);
+        String canonicalQuery = firstNonBlank(reorderStapleQuery(searchQuery), searchQuery);
+        List<String> queryTokens = meaningfulTokens(canonicalQuery);
         if (!isRecognizedGenericGrocery(queryTokens)) {
             return null;
         }
@@ -655,7 +680,7 @@ public class ReceiptUploadService {
         if ("rice basmati".equals(joinedQuery) && productText.contains("basmati") && productText.contains("rice")) {
             boost += 0.22;
         }
-        if ("apple juice".equals(joinedQuery) && productText.contains("apple") && productText.contains("juice")) {
+        if (APPLE_JUICE.equals(joinedQuery) && productText.contains("apple") && productText.contains("juice")) {
             boost += 0.22;
         }
         if (product.getCaloriesPerPackage() != null && product.getCaloriesPerPackage() > 0) {
@@ -678,16 +703,15 @@ public class ReceiptUploadService {
         if (value == null) {
             return null;
         }
-        Matcher matcher = PACKAGE_QUANTITY_PATTERN.matcher(value);
-        if (!matcher.find()) {
+        QuantityAmount quantityAmount = findQuantityAmount(value);
+        if (quantityAmount == null) {
             return null;
         }
-        String amount = matcher.group(1).replace(',', '.');
+        String amount = normalizeAmountText(quantityAmount.amount());
         if (amount.endsWith(".0")) {
             amount = amount.substring(0, amount.length() - 2);
         }
-        String unit = matcher.group(2).toLowerCase(Locale.ROOT);
-        return amount + unit;
+        return amount + quantityAmount.unit();
     }
 
     private boolean shouldPreferGenericFallback(String searchQuery, ReceiptProductCandidateDTO topCandidate) {
@@ -747,32 +771,37 @@ public class ReceiptUploadService {
     private String buildFriendlyProductName(List<String> queryTokens) {
         String joined = String.join(" ", queryTokens);
         return switch (joined) {
-            case "apple juice" -> "Apple Juice";
+            case APPLE_JUICE -> "Apple Juice";
             case "banana organic" -> "Banana Organic";
-            case "bread whole" -> "Whole Bread";
-            case "bread wheat" -> "Wheat Bread";
+            case WHOLE_BREAD, "bread whole" -> "Whole Bread";
+            case WHEAT_BREAD, "bread wheat" -> "Wheat Bread";
             case "cereal" -> "Cereal";
-            case "cheese cheddar" -> "Cheddar Cheese";
+            case CHEDDAR_CHEESE -> "Cheddar Cheese";
             case "cheese feta" -> "Feta Cheese";
             case "cheese gouda" -> "Gouda Cheese";
             case "cheese parmesan" -> "Parmesan Cheese";
             case "coffee" -> "Coffee";
             case "coffee blnd" -> "Coffee Blend";
             case "egg medium" -> "Medium Eggs";
+            case BLACK_TEA -> "Black Tea";
+            case GREEN_TEA -> "Green Tea";
+            case HERBAL_TEA -> "Herbal Tea";
+            case ICED_TEA -> "Iced Tea";
             case "milk" -> "Milk";
+            case MILK_TEA -> "Milk Tea";
             case "olive oil" -> "Olive Oil";
             case "oats" -> "Oats";
-            case "orange juice" -> "Orange Juice";
+            case ORANGE_JUICE -> "Orange Juice";
             case "granola" -> "Granola";
             case "muesli" -> "Muesli";
             case "pasta penne" -> "Pasta Penne";
             case "pasta spaghetti" -> "Pasta Spaghetti";
             case "potato" -> "Potatoes";
-            case "rice basmati" -> "Basmati Rice";
-            case "sparkling water" -> "Sparkling Water";
-            case "spinach baby" -> "Baby Spinach";
-            case "still water" -> "Still Water";
-            case "tomato cherry" -> "Cherry Tomatoes";
+            case BASMATI_RICE, "rice basmati" -> "Basmati Rice";
+            case SPARKLING_WATER -> "Sparkling Water";
+            case BABY_SPINACH, "spinach baby" -> "Baby Spinach";
+            case STILL_WATER -> "Still Water";
+            case CHERRY_TOMATO, "tomato cherry" -> "Cherry Tomatoes";
             case "tomato sauce" -> "Tomato Sauce";
             case "yogurt greek" -> "Greek Yogurt";
             case "yogurt strawberry" -> "Strawberry Yogurt";
@@ -785,29 +814,34 @@ public class ReceiptUploadService {
         String packageQuantity = extractPackageQuantity(originalDescription);
 
         return switch (joined) {
-            case "apple juice" -> estimateByQuantityOrDefault(packageQuantity, 46.0, Set.of("ml", "l"), 460.0);
+            case APPLE_JUICE -> estimateByQuantityOrDefault(packageQuantity, 46.0, Set.of("ml", "l"), 460.0);
             case "banana organic" -> 135.0;
-            case "bread whole" -> estimateByQuantityOrDefault(packageQuantity, 250.0, Set.of("g", "kg"), 1870.0);
-            case "bread wheat" -> estimateByQuantityOrDefault(packageQuantity, 245.0, Set.of("g", "kg"), 1225.0);
+            case WHOLE_BREAD, "bread whole" -> estimateByQuantityOrDefault(packageQuantity, 250.0, Set.of("g", "kg"), 1870.0);
+            case WHEAT_BREAD, "bread wheat" -> estimateByQuantityOrDefault(packageQuantity, 245.0, Set.of("g", "kg"), 1225.0);
             case "cereal" -> estimateByQuantityOrDefault(packageQuantity, 380.0, Set.of("g", "kg"), 1900.0);
-            case "cheese cheddar" -> estimateByQuantityOrDefault(packageQuantity, 400.0, Set.of("g", "kg"), 800.0);
+            case CHEDDAR_CHEESE -> estimateByQuantityOrDefault(packageQuantity, 400.0, Set.of("g", "kg"), 800.0);
             case "cheese feta" -> estimateByQuantityOrDefault(packageQuantity, 265.0, Set.of("g", "kg"), 530.0);
             case "cheese gouda" -> estimateByQuantityOrDefault(packageQuantity, 356.0, Set.of("g", "kg"), 712.0);
             case "cheese parmesan" -> estimateByQuantityOrDefault(packageQuantity, 430.0, Set.of("g", "kg"), 860.0);
             case "chicken breast" -> estimateByQuantityOrDefault(packageQuantity, 120.0, Set.of("g", "kg"), 600.0);
             case "coffee", "coffee blnd" -> estimateByQuantityOrDefault(packageQuantity, 2.0, Set.of("g", "kg"), 5.0);
             case "egg medium" -> estimateEggCalories(originalDescription, 700.0);
+            case BLACK_TEA, GREEN_TEA, HERBAL_TEA -> estimateByQuantityOrDefault(packageQuantity, 1.0, Set.of("ml", "l"), 2.0);
             case "granola" -> estimateByQuantityOrDefault(packageQuantity, 450.0, Set.of("g", "kg"), 2250.0);
+            case ICED_TEA -> estimateByQuantityOrDefault(packageQuantity, 30.0, Set.of("ml", "l"), 300.0);
             case "milk" -> estimateByQuantityOrDefault(packageQuantity, 64.0, Set.of("ml", "l"), 640.0);
+            case MILK_TEA -> estimateByQuantityOrDefault(packageQuantity, 45.0, Set.of("ml", "l"), 450.0);
             case "muesli" -> estimateByQuantityOrDefault(packageQuantity, 380.0, Set.of("g", "kg"), 1900.0);
             case "oats" -> estimateByQuantityOrDefault(packageQuantity, 370.0, Set.of("g", "kg"), 1850.0);
             case "olive oil" -> estimateByQuantityOrDefault(packageQuantity, 820.0, Set.of("ml", "l"), 4100.0);
-            case "orange juice" -> estimateByQuantityOrDefault(packageQuantity, 45.0, Set.of("ml", "l"), 450.0);
+            case ORANGE_JUICE -> estimateByQuantityOrDefault(packageQuantity, 45.0, Set.of("ml", "l"), 450.0);
             case "pasta penne" -> estimateByQuantityOrDefault(packageQuantity, 360.0, Set.of("g", "kg"), 1800.0);
             case "pasta spaghetti" -> estimateByQuantityOrDefault(packageQuantity, 360.0, Set.of("g", "kg"), 1800.0);
-            case "rice basmati" -> estimateByQuantityOrDefault(packageQuantity, 360.0, Set.of("g", "kg"), 3600.0);
-            case "sparkling water", "still water" -> 0.0;
+            case BASMATI_RICE, "rice basmati" -> estimateByQuantityOrDefault(packageQuantity, 360.0, Set.of("g", "kg"), 3600.0);
+            case SPARKLING_WATER, STILL_WATER, MINERAL_WATER -> 0.0;
             case "tomato sauce" -> estimateByQuantityOrDefault(packageQuantity, 35.0, Set.of("g", "kg", "ml", "l"), 175.0);
+            case BABY_SPINACH, "spinach baby" -> estimateByQuantityOrDefault(packageQuantity, 23.0, Set.of("g", "kg"), 46.0);
+            case CHERRY_TOMATO, "tomato cherry" -> estimateByQuantityOrDefault(packageQuantity, 18.0, Set.of("g", "kg"), 36.0);
             case "yogurt greek" -> estimateByQuantityOrDefault(packageQuantity, 95.0, Set.of("g", "kg"), 150.0);
             case "yogurt greek natural" -> estimateByQuantityOrDefault(packageQuantity, 100.0, Set.of("g", "kg"), 150.0);
             case "yogurt strawberry" -> estimateByQuantityOrDefault(packageQuantity, 110.0, Set.of("g", "kg"), 165.0);
@@ -829,6 +863,15 @@ public class ReceiptUploadService {
             if (queryTokens.contains("water")) {
                 return 0.0;
             }
+            if (queryTokens.contains("tea")) {
+                if (queryTokens.contains("milk")) {
+                    return estimateByQuantityOrDefault(packageQuantity, 45.0, Set.of("ml", "l"), 450.0);
+                }
+                if (queryTokens.contains("iced")) {
+                    return estimateByQuantityOrDefault(packageQuantity, 30.0, Set.of("ml", "l"), 300.0);
+                }
+                return estimateByQuantityOrDefault(packageQuantity, 1.0, Set.of("ml", "l"), 2.0);
+            }
             if (queryTokens.contains("juice")) {
                 if (queryTokens.contains("orange")) {
                     return estimateByQuantityOrDefault(packageQuantity, 45.0, Set.of("ml", "l"), 450.0);
@@ -837,9 +880,6 @@ public class ReceiptUploadService {
             }
             if (queryTokens.contains("milk")) {
                 return estimateByQuantityOrDefault(packageQuantity, 64.0, Set.of("ml", "l"), 640.0);
-            }
-            if (queryTokens.contains("tea")) {
-                return estimateByQuantityOrDefault(packageQuantity, 1.0, Set.of("g", "kg", "ml", "l"), 2.0);
             }
             return estimateByQuantityOrDefault(packageQuantity, 2.0, Set.of("g", "kg", "ml", "l"), 5.0);
         }
@@ -970,19 +1010,7 @@ public class ReceiptUploadService {
             return null;
         }
 
-        Matcher matcher = PACKAGE_QUANTITY_PATTERN.matcher(value);
-        if (!matcher.find()) {
-            return null;
-        }
-
-        try {
-            double amount = Double.parseDouble(matcher.group(1).replace(',', '.'));
-            String unit = matcher.group(2).toLowerCase(Locale.ROOT);
-            return new QuantityAmount(amount, unit);
-        }
-        catch (NumberFormatException exception) {
-            return null;
-        }
+        return findQuantityAmount(value);
     }
 
     private String toTitleCase(String value) {
@@ -1063,14 +1091,95 @@ public class ReceiptUploadService {
             return null;
         }
 
-        Matcher matcher = PACKAGE_QUANTITY_PATTERN.matcher(value);
-        if (!matcher.find()) {
+        QuantityAmount quantityAmount = findQuantityAmount(value);
+        if (quantityAmount == null) {
             return null;
         }
+        return normalizeAmountText(quantityAmount.amount()) + quantityAmount.unit();
+    }
 
-        String amount = matcher.group(1).replace(',', '.');
-        String unit = matcher.group(2).toLowerCase(Locale.ROOT);
-        return amount + unit;
+    private QuantityAmount findQuantityAmount(String value) {
+        for (int index = 0; index < value.length(); index++) {
+            char character = value.charAt(index);
+            if (!Character.isDigit(character)) {
+                continue;
+            }
+
+            int amountEnd = consumeAmount(value, index);
+            if (amountEnd == index) {
+                continue;
+            }
+
+            int unitStart = skipWhitespace(value, amountEnd);
+            int unitEnd = consumeLetters(value, unitStart);
+            if (unitEnd == unitStart) {
+                continue;
+            }
+
+            String unit = value.substring(unitStart, unitEnd).toLowerCase(Locale.ROOT);
+            if (!PACKAGE_QUANTITY_UNITS.contains(unit)) {
+                continue;
+            }
+
+            Double amount = parseDoubleValue(value.substring(index, amountEnd));
+            if (amount == null) {
+                continue;
+            }
+            return new QuantityAmount(amount, unit);
+        }
+        return null;
+    }
+
+    private int consumeAmount(String value, int startIndex) {
+        boolean seenSeparator = false;
+        int index = startIndex;
+        while (index < value.length()) {
+            char character = value.charAt(index);
+            if (Character.isDigit(character)) {
+                index++;
+                continue;
+            }
+            if ((character == '.' || character == ',') && !seenSeparator) {
+                seenSeparator = true;
+                index++;
+                continue;
+            }
+            break;
+        }
+        return index;
+    }
+
+    private int skipWhitespace(String value, int startIndex) {
+        int index = startIndex;
+        while (index < value.length() && Character.isWhitespace(value.charAt(index))) {
+            index++;
+        }
+        return index;
+    }
+
+    private int consumeLetters(String value, int startIndex) {
+        int index = startIndex;
+        while (index < value.length() && Character.isLetter(value.charAt(index))) {
+            index++;
+        }
+        return index;
+    }
+
+    private Double parseDoubleValue(String value) {
+        try {
+            return Double.parseDouble(value.replace(',', '.'));
+        }
+        catch (NumberFormatException exception) {
+            return null;
+        }
+    }
+
+    private String normalizeAmountText(double amount) {
+        String amountText = Double.toString(amount);
+        if (amountText.endsWith(".0")) {
+            return amountText.substring(0, amountText.length() - 2);
+        }
+        return amountText;
     }
 
     private double bestTokenScore(String queryToken, List<String> productTokens) {
