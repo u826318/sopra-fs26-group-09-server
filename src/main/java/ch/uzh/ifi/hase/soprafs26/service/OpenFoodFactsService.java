@@ -11,8 +11,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,6 +36,7 @@ public class OpenFoodFactsService {
 
   private static final String OFF_BASE = "https://world.openfoodfacts.org";
   private static final String USER_AGENT = "sopra-fs26-group-09-virtual-pantry/0.1 (OpenFoodFacts portal)";
+  private static final String OFF_PRODUCT_API_PATH = "/api/v2/product/";
   private static final int MAX_LIMIT = 12;
   private static final String OFF_PRODUCT_FIELDS = String.join(",",
       "code",
@@ -47,6 +51,7 @@ public class OpenFoodFactsService {
       "nutrition_grades",
       "nutriscore_data",
       "nutriments",
+      "nutrition",
       "stores",
       "stores_tags",
       "purchase_places",
@@ -83,10 +88,14 @@ public class OpenFoodFactsService {
     try {
       ProductDTO offProduct = lookupByBarcodeFromOpenFoodFacts(sanitizedBarcode);
       debug(
-          "[OFF_LOOKUP] OpenFoodFacts HIT. barcode='{}', productName='{}', brand='{}'",
+          "[OFF_LOOKUP] OpenFoodFacts HIT. barcode='{}', productName='{}', brand='{}', hasNutriments={}, hasNutrition={}, nutriments={}, nutrition={}",
           sanitizedBarcode,
           offProduct.getName(),
-          offProduct.getBrand()
+          offProduct.getBrand(),
+          offProduct.getNutriments() != null && !offProduct.getNutriments().isEmpty(),
+          offProduct.getNutrition() != null && !offProduct.getNutrition().isEmpty(),
+          previewObject(offProduct.getNutriments()),
+          previewObject(offProduct.getNutrition())
       );
       return offProduct;
     }
@@ -123,16 +132,18 @@ public class OpenFoodFactsService {
 
   private ProductDTO lookupByBarcodeFromOpenFoodFacts(String sanitizedBarcode) {
     String url = OFF_BASE
-        + "/api/v2/product/"
+        + OFF_PRODUCT_API_PATH
         + urlEncode(sanitizedBarcode)
         + "?fields="
-        + OFF_PRODUCT_FIELDS;
+        + urlEncode(OFF_PRODUCT_FIELDS);
     debug("[OFF_LOOKUP] calling OpenFoodFacts. barcode='{}', url='{}'", sanitizedBarcode, url);
     String body = getWithUserAgent(url);
     debug("[OFF_LOOKUP] OpenFoodFacts HTTP body received. barcode='{}', bodyLength={}", sanitizedBarcode, body.length());
+    debug("[OFF_LOOKUP] OpenFoodFacts raw body preview. barcode='{}', bodyPreview={}", sanitizedBarcode, truncateForLog(body));
 
     try {
       JsonNode root = objectMapper.readTree(body);
+      debug("[OFF_LOOKUP] OpenFoodFacts root field names. barcode='{}', rootFields={}", sanitizedBarcode, fieldNames(root));
       int status = root.path("status").asInt(0);
       String statusVerbose = root.path("status_verbose").asText(null);
       debug(
@@ -196,7 +207,7 @@ public class OpenFoodFactsService {
         + "&action=process"
         + "&json=1"
         + "&page_size=" + safeLimit
-        + "&fields=" + OFF_PRODUCT_FIELDS;
+        + "&fields=" + urlEncode(OFF_PRODUCT_FIELDS);
 
     String body = getWithUserAgent(url);
 
@@ -263,7 +274,21 @@ public class OpenFoodFactsService {
     dto.setStoreTags(extractStringList(product, "stores_tags"));
     dto.setPurchasePlaces(extractStringList(product, "purchase_places", "purchase_places_tags"));
 
-    dto.setNutriments(copyObjectNodeOrNull(product.get("nutriments")));
+    JsonNode rawNutriments = product.get("nutriments");
+    JsonNode rawNutrition = product.get("nutrition");
+
+    debug(
+        "[OFF_LOOKUP] raw OFF nutrition fields. barcode='{}', productFields={}, hasNutriments={}, hasNutrition={}, rawNutriments={}, rawNutrition={}",
+        dto.getBarcode(),
+        fieldNames(product),
+        isUsableObjectNode(rawNutriments),
+        isUsableObjectNode(rawNutrition),
+        previewJsonNode(rawNutriments),
+        previewJsonNode(rawNutrition)
+    );
+
+    dto.setNutriments(copyObjectNodeOrNull(rawNutriments));
+    dto.setNutrition(copyObjectNodeOrNull(rawNutrition));
     dto.setNutriScoreData(copyObjectNodeOrNull(product.get("nutriscore_data")));
     dto.setRawProduct(copyObjectNodeOrNull(product));
     dto.setLocalFallback(false);
@@ -535,31 +560,59 @@ public class OpenFoodFactsService {
     try {
       HttpHeaders headers = new HttpHeaders();
       headers.set(HttpHeaders.USER_AGENT, USER_AGENT);
+      headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
       HttpEntity<Void> entity = new HttpEntity<>(headers);
       ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+      String responseBody = response.getBody();
       debug(
-          "[OFF_LOOKUP] OpenFoodFacts HTTP response. url='{}', httpStatus={}, hasBody={}",
+          "[OFF_LOOKUP] OpenFoodFacts HTTP response. url='{}', httpStatus={}, hasBody={}, bodyPreview={}",
           url,
           response.getStatusCode(),
-          response.getBody() != null
+          responseBody != null,
+          truncateForLog(responseBody)
       );
 
-      if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+      if (!response.getStatusCode().is2xxSuccessful() || responseBody == null) {
         throw new ResponseStatusException(
             HttpStatus.BAD_GATEWAY,
             "OpenFoodFacts request failed: " + response.getStatusCode()
         );
       }
-      return response.getBody();
+
+      return responseBody;
     }
     catch (ResponseStatusException e) {
       throw e;
     }
-    catch (RestClientException e) {
-      debug("[OFF_LOOKUP] OpenFoodFacts request failed before local fallback can start. url='{}'", url, e);
+    catch (HttpStatusCodeException e) {
+      String upstreamBody = e.getResponseBodyAsString(StandardCharsets.UTF_8);
+      debug(
+          "[OFF_LOOKUP] OpenFoodFacts HTTP ERROR. url='{}', upstreamStatus={}, upstreamBody={}",
+          url,
+          e.getStatusCode(),
+          truncateForLog(upstreamBody)
+      );
       throw new ResponseStatusException(
           HttpStatus.BAD_GATEWAY,
-          "OpenFoodFacts request failed",
+          "OpenFoodFacts HTTP error: " + e.getStatusCode(),
+          e
+      );
+    }
+    catch (ResourceAccessException e) {
+      debug("[OFF_LOOKUP] OpenFoodFacts NETWORK/TIMEOUT ERROR. url='{}', message='{}'", url, e.getMessage(), e);
+      throw new ResponseStatusException(
+          HttpStatus.GATEWAY_TIMEOUT,
+          "OpenFoodFacts could not be reached: " + e.getMessage(),
+          e
+      );
+    }
+    catch (RestClientException e) {
+      debug("[OFF_LOOKUP] OpenFoodFacts CLIENT ERROR. url='{}', message='{}'", url, e.getMessage(), e);
+      throw new ResponseStatusException(
+          HttpStatus.BAD_GATEWAY,
+          "OpenFoodFacts request failed: " + e.getMessage(),
           e
       );
     }
@@ -598,6 +651,59 @@ public class OpenFoodFactsService {
     return new ArrayList<>(values);
   }
 
+  private boolean isUsableObjectNode(JsonNode node) {
+    return node != null
+        && !node.isNull()
+        && !node.isMissingNode()
+        && node.isObject()
+        && node.size() > 0;
+  }
+
+  private List<String> fieldNames(JsonNode node) {
+    List<String> names = new ArrayList<>();
+
+    if (node == null || !node.isObject()) {
+      return names;
+    }
+
+    node.fieldNames().forEachRemaining(names::add);
+    return names;
+  }
+
+  private String previewJsonNode(JsonNode node) {
+    if (node == null || node.isNull() || node.isMissingNode()) {
+      return "<missing>";
+    }
+
+    return truncateForLog(node.toString());
+  }
+
+  private String previewObject(Object value) {
+    if (value == null) {
+      return "null";
+    }
+
+    try {
+      return truncateForLog(objectMapper.writeValueAsString(value));
+    }
+    catch (Exception e) {
+      return truncateForLog(String.valueOf(value));
+    }
+  }
+
+  private String truncateForLog(String text) {
+    if (text == null) {
+      return "null";
+    }
+
+    String normalized = text.replace('\n', '_').replace('\r', '_');
+    int maxLength = 4000;
+
+    return normalized.length() <= maxLength
+        ? normalized
+        : normalized.substring(0, maxLength) + "...<truncated>";
+  }
+
   private Map<String, Object> copyObjectNodeOrNull(JsonNode node) {
     if (node == null || node.isNull() || node.isMissingNode() || !node.isObject()) {
       return null;
@@ -629,12 +735,12 @@ public class OpenFoodFactsService {
 
   private static void debug(String template, Object... args) {
     Object[] safeArgs = sanitizeLogArgs(args);
-    log.warn(withoutPlaceholders(template));
+    log.warn(template, safeArgs);
     System.err.println(formatForFallbackConsole(template, safeArgs));
 
-    Throwable throwable = trailingThrowable(safeArgs);
+    Throwable throwable = trailingThrowable(args);
     if (throwable != null) {
-      System.err.println(throwable.getClass().getSimpleName() + ": " + sanitizeLogValue(throwable.getMessage()));
+      throwable.printStackTrace(System.err);
     }
   }
 

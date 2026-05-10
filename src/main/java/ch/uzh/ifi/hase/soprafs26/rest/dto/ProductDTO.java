@@ -21,6 +21,7 @@ public class ProductDTO {
   private List<String> purchasePlaces;
 
   private Map<String, Object> nutriments;
+  private Map<String, Object> nutrition;
   private Map<String, Object> nutriScoreData;
   private Map<String, Object> rawProduct;
 
@@ -68,7 +69,12 @@ public class ProductDTO {
 
   public Map<String, Object> getNutriments() { return nutriments; }
   public void setNutriments(Map<String, Object> nutriments) { this.nutriments = nutriments; }
+  
+  public Map<String, Object> getNutrition() { return nutrition; }
 
+  public void setNutrition(Map<String, Object> nutrition) {
+    this.nutrition = nutrition;
+  }
   public Map<String, Object> getNutriScoreData() { return nutriScoreData; }
   public void setNutriScoreData(Map<String, Object> nutriScoreData) { this.nutriScoreData = nutriScoreData; }
 
