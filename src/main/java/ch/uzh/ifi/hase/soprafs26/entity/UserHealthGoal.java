@@ -23,6 +23,13 @@ public class UserHealthGoal implements Serializable {
     @Column
     private Double targetRate;
 
+    // Stored so the frontend can restore the form when the user revisits the page
+    @Column
+    private Double targetWeight;
+
+    @Column
+    private Integer weeksToGoal;
+
     @Column(nullable = false)
     private Integer age;
 
@@ -61,6 +68,12 @@ public class UserHealthGoal implements Serializable {
 
     public Double getTargetRate() { return targetRate; }
     public void setTargetRate(Double targetRate) { this.targetRate = targetRate; }
+
+    public Double getTargetWeight() { return targetWeight; }
+    public void setTargetWeight(Double targetWeight) { this.targetWeight = targetWeight; }
+
+    public Integer getWeeksToGoal() { return weeksToGoal; }
+    public void setWeeksToGoal(Integer weeksToGoal) { this.weeksToGoal = weeksToGoal; }
 
     public Integer getAge() { return age; }
     public void setAge(Integer age) { this.age = age; }

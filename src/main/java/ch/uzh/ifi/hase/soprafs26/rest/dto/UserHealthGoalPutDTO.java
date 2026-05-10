@@ -3,7 +3,9 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 public class UserHealthGoalPutDTO {
 
     private String goalType;
-    private Double targetRate;
+    // targetRate removed — backend derives it from targetWeight and weeksToGoal
+    private Double targetWeight;  // kg; required when goalType == LOSE_WEIGHT
+    private Integer weeksToGoal;  // required when goalType == LOSE_WEIGHT
     private Integer age;
     private String sex;
     private Double height;
@@ -13,8 +15,11 @@ public class UserHealthGoalPutDTO {
     public String getGoalType() { return goalType; }
     public void setGoalType(String goalType) { this.goalType = goalType; }
 
-    public Double getTargetRate() { return targetRate; }
-    public void setTargetRate(Double targetRate) { this.targetRate = targetRate; }
+    public Double getTargetWeight() { return targetWeight; }
+    public void setTargetWeight(Double targetWeight) { this.targetWeight = targetWeight; }
+
+    public Integer getWeeksToGoal() { return weeksToGoal; }
+    public void setWeeksToGoal(Integer weeksToGoal) { this.weeksToGoal = weeksToGoal; }
 
     public Integer getAge() { return age; }
     public void setAge(Integer age) { this.age = age; }
