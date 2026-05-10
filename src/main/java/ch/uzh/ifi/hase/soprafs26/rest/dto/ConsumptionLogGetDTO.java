@@ -9,6 +9,8 @@ public class ConsumptionLogGetDTO {
     private Long pantryItemId;
     private String productName;
     private Integer consumedQuantity;
+    // Issue #133 — exposed so frontend can display "200g" instead of "200×"
+    private String consumedUnit;
     private Double consumedCalories;
     private Long userId;
     private String username;
@@ -51,6 +53,14 @@ public class ConsumptionLogGetDTO {
 
     public void setConsumedQuantity(Integer consumedQuantity) {
         this.consumedQuantity = consumedQuantity;
+    }
+
+    public String getConsumedUnit() {
+        return consumedUnit;
+    }
+
+    public void setConsumedUnit(String consumedUnit) {
+        this.consumedUnit = consumedUnit;
     }
 
     public Double getConsumedCalories() {

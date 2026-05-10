@@ -574,6 +574,35 @@ class HouseholdServiceTest {
         assertEquals("alice", result.get(0).getUsername());
     }
 
+    // Issue #133 — consumedUnit must be mapped from entity to DTO
+    @Test
+    void getConsumptionLogs_mapsConsumedUnitToDto() {
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(true);
+
+        ConsumptionLog log = new ConsumptionLog();
+        log.setId(200L);
+        log.setHouseholdId(10L);
+        log.setUserId(1L);
+        log.setPantryItemId(5L);
+        log.setConsumedQuantity(200);
+        log.setConsumedUnit("g");
+        log.setConsumedCalories(728.0);
+        log.setConsumedAt(Instant.parse("2026-04-17T12:00:00Z"));
+
+        when(consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(eq(10L), any(Pageable.class)))
+                .thenReturn(List.of(log));
+
+        PantryItem item = new PantryItem();
+        item.setName("Flour");
+        when(pantryItemRepository.findByIdAndHouseholdId(5L, 10L)).thenReturn(Optional.of(item));
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of());
+
+        List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, 20);
+
+        assertEquals("g", result.get(0).getConsumedUnit());
+    }
+
     @Test
     void getConsumptionLogs_removedItem_usesPlaceholderName() {
         when(householdRepository.existsById(10L)).thenReturn(true);

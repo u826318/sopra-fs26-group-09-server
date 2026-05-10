@@ -363,6 +363,8 @@ public class PantryService {
         log.setUserId(authenticatedUserId);
         log.setPantryItemId(pantryItem.getId());
         log.setConsumedQuantity(loggedQuantity);
+        // Issue #133 — persist unit so activity feed can display "200g" instead of "200×"
+        log.setConsumedUnit(pantryItem.getAmountUnit());
         log.setConsumedCalories(consumedCalories);
         log.setConsumedAt(Instant.now());
         consumptionLogRepository.save(log);
