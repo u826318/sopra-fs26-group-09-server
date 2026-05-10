@@ -590,6 +590,63 @@ class PantryServiceTest {
     }
 
     @Test
+    void addItem_success_noBarcode_createsNewRowWithNullBarcode() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItemPostDTO postDTO = new PantryItemPostDTO();
+        postDTO.setBarcode(null);
+        postDTO.setName("Homemade Jam");
+        postDTO.setKcalPerPackage(180.0);
+        postDTO.setAmount(1.0);
+        postDTO.setAmountUnit("package");
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.save(any(PantryItem.class))).thenAnswer(inv -> {
+            PantryItem saved = inv.getArgument(0);
+            saved.setId(20L);
+            return saved;
+        });
+
+        PantryItem result = pantryService.addItem(1L, postDTO, 99L);
+
+        assertNull(result.getBarcode());
+        assertEquals("Homemade Jam", result.getName());
+        assertEquals(1.0, result.getAmount(), 0.001);
+        verify(mockPantryRepo, times(1)).save(any(PantryItem.class));
+        verify(mockPantryRepo, never()).findByHouseholdIdAndBarcode(anyLong(), any());
+    }
+
+    @Test
+    void addItem_success_emptyBarcode_createsNewRowWithNullBarcode() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItemPostDTO postDTO = new PantryItemPostDTO();
+        postDTO.setBarcode("   ");
+        postDTO.setName("Homemade Bread");
+        postDTO.setKcalPerPackage(200.0);
+        postDTO.setAmount(2.0);
+        postDTO.setAmountUnit("package");
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.save(any(PantryItem.class))).thenAnswer(inv -> {
+            PantryItem saved = inv.getArgument(0);
+            saved.setId(21L);
+            return saved;
+        });
+
+        PantryItem result = pantryService.addItem(1L, postDTO, 99L);
+
+        assertNull(result.getBarcode());
+        assertEquals("Homemade Bread", result.getName());
+        verify(mockPantryRepo, times(1)).save(any(PantryItem.class));
+        verify(mockPantryRepo, never()).findByHouseholdIdAndBarcode(anyLong(), any());
+    }
+
+    @Test
     void bulkAddItems_success_savesEachRowAndBroadcastsPerRow() {
         Household household = new Household();
         household.setId(1L);

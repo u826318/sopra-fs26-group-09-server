@@ -25,7 +25,7 @@ public class PantryItem implements Serializable {
     @Column(nullable = false)
     private Long householdId;
 
-    @Column(nullable = false)
+    @Column
     private String barcode;
 
     @Column(nullable = false)
