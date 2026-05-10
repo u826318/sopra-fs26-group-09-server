@@ -163,7 +163,7 @@ Replace the entire `upsertGoal` method:
 
 Run from `sopra-fs26-group-09-server/`:
 ```bash
-./mvnw compile -q
+./gradlew compileJava -q
 ```
 Expected: BUILD SUCCESS with no errors. Fix any compilation errors before continuing.
 
@@ -346,7 +346,7 @@ Replace the old `calculate_femaleModerateLosingHalfKgPerWeek` and add four new H
 - [ ] **Step 2.4: Run tests and confirm the right ones fail**
 
 ```bash
-./mvnw test -pl . -Dtest=UserHealthGoalServiceTest -q
+./gradlew cleanTest test --tests "ch.uzh.ifi.hase.soprafs26.service.UserHealthGoalServiceTest"
 ```
 
 Expected:
@@ -442,7 +442,7 @@ Replace the entire `calculate` static method and add the helper below it:
 - [ ] **Step 3.2: Run all service tests and confirm they pass**
 
 ```bash
-./mvnw test -pl . -Dtest=UserHealthGoalServiceTest -q
+./gradlew cleanTest test --tests "ch.uzh.ifi.hase.soprafs26.service.UserHealthGoalServiceTest"
 ```
 
 Expected: all 11 tests PASS. If any fail, check the arithmetic in the test comments against the algorithm — fix the implementation, not the comments.
@@ -506,7 +506,7 @@ Also update `buildGoal` to set the new entity fields (so GET tests can assert on
 - [ ] **Step 4.2: Run controller tests**
 
 ```bash
-./mvnw test -pl . -Dtest=UserHealthGoalControllerTest -q
+./gradlew cleanTest test --tests "ch.uzh.ifi.hase.soprafs26.controller.UserHealthGoalControllerTest"
 ```
 
 Expected: all 4 controller tests PASS.
@@ -514,7 +514,7 @@ Expected: all 4 controller tests PASS.
 - [ ] **Step 4.3: Run the full backend test suite**
 
 ```bash
-./mvnw test -q
+./gradlew test
 ```
 
 Expected: BUILD SUCCESS, all tests pass.

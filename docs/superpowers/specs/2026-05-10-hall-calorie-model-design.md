@@ -8,7 +8,7 @@
 
 ## Problem
 
-The current calorie recommendation formula (`TDEE - targetRate * 1000`) has three bugs:
+The current calorie recommendation formula (`TDEE - targetRate * 1000`) has four bugs:
 
 1. Energy density coefficient is wrong: `×1000` instead of `7700/7 ≈ 1100 kcal/kg·week`.
 2. No minimum calorie floor — outputs like 700 kcal/day are possible and dangerous.

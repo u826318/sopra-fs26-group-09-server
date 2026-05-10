@@ -8,6 +8,9 @@ public class UserHealthGoalGetDTO {
     private Long userId;
     private String goalType;
     private Double targetRate;
+    // targetWeight and weeksToGoal are stored so the frontend can restore the form on reload
+    private Double targetWeight;
+    private Integer weeksToGoal;
     private Integer age;
     private String sex;
     private Double height;
@@ -27,10 +30,6 @@ public class UserHealthGoalGetDTO {
 
     public Double getTargetRate() { return targetRate; }
     public void setTargetRate(Double targetRate) { this.targetRate = targetRate; }
-
-    // targetWeight and weeksToGoal are stored so the frontend can restore the form on reload
-    private Double targetWeight;
-    private Integer weeksToGoal;
 
     public Double getTargetWeight() { return targetWeight; }
     public void setTargetWeight(Double targetWeight) { this.targetWeight = targetWeight; }

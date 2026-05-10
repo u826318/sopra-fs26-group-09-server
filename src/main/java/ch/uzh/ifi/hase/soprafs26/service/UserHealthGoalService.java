@@ -29,9 +29,11 @@ public class UserHealthGoalService {
         goal.setGoalType(dto.getGoalType());
         goal.setTargetWeight(dto.getTargetWeight());
         goal.setWeeksToGoal(dto.getWeeksToGoal());
-        // targetRate is a derived field: (currentWeight - targetWeight) / weeks
+        // targetRate is a derived field: (currentWeight - targetWeight) / weeks.
+        // Only computed when inputs are valid; calculate() below will throw 400 for invalid inputs.
         if ("LOSE_WEIGHT".equals(dto.getGoalType())
-                && dto.getTargetWeight() != null && dto.getWeeksToGoal() != null) {
+                && dto.getTargetWeight() != null && dto.getWeeksToGoal() != null
+                && dto.getWeeksToGoal() > 0 && dto.getTargetWeight() < dto.getWeight()) {
             goal.setTargetRate((dto.getWeight() - dto.getTargetWeight()) / dto.getWeeksToGoal());
         } else {
             goal.setTargetRate(null);
@@ -66,6 +68,15 @@ public class UserHealthGoalService {
                 if (dto.getTargetWeight() == null || dto.getWeeksToGoal() == null) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "targetWeight and weeksToGoal are required for LOSE_WEIGHT");
+                }
+                // Guard against inputs that would produce nonsensical or infinite results
+                if (dto.getWeeksToGoal() <= 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "weeksToGoal must be greater than 0");
+                }
+                if (dto.getTargetWeight() >= dto.getWeight()) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "targetWeight must be less than current weight for LOSE_WEIGHT");
                 }
 
                 // Hall (2012): use TDEE at the average weight across the loss journey,

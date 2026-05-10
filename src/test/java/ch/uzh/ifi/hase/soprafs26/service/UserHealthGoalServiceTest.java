@@ -116,6 +116,24 @@ class UserHealthGoalServiceTest {
         assertEquals(400, ex.getStatusCode().value());
     }
 
+    // Validation: weeksToGoal == 0 would cause division by zero → must throw 400
+    @Test
+    void calculate_loseWeight_zeroWeeksToGoal_throws400() {
+        UserHealthGoalPutDTO dto = buildDto("FEMALE", 28, 165.0, 62.0, "MODERATE", "LOSE_WEIGHT", 52.0, 0);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> UserHealthGoalService.calculate(dto));
+        assertEquals(400, ex.getStatusCode().value());
+    }
+
+    // Validation: targetWeight >= current weight is nonsensical for LOSE_WEIGHT → must throw 400
+    @Test
+    void calculate_loseWeight_targetWeightNotLessThanCurrentWeight_throws400() {
+        UserHealthGoalPutDTO dto = buildDto("FEMALE", 28, 165.0, 62.0, "MODERATE", "LOSE_WEIGHT", 62.0, 20);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> UserHealthGoalService.calculate(dto));
+        assertEquals(400, ex.getStatusCode().value());
+    }
+
     // ── upsertGoal integration stubs ─────────────────────────────────────────
 
     @Test
