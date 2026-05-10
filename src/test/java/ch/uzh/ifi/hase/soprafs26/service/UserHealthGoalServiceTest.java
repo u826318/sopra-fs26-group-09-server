@@ -134,6 +134,46 @@ class UserHealthGoalServiceTest {
         assertEquals(400, ex.getStatusCode().value());
     }
 
+    // Validation: negative weeksToGoal is also rejected (condition is <= 0)
+    @Test
+    void calculate_loseWeight_negativeWeeksToGoal_throws400() {
+        UserHealthGoalPutDTO dto = buildDto("FEMALE", 28, 165.0, 62.0, "MODERATE", "LOSE_WEIGHT", 52.0, -5);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> UserHealthGoalService.calculate(dto));
+        assertEquals(400, ex.getStatusCode().value());
+    }
+
+    // Male 1500 kcal floor (different branch from female 1200 floor)
+    // Small sedentary male, aggressive rate → floor kicks in at 1500
+    // rate = 5kg / 8 weeks = 0.625; W_avg = 42.5
+    // BMR_avg(42.5kg,150cm,23y,MALE) = 10*42.5+6.25*150-5*23+5 = 1117.5
+    // TDEE_avg = 1117.5*1.2 = 1341; adapted = 1206.9; dailyDeficit = 687.5; raw = 519.4
+    // TDEE0 = (10*45+6.25*150-5*23+5)*1.2 = 1142.5*1.2 = 1371; cap floor = 1371*0.65 = 891.15
+    // result = max(519.4, 891.15, 1500) = 1500
+    @Test
+    void calculate_loseWeight_maleFloorTriggered() {
+        UserHealthGoalPutDTO dto = buildDto("MALE", 23, 150.0, 45.0, "SEDENTARY", "LOSE_WEIGHT", 40.0, 8);
+        assertEquals(1500.0, UserHealthGoalService.calculate(dto), 0.1);
+    }
+
+    // Invalid activityLevel must throw 400
+    @Test
+    void calculate_invalidActivityLevel_throws400() {
+        UserHealthGoalPutDTO dto = buildDto("FEMALE", 28, 165.0, 62.0, "COUCH_POTATO", "MAINTAIN", null, null);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> UserHealthGoalService.calculate(dto));
+        assertEquals(400, ex.getStatusCode().value());
+    }
+
+    // Invalid goalType must throw 400
+    @Test
+    void calculate_invalidGoalType_throws400() {
+        UserHealthGoalPutDTO dto = buildDto("FEMALE", 28, 165.0, 62.0, "MODERATE", "GET_JACKED", null, null);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> UserHealthGoalService.calculate(dto));
+        assertEquals(400, ex.getStatusCode().value());
+    }
+
     // ── upsertGoal integration stubs ─────────────────────────────────────────
 
     @Test
@@ -190,6 +230,20 @@ class UserHealthGoalServiceTest {
 
         UserHealthGoal result = service.upsertGoal(2L, dto);
         assertEquals("MAINTAIN", result.getGoalType());
+    }
+
+    // upsertGoal with LOSE_WEIGHT: verifies targetRate is derived from targetWeight/weeksToGoal
+    @Test
+    void upsertGoal_loseWeight_derivesTargetRateCorrectly() {
+        // rate = (62 - 52) / 20 = 0.5 kg/week
+        UserHealthGoalPutDTO dto = buildDto("FEMALE", 28, 165.0, 62.0, "MODERATE", "LOSE_WEIGHT", 52.0, 20);
+        when(repository.findByUserId(3L)).thenReturn(Optional.empty());
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        UserHealthGoal result = service.upsertGoal(3L, dto);
+        assertEquals(0.5, result.getTargetRate(), 0.001);
+        assertEquals(52.0, result.getTargetWeight(), 0.001);
+        assertEquals(20, result.getWeeksToGoal());
     }
 
     // ── Helper ────────────────────────────────────────────────────────────────
