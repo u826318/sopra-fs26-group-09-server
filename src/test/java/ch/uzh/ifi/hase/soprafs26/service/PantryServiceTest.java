@@ -286,7 +286,8 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 99L);
+        // Issue #133 — consumeItem now takes Double amount
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2.0, 99L);
 
         assertEquals(10L, result.getItemId());
         assertEquals(3.0, result.getRemainingAmount(), 0.001);
@@ -317,7 +318,7 @@ class PantryServiceTest {
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
         // act
-        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 99L);
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2.0, 99L);
 
         // assert: returned result (state-based)
         assertEquals(10L, result.getItemId());
@@ -332,6 +333,7 @@ class PantryServiceTest {
         assertEquals(1L, savedLog.getHouseholdId());
         assertEquals(99L, savedLog.getUserId());
         assertEquals(10L, savedLog.getPantryItemId());
+        // Issue #133 — consumedQuantity is rounded from Double amount (2.0 → 2)
         assertEquals(2, savedLog.getConsumedQuantity());
         assertEquals(240.0, savedLog.getConsumedCalories(), 0.001);
         assertNotNull(savedLog.getConsumedAt());
@@ -372,7 +374,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        pantryService.consumeItem(1L, 10L, 1, 99L);
+        pantryService.consumeItem(1L, 10L, 1.0, 99L);
 
         verify(mockBroadcastService).broadcastPantryUpdate(
                 org.mockito.ArgumentMatchers.eq(1L),
@@ -396,7 +398,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2, 180.0, false, 99L);
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2.0, 180.0, false, 99L);
 
         assertEquals(2.0, result.getRemainingAmount(), 0.001);
         assertEquals(360.0, result.getConsumedCalories(), 0.001);
@@ -424,7 +426,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 1, 250.0, true, 99L);
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 1.0, 250.0, true, 99L);
 
         assertEquals(2.0, result.getRemainingAmount(), 0.001);
         assertNull(result.getConsumedCalories());
@@ -440,7 +442,7 @@ class PantryServiceTest {
     void consumeItem_throwsException_whenKcalOverrideIsNegative() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.consumeItem(1L, 10L, 1, -1.0, false, 99L)
+                () -> pantryService.consumeItem(1L, 10L, 1.0, -1.0, false, 99L)
         );
 
         assertEquals("Calories per package must not be negative.", exception.getMessage());
@@ -464,7 +466,7 @@ class PantryServiceTest {
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.consumeItem(1L, 10L, 5, 99L)
+                () -> pantryService.consumeItem(1L, 10L, 5.0, 99L)
         );
 
         assertEquals("Consumed quantity exceeds available quantity.", exception.getMessage());
@@ -475,7 +477,7 @@ class PantryServiceTest {
     void consumeItem_throwsException_whenQuantityIsInvalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.consumeItem(1L, 10L, 0, 99L)
+                () -> pantryService.consumeItem(1L, 10L, 0.0, 99L)
         );
 
         assertEquals("Quantity must be greater than zero.", exception.getMessage());
@@ -487,7 +489,7 @@ class PantryServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> pantryService.consumeItem(1L, 10L, 1, 99L)
+                () -> pantryService.consumeItem(1L, 10L, 1.0, 99L)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
@@ -503,7 +505,7 @@ class PantryServiceTest {
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.consumeItem(1L, 10L, 1, 99L)
+                () -> pantryService.consumeItem(1L, 10L, 1.0, 99L)
         );
 
         assertEquals("User is not a member of this household.", exception.getMessage());
@@ -520,7 +522,7 @@ class PantryServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> pantryService.consumeItem(1L, 10L, 1, 99L)
+                () -> pantryService.consumeItem(1L, 10L, 1.0, 99L)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
@@ -702,7 +704,8 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService.ConsumeResult result = pantryService.removeItem(1L, 10L, 2, 99L);
+        // Issue #133 — removeItem now takes Double amount
+        PantryService.ConsumeResult result = pantryService.removeItem(1L, 10L, 2.0, 99L);
 
         assertEquals(10L, result.getItemId());
         assertEquals(3.0, result.getRemainingAmount(), 0.001);
@@ -730,7 +733,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        PantryService.ConsumeResult result = pantryService.removeItem(1L, 10L, 2, 99L);
+        PantryService.ConsumeResult result = pantryService.removeItem(1L, 10L, 2.0, 99L);
 
         assertEquals(0.0, result.getRemainingAmount(), 0.001);
         assertTrue(result.isRemoved());
@@ -755,7 +758,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        pantryService.removeItem(1L, 10L, 1, 99L);
+        pantryService.removeItem(1L, 10L, 1.0, 99L);
 
         verify(mockBroadcastService).broadcastPantryUpdate(
                 org.mockito.ArgumentMatchers.eq(1L),
@@ -779,7 +782,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        pantryService.removeItem(1L, 10L, 2, 99L);
+        pantryService.removeItem(1L, 10L, 2.0, 99L);
 
         verify(mockBroadcastService).broadcastPantryUpdate(
                 org.mockito.ArgumentMatchers.eq(1L),
@@ -805,7 +808,7 @@ class PantryServiceTest {
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.removeItem(1L, 10L, 5, 99L)
+                () -> pantryService.removeItem(1L, 10L, 5.0, 99L)
         );
 
         assertEquals("Removed quantity exceeds available quantity.", exception.getMessage());
@@ -816,7 +819,7 @@ class PantryServiceTest {
     void removeItem_throwsException_whenQuantityIsInvalid() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.removeItem(1L, 10L, 0, 99L)
+                () -> pantryService.removeItem(1L, 10L, 0.0, 99L)
         );
 
         assertEquals("Quantity must be greater than zero.", exception.getMessage());
@@ -828,7 +831,7 @@ class PantryServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> pantryService.removeItem(1L, 10L, 1, 99L)
+                () -> pantryService.removeItem(1L, 10L, 1.0, 99L)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
@@ -844,7 +847,7 @@ class PantryServiceTest {
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> pantryService.removeItem(1L, 10L, 1, 99L)
+                () -> pantryService.removeItem(1L, 10L, 1.0, 99L)
         );
 
         assertEquals("User is not a member of this household.", exception.getMessage());
@@ -861,7 +864,7 @@ class PantryServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> pantryService.removeItem(1L, 10L, 1, 99L)
+                () -> pantryService.removeItem(1L, 10L, 1.0, 99L)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());

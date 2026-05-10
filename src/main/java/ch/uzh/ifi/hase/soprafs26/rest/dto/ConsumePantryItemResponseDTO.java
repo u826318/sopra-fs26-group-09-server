@@ -3,7 +3,8 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 public class ConsumePantryItemResponseDTO {
 
     private Long itemId;
-    private Integer remainingCount;
+    // Issue #133 — remainingAmount (Double) replaces remainingCount (Integer)
+    private Double remainingAmount;
     private Double consumedCalories;
     private boolean removed;
 
@@ -15,12 +16,12 @@ public class ConsumePantryItemResponseDTO {
         this.itemId = itemId;
     }
 
-    public Integer getRemainingCount() {
-        return remainingCount;
+    public Double getRemainingAmount() {
+        return remainingAmount;
     }
 
-    public void setRemainingCount(Integer remainingCount) {
-        this.remainingCount = remainingCount;
+    public void setRemainingAmount(Double remainingAmount) {
+        this.remainingAmount = remainingAmount;
     }
 
     public Double getConsumedCalories() {

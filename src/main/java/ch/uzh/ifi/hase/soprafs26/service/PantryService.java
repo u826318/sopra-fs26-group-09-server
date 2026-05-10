@@ -311,18 +311,19 @@ public class PantryService {
         return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
     }
 
-    public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
-        return consumeItem(householdId, itemId, quantity, null, false, authenticatedUserId);
+    public ConsumeResult consumeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {
+        return consumeItem(householdId, itemId, amount, null, false, authenticatedUserId);
     }
 
     public ConsumeResult consumeItem(
             Long householdId,
             Long itemId,
-            Integer quantity,
+            Double amount,
             Double kcalPerPackageOverride,
             boolean skipCalorieLogging,
             Long authenticatedUserId) {
-        if (quantity == null || quantity <= 0) {
+        // Issue #133 — amount (Double) replaces quantity (Integer) to support portion-based consumption
+        if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
         if (kcalPerPackageOverride != null && kcalPerPackageOverride < 0) {
@@ -341,8 +342,7 @@ public class PantryService {
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
-        // Issue #114 — compare against amount (Double) instead of count (Integer)
-        double consumeAmount = quantity.doubleValue();
+        double consumeAmount = amount;
         if (consumeAmount > safeAmount(pantryItem.getAmount())) {
             throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
         }
@@ -353,22 +353,27 @@ public class PantryService {
         }
 
         double remainingAmount = safeAmount(pantryItem.getAmount()) - consumeAmount;
-        // Issue #114 — use unit-aware helper instead of package-only calculation
+        // Issue #114 — unit-aware calorie formula; Issue #133 — supports partial amounts
         Double consumedCalories = skipCalorieLogging ? null : computeConsumedCalories(pantryItem, consumeAmount);
 
+        // Issue #133 — log consumed amount rounded to nearest int for display in activity feed
+        int loggedQuantity = (int) Math.max(1, Math.round(consumeAmount));
         ConsumptionLog log = new ConsumptionLog();
         log.setHouseholdId(householdId);
         log.setUserId(authenticatedUserId);
         log.setPantryItemId(pantryItem.getId());
-        log.setConsumedQuantity(quantity);
+        log.setConsumedQuantity(loggedQuantity);
         log.setConsumedCalories(consumedCalories);
         log.setConsumedAt(Instant.now());
         consumptionLogRepository.save(log);
-        dailyNutrientIntakeService.recordConsumedPantryItem(
-                authenticatedUserId,
-                pantryItem,
-                quantity,
-                log.getConsumedAt());
+        // Issue #133 — only track micronutrients for package unit (g/ml multiplier requires package size)
+        if ("package".equals(pantryItem.getAmountUnit())) {
+            dailyNutrientIntakeService.recordConsumedPantryItem(
+                    authenticatedUserId,
+                    pantryItem,
+                    loggedQuantity,
+                    log.getConsumedAt());
+        }
 
         ConsumeResult result = new ConsumeResult();
         result.setItemId(pantryItem.getId());
@@ -399,8 +404,9 @@ public class PantryService {
         return result;
     }
 
-    public ConsumeResult removeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
-        if (quantity == null || quantity <= 0) {
+    public ConsumeResult removeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {
+        // Issue #133 — amount (Double) replaces quantity (Integer)
+        if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
@@ -416,8 +422,7 @@ public class PantryService {
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
-        // Issue #114 — compare against amount (Double) instead of count (Integer)
-        double removeAmount = quantity.doubleValue();
+        double removeAmount = amount;
         if (removeAmount > safeAmount(pantryItem.getAmount())) {
             throw new IllegalArgumentException("Removed quantity exceeds available quantity.");
         }

@@ -62,17 +62,18 @@ class PantryControllerTest {
 
         @Test
         void consumePantryItem_success_returnsOk() throws Exception {
+        // Issue #133 — consume endpoint now accepts amount (Double) for portion support
         PantryService.ConsumeResult result = new PantryService.ConsumeResult();
         result.setItemId(10L);
-        result.setRemainingCount(3);
+        result.setRemainingAmount(3.0);
         result.setConsumedCalories(200.0);
         result.setRemoved(false);
 
-        when(pantryService.consumeItem(1L, 10L, 2, null, false, 99L)).thenReturn(result);
+        when(pantryService.consumeItem(1L, 10L, 2.0, null, false, 99L)).thenReturn(result);
 
         String requestBody = """
                 {
-                        "quantity": 2
+                        "amount": 2.0
                 }
                 """;
 
@@ -81,19 +82,19 @@ class PantryControllerTest {
                         .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemId").value(10))
-                .andExpect(jsonPath("$.remainingCount").value(3))
+                .andExpect(jsonPath("$.remainingAmount").value(3.0))
                 .andExpect(jsonPath("$.consumedCalories").value(200.0))
                 .andExpect(jsonPath("$.removed").value(false));
         }
 
         @Test
         void consumePantryItem_invalidQuantity_returnsBadRequest() throws Exception {
-        when(pantryService.consumeItem(1L, 10L, 0, null, false, 99L))
+        when(pantryService.consumeItem(1L, 10L, 0.0, null, false, 99L))
                 .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
 
         String requestBody = """
                 {
-                        "quantity": 0
+                        "amount": 0
                 }
                 """;
 
@@ -296,17 +297,18 @@ class PantryControllerTest {
 
         @Test
         void removePantryItem_success_returnsOk() throws Exception {
+        // Issue #133 — remove endpoint also uses amount (Double)
         PantryService.ConsumeResult result = new PantryService.ConsumeResult();
         result.setItemId(10L);
-        result.setRemainingCount(2);
+        result.setRemainingAmount(2.0);
         result.setConsumedCalories(0.0);
         result.setRemoved(false);
 
-        when(pantryService.removeItem(1L, 10L, 1, 99L)).thenReturn(result);
+        when(pantryService.removeItem(1L, 10L, 1.0, 99L)).thenReturn(result);
 
         String requestBody = """
                 {
-                        "quantity": 1
+                        "amount": 1.0
                 }
                 """;
 
@@ -315,19 +317,19 @@ class PantryControllerTest {
                         .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemId").value(10))
-                .andExpect(jsonPath("$.remainingCount").value(2))
+                .andExpect(jsonPath("$.remainingAmount").value(2.0))
                 .andExpect(jsonPath("$.consumedCalories").value(0.0))
                 .andExpect(jsonPath("$.removed").value(false));
         }
 
         @Test
         void removePantryItem_invalidQuantity_returnsBadRequest() throws Exception {
-        when(pantryService.removeItem(1L, 10L, 0, 99L))
+        when(pantryService.removeItem(1L, 10L, 0.0, 99L))
                 .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
 
         String requestBody = """
                 {
-                        "quantity": 0
+                        "amount": 0
                 }
                 """;
 

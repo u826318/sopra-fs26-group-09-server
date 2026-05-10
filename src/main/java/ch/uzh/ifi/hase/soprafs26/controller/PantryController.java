@@ -68,7 +68,7 @@ public class PantryController {
         PantryService.ConsumeResult result = pantryService.consumeItem(
                 householdId,
                 itemId,
-                consumePostDTO.getQuantity(),
+                consumePostDTO.getAmount(),
                 consumePostDTO.getKcalPerPackage(),
                 Boolean.TRUE.equals(consumePostDTO.getSkipCalorieLogging()),
                 authenticatedUserId
@@ -76,7 +76,7 @@ public class PantryController {
 
         ConsumePantryItemResponseDTO responseDTO = new ConsumePantryItemResponseDTO();
         responseDTO.setItemId(result.getItemId());
-        responseDTO.setRemainingCount(result.getRemainingCount());
+        responseDTO.setRemainingAmount(result.getRemainingAmount());
         responseDTO.setConsumedCalories(result.getConsumedCalories());
         responseDTO.setRemoved(result.isRemoved());
 
@@ -94,13 +94,13 @@ public class PantryController {
         PantryService.ConsumeResult result = pantryService.removeItem(
                 householdId,
                 itemId,
-                removePostDTO.getQuantity(),
+                removePostDTO.getAmount(),
                 authenticatedUserId
         );
 
         ConsumePantryItemResponseDTO responseDTO = new ConsumePantryItemResponseDTO();
         responseDTO.setItemId(result.getItemId());
-        responseDTO.setRemainingCount(result.getRemainingCount());
+        responseDTO.setRemainingAmount(result.getRemainingAmount());
         responseDTO.setConsumedCalories(result.getConsumedCalories());
         responseDTO.setRemoved(result.isRemoved());
 

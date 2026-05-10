@@ -2,16 +2,17 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 public class ConsumePantryItemPostDTO {
 
-    private Integer quantity;
+    // Issue #133 — amount replaces quantity (Integer) to support partial/portion consumption
+    private Double amount;
     private Double kcalPerPackage;
     private Boolean skipCalorieLogging;
 
-    public Integer getQuantity() {
-        return quantity;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public Double getKcalPerPackage() {
