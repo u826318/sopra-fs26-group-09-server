@@ -23,9 +23,10 @@ class PantryItemRepositoryIntegrationTest {
     @Autowired
     private PantryItemRepository pantryItemRepository;
 
+    // Issue #114 — createPantryItem now uses amount/amountUnit instead of count
     @Test
     void savePantryItem_success() {
-        PantryItem pantryItem = createPantryItem(1L, "7612345678901", "Greek Yogurt", 150.0, 2);
+        PantryItem pantryItem = createPantryItem(1L, "7612345678901", "Greek Yogurt", 150.0, 2.0, "package");
 
         entityManager.persistAndFlush(pantryItem);
         entityManager.clear();
@@ -38,12 +39,13 @@ class PantryItemRepositoryIntegrationTest {
         assertEquals("7612345678901", found.get().getBarcode());
         assertEquals("Greek Yogurt", found.get().getName());
         assertEquals(150.0, found.get().getKcalPerPackage(), 0.001);
-        assertEquals(2, found.get().getCount());
+        assertEquals(2.0, found.get().getAmount(), 0.001);
+        assertEquals("package", found.get().getAmountUnit());
     }
 
     @Test
     void findByIdAndHouseholdId_success() {
-        PantryItem pantryItem = createPantryItem(1L, "111", "Milk", 80.0, 1);
+        PantryItem pantryItem = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
 
         entityManager.persistAndFlush(pantryItem);
         entityManager.clear();
@@ -57,7 +59,7 @@ class PantryItemRepositoryIntegrationTest {
 
     @Test
     void findByIdAndHouseholdId_wrongHousehold_returnsEmpty() {
-        PantryItem pantryItem = createPantryItem(1L, "111", "Milk", 80.0, 1);
+        PantryItem pantryItem = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
 
         entityManager.persistAndFlush(pantryItem);
         entityManager.clear();
@@ -69,9 +71,9 @@ class PantryItemRepositoryIntegrationTest {
 
     @Test
     void findByHouseholdId_returnsOnlyItemsForThatHousehold() {
-        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1);
-        PantryItem yogurt = createPantryItem(1L, "222", "Greek Yogurt", 150.0, 2);
-        PantryItem pasta = createPantryItem(2L, "333", "Pasta", 350.0, 1);
+        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
+        PantryItem yogurt = createPantryItem(1L, "222", "Greek Yogurt", 150.0, 2.0, "package");
+        PantryItem pasta = createPantryItem(2L, "333", "Pasta", 350.0, 1.0, "package");
 
         entityManager.persist(milk);
         entityManager.persist(yogurt);
@@ -89,7 +91,7 @@ class PantryItemRepositoryIntegrationTest {
 
     @Test
     void findByHouseholdId_notFound_returnsEmptyList() {
-        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1);
+        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
 
         entityManager.persistAndFlush(milk);
         entityManager.clear();
@@ -101,13 +103,13 @@ class PantryItemRepositoryIntegrationTest {
 
     @Test
     void findByHouseholdIdAndBarcode_returnsOnlyMatchingItems() {
-        PantryItem milkFirstPackage = createPantryItem(1L, "111", "Milk", 80.0, 1);
-        PantryItem milkSecondPackage = createPantryItem(1L, "111", "Milk", 80.0, 3);
-        PantryItem sameBarcodeOtherHousehold = createPantryItem(2L, "111", "Milk", 80.0, 1);
-        PantryItem differentBarcodeSameHousehold = createPantryItem(1L, "222", "Greek Yogurt", 150.0, 2);
+        PantryItem milkFirstPackage = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
+        PantryItem milkInGrams = createPantryItem(1L, "111", "Milk", 80.0, 300.0, "g");
+        PantryItem sameBarcodeOtherHousehold = createPantryItem(2L, "111", "Milk", 80.0, 1.0, "package");
+        PantryItem differentBarcodeSameHousehold = createPantryItem(1L, "222", "Greek Yogurt", 150.0, 2.0, "package");
 
         entityManager.persist(milkFirstPackage);
-        entityManager.persist(milkSecondPackage);
+        entityManager.persist(milkInGrams);
         entityManager.persist(sameBarcodeOtherHousehold);
         entityManager.persist(differentBarcodeSameHousehold);
         entityManager.flush();
@@ -122,7 +124,7 @@ class PantryItemRepositoryIntegrationTest {
 
     @Test
     void findByHouseholdIdAndBarcode_noMatch_returnsEmptyList() {
-        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1);
+        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
 
         entityManager.persistAndFlush(milk);
         entityManager.clear();
@@ -134,9 +136,9 @@ class PantryItemRepositoryIntegrationTest {
 
     @Test
     void deleteByHouseholdId_deletesOnlyItemsForThatHousehold() {
-        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1);
-        PantryItem yogurt = createPantryItem(1L, "222", "Greek Yogurt", 150.0, 2);
-        PantryItem pasta = createPantryItem(2L, "333", "Pasta", 350.0, 1);
+        PantryItem milk = createPantryItem(1L, "111", "Milk", 80.0, 1.0, "package");
+        PantryItem yogurt = createPantryItem(1L, "222", "Greek Yogurt", 150.0, 2.0, "package");
+        PantryItem pasta = createPantryItem(2L, "333", "Pasta", 350.0, 1.0, "package");
 
         entityManager.persist(milk);
         entityManager.persist(yogurt);
@@ -158,13 +160,14 @@ class PantryItemRepositoryIntegrationTest {
     }
 
     private PantryItem createPantryItem(Long householdId, String barcode, String name,
-                                        Double kcalPerPackage, Integer count) {
+                                        Double kcalPerPackage, Double amount, String amountUnit) {
         PantryItem pantryItem = new PantryItem();
         pantryItem.setHouseholdId(householdId);
         pantryItem.setBarcode(barcode);
         pantryItem.setName(name);
         pantryItem.setKcalPerPackage(kcalPerPackage);
-        pantryItem.setCount(count);
+        pantryItem.setAmount(amount);
+        pantryItem.setAmountUnit(amountUnit);
         pantryItem.setAddedAt(Instant.now());
         return pantryItem;
     }
