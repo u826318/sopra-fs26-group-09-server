@@ -31,11 +31,26 @@ public class PantryItem implements Serializable {
     @Column(nullable = false)
     private String name;
 
+    // Issue #114 — store tracking unit chosen by user at add time
+    // amountUnit is one of: "g", "ml", "package"
     @Column(nullable = false)
+    private String amountUnit;
+
+    // amount in the chosen unit (Double allows partial consumption)
+    @Column(nullable = false)
+    private Double amount;
+
+    // kcalPerPackage: used when amountUnit = "package"
+    @Column
     private Double kcalPerPackage;
 
-    @Column(nullable = false)
-    private Integer count;
+    // kcalPer100g: used when amountUnit = "g"
+    @Column
+    private Double kcalPer100g;
+
+    // kcalPer100ml: used when amountUnit = "ml"
+    @Column
+    private Double kcalPer100ml;
 
     @Column(nullable = false, updatable = false)
     private Instant addedAt;
@@ -75,6 +90,12 @@ public class PantryItem implements Serializable {
         this.name = name;
     }
 
+    public String getAmountUnit() { return amountUnit; }
+    public void setAmountUnit(String amountUnit) { this.amountUnit = amountUnit; }
+
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
+
     public Double getKcalPerPackage() {
         return kcalPerPackage;
     }
@@ -83,13 +104,11 @@ public class PantryItem implements Serializable {
         this.kcalPerPackage = kcalPerPackage;
     }
 
-    public Integer getCount() {
-        return count;
-    }
+    public Double getKcalPer100g() { return kcalPer100g; }
+    public void setKcalPer100g(Double kcalPer100g) { this.kcalPer100g = kcalPer100g; }
 
-    public void setCount(Integer count) {
-        this.count = count;
-    }
+    public Double getKcalPer100ml() { return kcalPer100ml; }
+    public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
 
     public Instant getAddedAt() {
         return addedAt;

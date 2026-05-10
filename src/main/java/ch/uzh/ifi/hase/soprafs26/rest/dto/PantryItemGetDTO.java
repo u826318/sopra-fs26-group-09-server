@@ -9,7 +9,14 @@ public class PantryItemGetDTO {
     private String barcode;
     private String name;
     private Double kcalPerPackage;
-    private Integer count;
+    // Issue #114 — remaining amount in the stored unit
+    private Double amount;
+    // one of: "g", "ml", "package"
+    private String amountUnit;
+    // populated when amountUnit = "g"
+    private Double kcalPer100g;
+    // populated when amountUnit = "ml"
+    private Double kcalPer100ml;
     private Instant addedAt;
 
     public Long getId() {
@@ -52,13 +59,17 @@ public class PantryItemGetDTO {
         this.kcalPerPackage = kcalPerPackage;
     }
 
-    public Integer getCount() {
-        return count;
-    }
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
 
-    public void setCount(Integer count) {
-        this.count = count;
-    }
+    public String getAmountUnit() { return amountUnit; }
+    public void setAmountUnit(String amountUnit) { this.amountUnit = amountUnit; }
+
+    public Double getKcalPer100g() { return kcalPer100g; }
+    public void setKcalPer100g(Double kcalPer100g) { this.kcalPer100g = kcalPer100g; }
+
+    public Double getKcalPer100ml() { return kcalPer100ml; }
+    public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
 
     public Instant getAddedAt() {
         return addedAt;

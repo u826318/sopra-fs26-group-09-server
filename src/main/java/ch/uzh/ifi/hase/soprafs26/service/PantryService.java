@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class PantryService {
      * Upper bound for {@link #bulkAddItems(Long, List, Long)} to avoid oversized payloads.
      */
     public static final int MAX_ITEMS_PER_BULK_REQUEST = 100;
+
+    // Issue #114 — allowed values for amountUnit
+    private static final Set<String> VALID_AMOUNT_UNITS = Set.of("g", "ml", "package");
 
     private final PantryItemRepository pantryItemRepository;
     private final ConsumptionLogRepository consumptionLogRepository;
@@ -60,17 +64,46 @@ public class PantryService {
         this.dailyNutrientIntakeService = dailyNutrientIntakeService;
     }
 
+    // Issue #114 — unit-aware calorie calculation for a single consume operation
+    private Double computeConsumedCalories(PantryItem item, double consumedAmount) {
+        String unit = item.getAmountUnit();
+        if ("g".equals(unit) && item.getKcalPer100g() != null && item.getKcalPer100g() > 0) {
+            return item.getKcalPer100g() * consumedAmount / 100.0;
+        }
+        if ("ml".equals(unit) && item.getKcalPer100ml() != null && item.getKcalPer100ml() > 0) {
+            return item.getKcalPer100ml() * consumedAmount / 100.0;
+        }
+        if ("package".equals(unit) && item.getKcalPerPackage() != null && item.getKcalPerPackage() > 0) {
+            return item.getKcalPerPackage() * consumedAmount;
+        }
+        return null;
+    }
+
     /**
      * Calculates the total calories currently stored in the pantry for one household.
-     * Formula: sum(kcalPerPackage * count)
+     * Issue #114 — formula depends on amountUnit:
+     *   g       → kcalPer100g * amount / 100
+     *   ml      → kcalPer100ml * amount / 100
+     *   package → kcalPerPackage * amount
      */
     public double calculateTotalCalories(Long householdId) {
         List<PantryItem> pantryItems = pantryItemRepository.findByHouseholdId(householdId);
 
         double totalCalories = 0.0;
         for (PantryItem item : pantryItems) {
-            if (item.getKcalPerPackage() != null && item.getCount() != null) {
-                totalCalories += item.getKcalPerPackage() * item.getCount();
+            String unit = item.getAmountUnit();
+            Double amount = item.getAmount();
+            if (unit == null || amount == null) {
+                continue;
+            }
+            if ("g".equals(unit) && item.getKcalPer100g() != null) {
+                totalCalories += item.getKcalPer100g() * amount / 100.0;
+            }
+            else if ("ml".equals(unit) && item.getKcalPer100ml() != null) {
+                totalCalories += item.getKcalPer100ml() * amount / 100.0;
+            }
+            else if ("package".equals(unit) && item.getKcalPerPackage() != null) {
+                totalCalories += item.getKcalPerPackage() * amount;
             }
         }
 
@@ -109,8 +142,11 @@ public class PantryService {
                 householdId,
                 normalizedBarcode,
                 normalizedName,
+                pantryItemPostDTO.getAmountUnit(),
+                pantryItemPostDTO.getAmount(),
                 pantryItemPostDTO.getKcalPerPackage(),
-                pantryItemPostDTO.getQuantity()
+                pantryItemPostDTO.getKcalPer100g(),
+                pantryItemPostDTO.getKcalPer100ml()
         );
         pantryItemMicronutrientService.upsertMicronutrientsPerPackage(
                 saved,
@@ -160,8 +196,11 @@ public class PantryService {
                     householdId,
                     normalizedBarcode,
                     normalizedName,
+                    dto.getAmountUnit(),
+                    dto.getAmount(),
                     dto.getKcalPerPackage(),
-                    dto.getQuantity());
+                    dto.getKcalPer100g(),
+                    dto.getKcalPer100ml());
             pantryItemMicronutrientService.upsertMicronutrientsPerPackage(
                     saved,
                     dto.getPackageQuantity(),
@@ -173,21 +212,22 @@ public class PantryService {
         return savedItems;
     }
 
-    private void validatePantryItemPayload(PantryItemPostDTO pantryItemPostDTO) {
-        if (pantryItemPostDTO == null) {
+    private void validatePantryItemPayload(PantryItemPostDTO dto) {
+        if (dto == null) {
             throw new IllegalArgumentException("Pantry item payload must not be empty.");
         }
-        if (pantryItemPostDTO.getQuantity() == null || pantryItemPostDTO.getQuantity() <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        // Issue #114 — validate amount and unit instead of integer quantity
+        if (dto.getAmount() == null || dto.getAmount() <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero.");
         }
-        if (pantryItemPostDTO.getBarcode() == null || pantryItemPostDTO.getBarcode().trim().isEmpty()) {
+        if (dto.getAmountUnit() == null || !VALID_AMOUNT_UNITS.contains(dto.getAmountUnit())) {
+            throw new IllegalArgumentException("Amount unit must be one of: g, ml, package.");
+        }
+        if (dto.getBarcode() == null || dto.getBarcode().trim().isEmpty()) {
             throw new IllegalArgumentException("Barcode must not be empty.");
         }
-        if (pantryItemPostDTO.getName() == null || pantryItemPostDTO.getName().trim().isEmpty()) {
+        if (dto.getName() == null || dto.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Product name must not be empty.");
-        }
-        if (pantryItemPostDTO.getKcalPerPackage() == null || pantryItemPostDTO.getKcalPerPackage() < 0) {
-            throw new IllegalArgumentException("Calories per package must be zero or greater.");
         }
     }
 
@@ -204,7 +244,9 @@ public class PantryService {
         payload.setItemId(saved.getId());
         payload.setProductName(saved.getName());
         payload.setBarcode(saved.getBarcode());
-        payload.setQuantity(saved.getCount().doubleValue());
+        // Issue #114 — broadcast the stored amount and its unit
+        payload.setAmount(saved.getAmount());
+        payload.setAmountUnit(saved.getAmountUnit());
         payload.setCaloriesPerUnit(saved.getKcalPerPackage());
         payload.setAddedByUserId(authenticatedUserId);
         payload.setAddedAt(saved.getAddedAt().toString());
@@ -212,24 +254,33 @@ public class PantryService {
         pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
     }
 
+    // Issue #114 — merge only when barcode AND amountUnit match; otherwise create a new row
     private PantryItem mergeOrCreatePantryItem(
             Long householdId,
             String barcode,
             String name,
+            String amountUnit,
+            Double amount,
             Double kcalPerPackage,
-            Integer quantity
+            Double kcalPer100g,
+            Double kcalPer100ml
     ) {
         String normalizedBarcode = normalizeBarcode(barcode);
 
         List<PantryItem> matchingItems = pantryItemRepository
                 .findByHouseholdIdAndBarcode(householdId, normalizedBarcode);
 
-        PantryItem matchingItem = matchingItems.isEmpty() ? null : matchingItems.get(0);
+        PantryItem matchingItem = matchingItems.stream()
+                .filter(item -> amountUnit.equals(item.getAmountUnit()))
+                .findFirst()
+                .orElse(null);
 
         if (matchingItem != null) {
             matchingItem.setName(name);
             matchingItem.setKcalPerPackage(kcalPerPackage);
-            matchingItem.setCount(safeCount(matchingItem.getCount()) + safeCount(quantity));
+            matchingItem.setKcalPer100g(kcalPer100g);
+            matchingItem.setKcalPer100ml(kcalPer100ml);
+            matchingItem.setAmount(safeAmount(matchingItem.getAmount()) + safeAmount(amount));
             return pantryItemRepository.save(matchingItem);
         }
 
@@ -237,11 +288,18 @@ public class PantryService {
         pantryItem.setHouseholdId(householdId);
         pantryItem.setBarcode(normalizedBarcode);
         pantryItem.setName(name);
+        pantryItem.setAmountUnit(amountUnit);
+        pantryItem.setAmount(safeAmount(amount));
         pantryItem.setKcalPerPackage(kcalPerPackage);
-        pantryItem.setCount(safeCount(quantity));
+        pantryItem.setKcalPer100g(kcalPer100g);
+        pantryItem.setKcalPer100ml(kcalPer100ml);
         pantryItem.setAddedAt(Instant.now());
 
         return pantryItemRepository.save(pantryItem);
+    }
+
+    private double safeAmount(Double amount) {
+        return amount == null ? 0.0 : amount;
     }
 
     private String normalizeBarcode(String barcode) {
@@ -251,10 +309,6 @@ public class PantryService {
 
         String trimmedBarcode = barcode.trim();
         return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
-    }
-
-    private int safeCount(Integer count) {
-        return count == null ? 0 : count;
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Integer quantity, Long authenticatedUserId) {
@@ -287,7 +341,9 @@ public class PantryService {
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
-        if (quantity > pantryItem.getCount()) {
+        // Issue #114 — compare against amount (Double) instead of count (Integer)
+        double consumeAmount = quantity.doubleValue();
+        if (consumeAmount > safeAmount(pantryItem.getAmount())) {
             throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
         }
 
@@ -296,12 +352,9 @@ public class PantryService {
             pantryItemRepository.save(pantryItem);
         }
 
-        int remainingCount = pantryItem.getCount() - quantity;
-        Double knownCaloriesPerPackage = pantryItem.getKcalPerPackage();
-        Double consumedCalories = null;
-        if (!skipCalorieLogging && knownCaloriesPerPackage != null && knownCaloriesPerPackage > 0) {
-            consumedCalories = knownCaloriesPerPackage * quantity;
-        }
+        double remainingAmount = safeAmount(pantryItem.getAmount()) - consumeAmount;
+        // Issue #114 — use unit-aware helper instead of package-only calculation
+        Double consumedCalories = skipCalorieLogging ? null : computeConsumedCalories(pantryItem, consumeAmount);
 
         ConsumptionLog log = new ConsumptionLog();
         log.setHouseholdId(householdId);
@@ -321,15 +374,15 @@ public class PantryService {
         result.setItemId(pantryItem.getId());
         result.setConsumedCalories(consumedCalories);
 
-        if (remainingCount == 0) {
+        if (remainingAmount <= 0) {
             pantryItemRepository.delete(pantryItem);
-            result.setRemainingCount(0);
+            result.setRemainingAmount(0.0);
             result.setRemoved(true);
         }
         else {
-            pantryItem.setCount(remainingCount);
+            pantryItem.setAmount(remainingAmount);
             pantryItemRepository.save(pantryItem);
-            result.setRemainingCount(remainingCount);
+            result.setRemainingAmount(remainingAmount);
             result.setRemoved(false);
         }
 
@@ -363,25 +416,27 @@ public class PantryService {
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
-        if (quantity > pantryItem.getCount()) {
+        // Issue #114 — compare against amount (Double) instead of count (Integer)
+        double removeAmount = quantity.doubleValue();
+        if (removeAmount > safeAmount(pantryItem.getAmount())) {
             throw new IllegalArgumentException("Removed quantity exceeds available quantity.");
         }
 
-        int remainingCount = pantryItem.getCount() - quantity;
+        double remainingAmount = safeAmount(pantryItem.getAmount()) - removeAmount;
 
         ConsumeResult result = new ConsumeResult();
         result.setItemId(pantryItem.getId());
         result.setConsumedCalories(0.0);
 
-        if (remainingCount == 0) {
+        if (remainingAmount <= 0) {
             pantryItemRepository.delete(pantryItem);
-            result.setRemainingCount(0);
+            result.setRemainingAmount(0.0);
             result.setRemoved(true);
         }
         else {
-            pantryItem.setCount(remainingCount);
+            pantryItem.setAmount(remainingAmount);
             pantryItemRepository.save(pantryItem);
-            result.setRemainingCount(remainingCount);
+            result.setRemainingAmount(remainingAmount);
             result.setRemoved(false);
         }
 
@@ -400,7 +455,7 @@ public class PantryService {
 
     public static class ConsumeResult {
         private Long itemId;
-        private Integer remainingCount;
+        private Double remainingAmount;
         private Double consumedCalories;
         private boolean removed;
 
@@ -412,12 +467,28 @@ public class PantryService {
             this.itemId = itemId;
         }
 
-        public Integer getRemainingCount() {
-            return remainingCount;
+        public Double getRemainingAmount() {
+            return remainingAmount;
         }
 
+        public void setRemainingAmount(Double remainingAmount) {
+            this.remainingAmount = remainingAmount;
+        }
+
+        /**
+         * @deprecated Use {@link #getRemainingAmount()} instead. Kept for compatibility.
+         */
+        @Deprecated
+        public Integer getRemainingCount() {
+            return remainingAmount == null ? null : remainingAmount.intValue();
+        }
+
+        /**
+         * @deprecated Use {@link #setRemainingAmount(Double)} instead. Kept for compatibility.
+         */
+        @Deprecated
         public void setRemainingCount(Integer remainingCount) {
-            this.remainingCount = remainingCount;
+            this.remainingAmount = remainingCount == null ? null : remainingCount.doubleValue();
         }
 
         public Double getConsumedCalories() {

@@ -7,7 +7,17 @@ public class PantryItemPostDTO {
     private String barcode;
     private String name;
     private Double kcalPerPackage;
-    private Integer quantity;
+    // Issue #114 — amount in the unit chosen by the user
+    private Double amount;
+
+    // one of: "g", "ml", "package"
+    private String amountUnit;
+
+    // populated when amountUnit = "g"
+    private Double kcalPer100g;
+
+    // populated when amountUnit = "ml"
+    private Double kcalPer100ml;
     private String packageQuantity;
     private Map<String, Object> nutriments;
 
@@ -35,13 +45,17 @@ public class PantryItemPostDTO {
         this.kcalPerPackage = kcalPerPackage;
     }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+    public String getAmountUnit() { return amountUnit; }
+    public void setAmountUnit(String amountUnit) { this.amountUnit = amountUnit; }
+
+    public Double getKcalPer100g() { return kcalPer100g; }
+    public void setKcalPer100g(Double kcalPer100g) { this.kcalPer100g = kcalPer100g; }
+
+    public Double getKcalPer100ml() { return kcalPer100ml; }
+    public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
 
     public String getPackageQuantity() {
         return packageQuantity;

@@ -63,7 +63,9 @@ public interface DTOMapper {
 	@Mapping(source = "barcode", target = "barcode")
 	@Mapping(source = "name", target = "name")
 	@Mapping(source = "kcalPerPackage", target = "kcalPerPackage")
-	@Mapping(source = "count", target = "count")
+	// Issue #114 — map new amount/unit fields; kcal fields have matching names so no explicit mapping needed
+	@Mapping(source = "amount", target = "amount")
+	@Mapping(source = "amountUnit", target = "amountUnit")
 	@Mapping(source = "addedAt", target = "addedAt")
 	PantryItemGetDTO convertEntityToPantryItemGetDTO(PantryItem pantryItem);
 	

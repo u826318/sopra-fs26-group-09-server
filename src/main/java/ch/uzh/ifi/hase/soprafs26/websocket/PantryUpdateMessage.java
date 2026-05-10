@@ -39,8 +39,9 @@ public class PantryUpdateMessage {
         private Long itemId;
         private String productName;
         private String barcode;
-        private Double quantity;
-        private String unit;
+        // Issue #114 — broadcast amount in chosen unit
+        private Double amount;
+        private String amountUnit;
         private Double caloriesPerUnit;
         private Long addedByUserId;
         private String addedAt;
@@ -54,11 +55,11 @@ public class PantryUpdateMessage {
         public String getBarcode() { return barcode; }
         public void setBarcode(String barcode) { this.barcode = barcode; }
 
-        public Double getQuantity() { return quantity; }
-        public void setQuantity(Double quantity) { this.quantity = quantity; }
+        public Double getAmount() { return amount; }
+        public void setAmount(Double amount) { this.amount = amount; }
 
-        public String getUnit() { return unit; }
-        public void setUnit(String unit) { this.unit = unit; }
+        public String getAmountUnit() { return amountUnit; }
+        public void setAmountUnit(String amountUnit) { this.amountUnit = amountUnit; }
 
         public Double getCaloriesPerUnit() { return caloriesPerUnit; }
         public void setCaloriesPerUnit(Double caloriesPerUnit) { this.caloriesPerUnit = caloriesPerUnit; }
