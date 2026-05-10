@@ -528,6 +528,30 @@ class PantryServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
+    // Issue #133 — consumedUnit from amountUnit must be persisted in the consumption log
+    @Test
+    void consumeItem_savesConsumedUnitFromAmountUnitInLog() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("g");
+        item.setKcalPer100g(364.0);
+        item.setAmount(500.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        pantryService.consumeItem(1L, 10L, 200.0, 99L);
+
+        ArgumentCaptor<ConsumptionLog> captor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(captor.capture());
+        assertEquals("g", captor.getValue().getConsumedUnit());
+    }
+
     // Issue #114 — mergeOrCreatePantryItem now merges on barcode+amountUnit match
     @Test
     void addItem_success_mergesExistingItemWithSameBarcodeAndUnit() {

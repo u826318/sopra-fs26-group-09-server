@@ -377,6 +377,8 @@ public class HouseholdService {
         dto.setConsumedAt(log.getConsumedAt());
         dto.setPantryItemId(log.getPantryItemId());
         dto.setConsumedQuantity(log.getConsumedQuantity());
+        // Issue #133 — pass unit through so frontend can display "200g" instead of "200×"
+        dto.setConsumedUnit(log.getConsumedUnit());
         dto.setConsumedCalories(log.getConsumedCalories());
         dto.setUserId(log.getUserId());
         String productName = pantryItemRepository.findByIdAndHouseholdId(log.getPantryItemId(), householdId)

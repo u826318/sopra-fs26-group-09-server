@@ -31,6 +31,10 @@ public class ConsumptionLog implements Serializable {
     @Column(nullable = false)
     private Integer consumedQuantity;
 
+    // Issue #133 — unit stored alongside quantity so activity feed can display "200g" instead of "200×"
+    @Column(nullable = true)
+    private String consumedUnit;
+
     @Column(nullable = true)
     private Double consumedCalories;
 
@@ -75,6 +79,14 @@ public class ConsumptionLog implements Serializable {
 
     public void setConsumedQuantity(Integer consumedQuantity) {
         this.consumedQuantity = consumedQuantity;
+    }
+
+    public String getConsumedUnit() {
+        return consumedUnit;
+    }
+
+    public void setConsumedUnit(String consumedUnit) {
+        this.consumedUnit = consumedUnit;
     }
 
     public Double getConsumedCalories() {
