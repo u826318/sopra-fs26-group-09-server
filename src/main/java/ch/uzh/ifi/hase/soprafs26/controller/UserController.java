@@ -129,6 +129,9 @@ public class UserController {
 		dto.setUserId(goal.getUserId());
 		dto.setGoalType(goal.getGoalType());
 		dto.setTargetRate(goal.getTargetRate());
+		// Copy new fields so the frontend can restore the form on reload
+		dto.setTargetWeight(goal.getTargetWeight());
+		dto.setWeeksToGoal(goal.getWeeksToGoal());
 		dto.setAge(goal.getAge());
 		dto.setSex(goal.getSex());
 		dto.setHeight(goal.getHeight());

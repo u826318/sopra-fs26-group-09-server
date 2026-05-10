@@ -27,7 +27,15 @@ public class UserHealthGoalService {
         UserHealthGoal goal = repository.findByUserId(userId).orElse(new UserHealthGoal());
         goal.setUserId(userId);
         goal.setGoalType(dto.getGoalType());
-        goal.setTargetRate(dto.getTargetRate());
+        goal.setTargetWeight(dto.getTargetWeight());
+        goal.setWeeksToGoal(dto.getWeeksToGoal());
+        // targetRate is a derived field: (currentWeight - targetWeight) / weeks
+        if ("LOSE_WEIGHT".equals(dto.getGoalType())
+                && dto.getTargetWeight() != null && dto.getWeeksToGoal() != null) {
+            goal.setTargetRate((dto.getWeight() - dto.getTargetWeight()) / dto.getWeeksToGoal());
+        } else {
+            goal.setTargetRate(null);
+        }
         goal.setAge(dto.getAge());
         goal.setSex(dto.getSex());
         goal.setHeight(dto.getHeight());
@@ -38,35 +46,62 @@ public class UserHealthGoalService {
     }
 
     static double calculate(UserHealthGoalPutDTO dto) {
-        double bmr;
-        if ("FEMALE".equals(dto.getSex())) {
-            bmr = 10 * dto.getWeight() + 6.25 * dto.getHeight() - 5 * dto.getAge() - 161;
-        } else if ("MALE".equals(dto.getSex())) {
-            bmr = 10 * dto.getWeight() + 6.25 * dto.getHeight() - 5 * dto.getAge() + 5;
-        } else {
-            double female = 10 * dto.getWeight() + 6.25 * dto.getHeight() - 5 * dto.getAge() - 161;
-            double male = 10 * dto.getWeight() + 6.25 * dto.getHeight() - 5 * dto.getAge() + 5;
-            bmr = (female + male) / 2.0;
-        }
-
-        double factor = switch (dto.getActivityLevel()) {
-            case "SEDENTARY" -> 1.2;
-            case "LIGHT" -> 1.375;
-            case "MODERATE" -> 1.55;
-            case "ACTIVE" -> 1.725;
+        double activityFactor = switch (dto.getActivityLevel()) {
+            case "SEDENTARY"   -> 1.2;
+            case "LIGHT"       -> 1.375;
+            case "MODERATE"    -> 1.55;
+            case "ACTIVE"      -> 1.725;
             case "VERY_ACTIVE" -> 1.9;
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Invalid activity level: " + dto.getActivityLevel());
         };
 
-        double tdee = bmr * factor;
+        // TDEE at current body weight — used as reference for cap and non-loss goals
+        double tdee0 = mifflinBmr(dto.getWeight(), dto.getHeight(), dto.getAge(), dto.getSex())
+                * activityFactor;
 
         return switch (dto.getGoalType()) {
-            case "LOSE_WEIGHT" -> tdee - (dto.getTargetRate() != null ? dto.getTargetRate() * 1000 : 500);
-            case "MAINTAIN" -> tdee;
-            case "GAIN_MUSCLE" -> tdee + 300;
+            case "LOSE_WEIGHT" -> {
+                // targetWeight and weeksToGoal are required inputs for weight-loss calculation
+                if (dto.getTargetWeight() == null || dto.getWeeksToGoal() == null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "targetWeight and weeksToGoal are required for LOSE_WEIGHT");
+                }
+
+                // Hall (2012): use TDEE at the average weight across the loss journey,
+                // then apply ~10% metabolic adaptation factor.
+                double wAvg = (dto.getWeight() + dto.getTargetWeight()) / 2.0;
+                double tdeeAtAvg = mifflinBmr(wAvg, dto.getHeight(), dto.getAge(), dto.getSex())
+                        * activityFactor;
+                double tdeeAdapted = tdeeAtAvg * 0.90;
+
+                // Energy density of mixed tissue (≈75% fat + 25% lean): 7700 kcal/kg
+                double rate = (dto.getWeight() - dto.getTargetWeight()) / dto.getWeeksToGoal();
+                double dailyDeficit = rate * 7700.0 / 7.0;
+
+                // Safety: cap deficit at 35% of current TDEE; enforce sex-based calorie floor
+                double maxDeficit = tdee0 * 0.35;
+                double floor = "MALE".equals(dto.getSex()) ? 1500.0 : 1200.0;
+
+                yield Math.max(
+                        Math.max(tdeeAdapted - dailyDeficit, tdee0 - maxDeficit),
+                        floor
+                );
+            }
+            case "MAINTAIN"    -> tdee0;
+            case "GAIN_MUSCLE" -> tdee0 + 300.0;
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Invalid goal type: " + dto.getGoalType());
+        };
+    }
+
+    // Mifflin-St Jeor BMR. "OTHER" uses the average of male (+5) and female (-161) offsets = -78.
+    private static double mifflinBmr(double weight, double height, int age, String sex) {
+        double base = 10.0 * weight + 6.25 * height - 5.0 * age;
+        return switch (sex) {
+            case "FEMALE" -> base - 161.0;
+            case "MALE"   -> base + 5.0;
+            default       -> base - 78.0;
         };
     }
 }

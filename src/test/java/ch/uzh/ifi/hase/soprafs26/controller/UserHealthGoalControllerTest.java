@@ -89,10 +89,12 @@ class UserHealthGoalControllerTest {
         UserHealthGoal saved = buildGoal(1L, "LOSE_WEIGHT", 0.5, 1592.89);
         given(userHealthGoalService.upsertGoal(eq(1L), any())).willReturn(saved);
 
+        // targetRate removed from PUT body; backend derives it from targetWeight and weeksToGoal
         String body = """
                 {
                   "goalType": "LOSE_WEIGHT",
-                  "targetRate": 0.5,
+                  "targetWeight": 57.5,
+                  "weeksToGoal": 9,
                   "age": 28,
                   "sex": "FEMALE",
                   "height": 165.0,
@@ -135,6 +137,9 @@ class UserHealthGoalControllerTest {
         goal.setUserId(userId);
         goal.setGoalType(goalType);
         goal.setTargetRate(targetRate);
+        // targetWeight and weeksToGoal stored so the frontend can restore the form on reload
+        goal.setTargetWeight(targetRate != null ? 57.5 : null);
+        goal.setWeeksToGoal(targetRate != null ? 9 : null);
         goal.setAge(28);
         goal.setSex("FEMALE");
         goal.setHeight(165.0);
