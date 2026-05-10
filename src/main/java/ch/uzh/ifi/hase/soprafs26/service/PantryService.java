@@ -135,7 +135,7 @@ public class PantryService {
             throw new IllegalArgumentException("User is not a member of this household.");
         }
 
-        String normalizedBarcode = pantryItemPostDTO.getBarcode().trim();
+        String normalizedBarcode = pantryItemPostDTO.getBarcode() != null ? pantryItemPostDTO.getBarcode().trim() : null;
         String normalizedName = pantryItemPostDTO.getName().trim();
 
         PantryItem saved = mergeOrCreatePantryItem(
@@ -190,7 +190,7 @@ public class PantryService {
 
         List<PantryItem> savedItems = new ArrayList<>(items.size());
         for (PantryItemPostDTO dto : items) {
-            String normalizedBarcode = dto.getBarcode().trim();
+            String normalizedBarcode = dto.getBarcode() != null ? dto.getBarcode().trim() : null;
             String normalizedName = dto.getName().trim();
             PantryItem saved = mergeOrCreatePantryItem(
                     householdId,
@@ -222,9 +222,6 @@ public class PantryService {
         }
         if (dto.getAmountUnit() == null || !VALID_AMOUNT_UNITS.contains(dto.getAmountUnit())) {
             throw new IllegalArgumentException("Amount unit must be one of: g, ml, package.");
-        }
-        if (dto.getBarcode() == null || dto.getBarcode().trim().isEmpty()) {
-            throw new IllegalArgumentException("Barcode must not be empty.");
         }
         if (dto.getName() == null || dto.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Product name must not be empty.");
@@ -267,8 +264,9 @@ public class PantryService {
     ) {
         String normalizedBarcode = normalizeBarcode(barcode);
 
-        List<PantryItem> matchingItems = pantryItemRepository
-                .findByHouseholdIdAndBarcode(householdId, normalizedBarcode);
+        List<PantryItem> matchingItems = (normalizedBarcode == null)
+                ? List.of()
+                : pantryItemRepository.findByHouseholdIdAndBarcode(householdId, normalizedBarcode);
 
         PantryItem matchingItem = matchingItems.stream()
                 .filter(item -> amountUnit.equals(item.getAmountUnit()))
