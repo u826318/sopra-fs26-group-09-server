@@ -167,6 +167,7 @@ class PantryItemRepositoryIntegrationTest {
         pantryItem.setName(name);
         pantryItem.setKcalPerPackage(kcalPerPackage);
         pantryItem.setAmount(amount);
+        pantryItem.setInitialAmount(amount);
         pantryItem.setAmountUnit(amountUnit);
         pantryItem.setAddedAt(Instant.now());
         return pantryItem;
