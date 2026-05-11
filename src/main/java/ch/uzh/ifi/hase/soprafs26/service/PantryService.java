@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
@@ -21,7 +22,9 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
+
 
 @Service
 @Transactional
@@ -43,6 +46,7 @@ public class PantryService {
     private final PantryBroadcastService pantryBroadcastService;
     private final PantryItemMicronutrientService pantryItemMicronutrientService;
     private final DailyNutrientIntakeService dailyNutrientIntakeService;
+    private final MealPortionEstimateService mealPortionEstimateService;
 
     public PantryService(
             PantryItemRepository pantryItemRepository,
@@ -52,7 +56,8 @@ public class PantryService {
             UserRepository userRepository,
             PantryBroadcastService pantryBroadcastService,
             PantryItemMicronutrientService pantryItemMicronutrientService,
-            DailyNutrientIntakeService dailyNutrientIntakeService
+            DailyNutrientIntakeService dailyNutrientIntakeService,
+            MealPortionEstimateService mealPortionEstimateService
     ) {
         this.pantryItemRepository = pantryItemRepository;
         this.consumptionLogRepository = consumptionLogRepository;
@@ -62,6 +67,7 @@ public class PantryService {
         this.pantryBroadcastService = pantryBroadcastService;
         this.pantryItemMicronutrientService = pantryItemMicronutrientService;
         this.dailyNutrientIntakeService = dailyNutrientIntakeService;
+        this.mealPortionEstimateService = mealPortionEstimateService;
     }
 
     // Issue #114 — unit-aware calorie calculation for a single consume operation
@@ -307,6 +313,27 @@ public class PantryService {
 
         String trimmedBarcode = barcode.trim();
         return trimmedBarcode.isEmpty() ? null : trimmedBarcode;
+    }
+
+    public PortionEstimateResponseDTO estimateMealPortion(
+            Long householdId,
+            Long itemId,
+            MultipartFile image,
+            Long authenticatedUserId) {
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
+
+        return mealPortionEstimateService.estimatePortion(pantryItem, image);
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {

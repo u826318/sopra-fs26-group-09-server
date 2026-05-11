@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemPostDTO;
@@ -18,6 +20,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryBulkAddPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryOverviewGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 
@@ -83,6 +86,22 @@ public class PantryController {
         return responseDTO;
     }
 
+        @PostMapping("/households/{householdId}/pantry/{itemId}/consume/portion-estimate")
+        @ResponseStatus(HttpStatus.OK)
+        public PortionEstimateResponseDTO estimateMealPortion(
+                @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+                @PathVariable Long householdId,
+                @PathVariable Long itemId,
+                @RequestParam("image") MultipartFile image) {
+
+        return pantryService.estimateMealPortion(
+                householdId,
+                itemId,
+                image,
+                authenticatedUserId
+        );
+        }
+        
     @PostMapping("/households/{householdId}/pantry/{itemId}/remove")
     @ResponseStatus(HttpStatus.OK)
     public ConsumePantryItemResponseDTO removePantryItem(

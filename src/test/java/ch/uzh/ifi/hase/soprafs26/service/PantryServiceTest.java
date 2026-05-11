@@ -50,6 +50,7 @@ class PantryServiceTest {
     private PantryItemMicronutrientService mockMicronutrientService;
     private DailyNutrientIntakeService mockDailyNutrientIntakeService;
     private PantryService pantryService;
+    private MealPortionEstimateService mockMealPortionEstimateService;
 
     @BeforeEach
     void setUp() {
@@ -61,6 +62,7 @@ class PantryServiceTest {
         mockBroadcastService = mock(PantryBroadcastService.class);
         mockMicronutrientService = mock(PantryItemMicronutrientService.class);
         mockDailyNutrientIntakeService = mock(DailyNutrientIntakeService.class);
+        mockMealPortionEstimateService = mock(MealPortionEstimateService.class);
 
         pantryService = new PantryService(
                 mockPantryRepo,
@@ -70,7 +72,8 @@ class PantryServiceTest {
                 mockUserRepo,
                 mockBroadcastService,
                 mockMicronutrientService,
-                mockDailyNutrientIntakeService
+                mockDailyNutrientIntakeService,
+                mockMealPortionEstimateService
         );
 
         when(mockUserRepo.findById(anyLong())).thenReturn(Optional.empty());
