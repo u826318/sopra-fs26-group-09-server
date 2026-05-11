@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,16 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.InOrder;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
@@ -550,6 +549,109 @@ class PantryServiceTest {
         ArgumentCaptor<ConsumptionLog> captor = ArgumentCaptor.forClass(ConsumptionLog.class);
         verify(mockConsumptionRepo).save(captor.capture());
         assertEquals("g", captor.getValue().getConsumedUnit());
+    }
+
+    // Issue #158 — portion consumption with grams uses kcalPer100g and updates amount
+    @Test
+    void consumeItem_withGramUnit_convertsPortionToCaloriesAndUpdatesAmount() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("g");
+        item.setKcalPer100g(364.0);
+        item.setAmount(500.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 200.0, 99L);
+
+        assertEquals(300.0, result.getRemainingAmount(), 0.001);
+        assertEquals(728.0, result.getConsumedCalories(), 0.001);
+        assertFalse(result.isRemoved());
+
+        ArgumentCaptor<ConsumptionLog> logCaptor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(logCaptor.capture());
+
+        ConsumptionLog savedLog = logCaptor.getValue();
+        assertEquals(200, savedLog.getConsumedQuantity());
+        assertEquals("g", savedLog.getConsumedUnit());
+        assertEquals(728.0, savedLog.getConsumedCalories(), 0.001);
+
+        verify(mockPantryRepo).save(item);
+        verify(mockBroadcastService).broadcastPantryUpdate(eq(1L), any(PantryUpdateMessage.class));
+    }
+
+    // Issue #158 — portion consumption with milliliters uses kcalPer100ml
+    @Test
+    void consumeItem_withMilliliterUnit_convertsPortionToCaloriesAndUpdatesAmount() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(11L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("ml");
+        item.setKcalPer100ml(50.0);
+        item.setAmount(750.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(11L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 11L, 250.0, 99L);
+
+        assertEquals(500.0, result.getRemainingAmount(), 0.001);
+        assertEquals(125.0, result.getConsumedCalories(), 0.001);
+        assertFalse(result.isRemoved());
+
+        ArgumentCaptor<ConsumptionLog> logCaptor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(logCaptor.capture());
+
+        ConsumptionLog savedLog = logCaptor.getValue();
+        assertEquals(250, savedLog.getConsumedQuantity());
+        assertEquals("ml", savedLog.getConsumedUnit());
+        assertEquals(125.0, savedLog.getConsumedCalories(), 0.001);
+
+        verify(mockPantryRepo).save(item);
+        verify(mockBroadcastService).broadcastPantryUpdate(eq(1L), any(PantryUpdateMessage.class));
+    }
+
+    // Issue #158 — unknown calories still records consumption and updates quantity
+    @Test
+    void consumeItem_withoutNutritionInfo_recordsConsumptionWithNullCalories() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(12L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("g");
+        item.setKcalPer100g(null);
+        item.setAmount(300.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(12L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 12L, 100.0, 99L);
+
+        assertEquals(200.0, result.getRemainingAmount(), 0.001);
+        assertNull(result.getConsumedCalories());
+        assertFalse(result.isRemoved());
+
+        ArgumentCaptor<ConsumptionLog> logCaptor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(logCaptor.capture());
+
+        assertEquals(100, logCaptor.getValue().getConsumedQuantity());
+        assertEquals("g", logCaptor.getValue().getConsumedUnit());
+        assertNull(logCaptor.getValue().getConsumedCalories());
+
+        verify(mockPantryRepo).save(item);
     }
 
     // Issue #114 — mergeOrCreatePantryItem now merges on barcode+amountUnit match
