@@ -294,6 +294,7 @@ public class PantryService {
         pantryItem.setName(name);
         pantryItem.setAmountUnit(amountUnit);
         pantryItem.setAmount(safeAmount(amount));
+        pantryItem.setInitialAmount(safeAmount(amount));
         pantryItem.setKcalPerPackage(kcalPerPackage);
         pantryItem.setKcalPer100g(kcalPer100g);
         pantryItem.setKcalPer100ml(kcalPer100ml);

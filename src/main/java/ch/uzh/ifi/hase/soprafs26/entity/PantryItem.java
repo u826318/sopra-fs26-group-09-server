@@ -40,6 +40,10 @@ public class PantryItem implements Serializable {
     @Column(nullable = false)
     private Double amount;
 
+    // original quantity at the time of first add — never modified by consumption
+    @Column(nullable = false, updatable = false)
+    private Double initialAmount;
+
     // kcalPerPackage: used when amountUnit = "package"
     @Column
     private Double kcalPerPackage;
@@ -95,6 +99,9 @@ public class PantryItem implements Serializable {
 
     public Double getAmount() { return amount; }
     public void setAmount(Double amount) { this.amount = amount; }
+
+    public Double getInitialAmount() { return initialAmount; }
+    public void setInitialAmount(Double initialAmount) { this.initialAmount = initialAmount; }
 
     public Double getKcalPerPackage() {
         return kcalPerPackage;

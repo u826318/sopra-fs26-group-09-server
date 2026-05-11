@@ -11,6 +11,8 @@ public class PantryItemGetDTO {
     private Double kcalPerPackage;
     // Issue #114 — remaining amount in the stored unit
     private Double amount;
+    // original quantity at the time of first add — never modified by consumption
+    private Double initialAmount;
     // one of: "g", "ml", "package"
     private String amountUnit;
     // populated when amountUnit = "g"
@@ -61,6 +63,9 @@ public class PantryItemGetDTO {
 
     public Double getAmount() { return amount; }
     public void setAmount(Double amount) { this.amount = amount; }
+
+    public Double getInitialAmount() { return initialAmount; }
+    public void setInitialAmount(Double initialAmount) { this.initialAmount = initialAmount; }
 
     public String getAmountUnit() { return amountUnit; }
     public void setAmountUnit(String amountUnit) { this.amountUnit = amountUnit; }
