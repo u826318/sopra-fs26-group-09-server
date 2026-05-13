@@ -431,12 +431,16 @@ public class HouseholdService {
         Household household = householdRepository.findById(householdId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, MSG_HOUSEHOLD_NOT_FOUND));
 
-        if (!household.getOwnerId().equals(requesterUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the household owner can remove members.");
-        }
+        boolean requesterIsOwner = household.getOwnerId().equals(requesterUserId);
+        boolean requesterIsSelf = targetUserId.equals(requesterUserId);
 
-        if (targetUserId.equals(requesterUserId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The owner cannot remove themselves from the household.");
+        if (requesterIsOwner && requesterIsSelf) {
+            // owner cannot leave; they must delete the household instead (client #118, server #162)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The owner cannot leave; delete the household instead.");
+        }
+        if (!requesterIsOwner && !requesterIsSelf) {
+            // non-owner members may only remove themselves, not other members (client #118, server #162)
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Members can only remove themselves.");
         }
 
         HouseholdMemberId memberId = new HouseholdMemberId(targetUserId, householdId);
