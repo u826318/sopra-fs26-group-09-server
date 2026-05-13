@@ -806,6 +806,22 @@ class HouseholdServiceTest {
     }
 
     @Test
+    // Implements member self-leave feature (client #118, server #162)
+    void removeMember_memberLeavesSelf_success() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L); // user 1 is owner
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(2L, 10L)))).thenReturn(true);
+
+        // user 2 (non-owner) removes themselves
+        householdService.removeMember(10L, 2L, 2L);
+
+        verify(householdMemberRepository).deleteById(eq(new HouseholdMemberId(2L, 10L)));
+    }
+
+    @Test
     void removeMember_nonOwner_throws403() {
         Household household = new Household();
         household.setId(10L);
