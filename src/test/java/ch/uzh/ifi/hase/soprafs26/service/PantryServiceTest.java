@@ -311,6 +311,7 @@ class PantryServiceTest {
         PantryItem item = new PantryItem();
         item.setId(10L);
         item.setHouseholdId(1L);
+        item.setName("Organic Rice");
         item.setAmountUnit("package");
         item.setKcalPerPackage(120.0);
         item.setAmount(2.0);
@@ -335,6 +336,7 @@ class PantryServiceTest {
         assertEquals(1L, savedLog.getHouseholdId());
         assertEquals(99L, savedLog.getUserId());
         assertEquals(10L, savedLog.getPantryItemId());
+        assertEquals("Organic Rice", savedLog.getProductNameSnapshot());
         // Issue #133 — consumedQuantity is rounded from Double amount (2.0 → 2)
         assertEquals(2, savedLog.getConsumedQuantity());
         assertEquals(240.0, savedLog.getConsumedCalories(), 0.001);

@@ -54,7 +54,7 @@ public class ReceiptOcrService {
     if (blankToNull(endpoint) == null || blankToNull(apiKey) == null) {
       throw new ResponseStatusException(
           HttpStatus.SERVICE_UNAVAILABLE,
-          "Azure Document Intelligence is not configured. Set AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT and AZURE_DOCUMENT_INTELLIGENCE_API_KEY."
+          "Receipt scanning is currently unavailable. Please add items manually or try again later."
       );
     }
 
