@@ -28,6 +28,9 @@ public class ConsumptionLog implements Serializable {
     @Column(nullable = false)
     private Long pantryItemId;
 
+    @Column(nullable = true)
+    private String productNameSnapshot;
+
     @Column(nullable = false)
     private Integer consumedQuantity;
 
@@ -71,6 +74,14 @@ public class ConsumptionLog implements Serializable {
 
     public void setPantryItemId(Long pantryItemId) {
         this.pantryItemId = pantryItemId;
+    }
+
+    public String getProductNameSnapshot() {
+        return productNameSnapshot;
+    }
+
+    public void setProductNameSnapshot(String productNameSnapshot) {
+        this.productNameSnapshot = productNameSnapshot;
     }
 
     public Integer getConsumedQuantity() {

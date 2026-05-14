@@ -604,12 +604,38 @@ class HouseholdServiceTest {
     }
 
     @Test
-    void getConsumptionLogs_removedItem_usesPlaceholderName() {
+    void getConsumptionLogs_removedItem_usesProductNameSnapshot() {
         when(householdRepository.existsById(10L)).thenReturn(true);
         when(householdMemberRepository.existsById(any())).thenReturn(true);
 
         ConsumptionLog log = new ConsumptionLog();
         log.setId(101L);
+        log.setHouseholdId(10L);
+        log.setUserId(1L);
+        log.setPantryItemId(99L);
+        log.setProductNameSnapshot("Finished Yogurt");
+        log.setConsumedQuantity(1);
+        log.setConsumedCalories(100.0);
+        log.setConsumedAt(Instant.now());
+
+        when(consumptionLogRepository.findByHouseholdIdOrderByConsumedAtDesc(eq(10L), any(Pageable.class)))
+                .thenReturn(List.of(log));
+        when(pantryItemRepository.findByIdAndHouseholdId(99L, 10L)).thenReturn(Optional.empty());
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of());
+
+        List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, null);
+
+        assertEquals("Finished Yogurt", result.get(0).getProductName());
+        assertEquals("Unknown user", result.get(0).getUsername());
+    }
+
+    @Test
+    void getConsumptionLogs_removedItemWithoutSnapshot_usesPlaceholderName() {
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(any())).thenReturn(true);
+
+        ConsumptionLog log = new ConsumptionLog();
+        log.setId(102L);
         log.setHouseholdId(10L);
         log.setUserId(1L);
         log.setPantryItemId(99L);
@@ -625,7 +651,6 @@ class HouseholdServiceTest {
         List<ConsumptionLogGetDTO> result = householdService.getConsumptionLogs(10L, 1L, null);
 
         assertEquals("Removed item", result.get(0).getProductName());
-        assertEquals("Unknown user", result.get(0).getUsername());
     }
 
     @Test

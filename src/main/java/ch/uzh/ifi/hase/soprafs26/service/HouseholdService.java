@@ -381,13 +381,23 @@ public class HouseholdService {
         dto.setConsumedUnit(log.getConsumedUnit());
         dto.setConsumedCalories(log.getConsumedCalories());
         dto.setUserId(log.getUserId());
-        String productName = pantryItemRepository.findByIdAndHouseholdId(log.getPantryItemId(), householdId)
-                .map(PantryItem::getName)
-                .orElse(REMOVED_PRODUCT_LABEL);
+        String productName = blankToNull(log.getProductNameSnapshot());
+        if (productName == null) {
+            productName = pantryItemRepository.findByIdAndHouseholdId(log.getPantryItemId(), householdId)
+                    .map(PantryItem::getName)
+                    .orElse(REMOVED_PRODUCT_LABEL);
+        }
         dto.setProductName(productName);
         String username = usernamesByUserId.getOrDefault(log.getUserId(), UNKNOWN_USERNAME_LABEL);
         dto.setUsername(username);
         return dto;
+    }
+
+    private String blankToNull(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        return value.trim();
     }
 
     private void refreshInviteCode(Household household) {
