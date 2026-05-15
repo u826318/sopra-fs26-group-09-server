@@ -550,9 +550,11 @@ class HouseholdServiceTest {
         logBob.setConsumedAt(Instant.parse("2026-04-10T12:00:00Z"));
 
         User alice = new User();
+        alice.setId(10L);
         alice.setUsername("alice");
 
         User bob = new User();
+        bob.setId(20L);
         bob.setUsername("bob");
 
         when(householdRepository.existsById(10L)).thenReturn(true);
@@ -560,8 +562,7 @@ class HouseholdServiceTest {
         when(consumptionLogRepository.findByHouseholdIdAndConsumedAtBetween(eq(10L), any(), any()))
                 .thenReturn(List.of(logAlice, logBob));
         when(householdBudgetRepository.findByHouseholdId(10L)).thenReturn(Optional.empty());
-        when(userRepository.findById(10L)).thenReturn(Optional.of(alice));
-        when(userRepository.findById(20L)).thenReturn(Optional.of(bob));
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of(alice, bob));
 
         HouseholdStatsGetDTO result = householdService.getStats(10L, "2026-04-10", "2026-04-10", 1L);
 

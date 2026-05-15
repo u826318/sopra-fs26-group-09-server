@@ -315,13 +315,14 @@ public class HouseholdService {
                         ConsumptionLog::getUserId,
                         Collectors.summingDouble(ConsumptionLog::getConsumedCalories)));
 
+        Map<Long, String> usernameByUserId = new HashMap<>();
+        userRepository.findAllById(calsByUser.keySet()).forEach(u -> usernameByUserId.put(u.getId(), u.getUsername()));
+
         List<HouseholdStatsGetDTO.MemberCalorieDTO> memberBreakdown = calsByUser.entrySet().stream()
                 .map(entry -> {
                     Long uid = entry.getKey();
                     Double total = entry.getValue();
-                    String uname = userRepository.findById(uid)
-                            .map(User::getUsername)
-                            .orElse("Unknown user #" + uid);
+                    String uname = usernameByUserId.getOrDefault(uid, "Unknown user #" + uid);
                     return new HouseholdStatsGetDTO.MemberCalorieDTO(uid, uname, total, total / numDays);
                 })
                 .collect(Collectors.toList());
