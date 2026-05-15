@@ -44,6 +44,10 @@ public class ConsumptionLog implements Serializable {
     @Column(nullable = false, updatable = false)
     private Instant consumedAt;
 
+    // Issue #121 — audit field: who clicked consume (may differ from userId when logging on behalf of another)
+    @Column(nullable = true)
+    private Long actorUserId;
+
     public Long getId() {
         return id;
     }
@@ -114,5 +118,13 @@ public class ConsumptionLog implements Serializable {
 
     public void setConsumedAt(Instant consumedAt) {
         this.consumedAt = consumedAt;
+    }
+
+    public Long getActorUserId() {
+        return actorUserId;
+    }
+
+    public void setActorUserId(Long actorUserId) {
+        this.actorUserId = actorUserId;
     }
 }
