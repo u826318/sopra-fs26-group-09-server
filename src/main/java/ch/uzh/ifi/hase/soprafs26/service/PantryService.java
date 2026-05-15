@@ -338,7 +338,7 @@ public class PantryService {
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {
-        return consumeItem(householdId, itemId, amount, null, false, authenticatedUserId);
+        return consumeItem(householdId, itemId, amount, null, false, authenticatedUserId, null);
     }
 
     public ConsumeResult consumeItem(
@@ -348,6 +348,17 @@ public class PantryService {
             Double kcalPerPackageOverride,
             boolean skipCalorieLogging,
             Long authenticatedUserId) {
+        return consumeItem(householdId, itemId, amount, kcalPerPackageOverride, skipCalorieLogging, authenticatedUserId, null);
+    }
+
+    public ConsumeResult consumeItem(
+            Long householdId,
+            Long itemId,
+            Double amount,
+            Double kcalPerPackageOverride,
+            boolean skipCalorieLogging,
+            Long authenticatedUserId,
+            Long consumedForUserId) {  // Issue #121 — null means self
         // Issue #133 — amount (Double) replaces quantity (Integer) to support portion-based consumption
         if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
@@ -363,6 +374,16 @@ public class PantryService {
         boolean isMember = householdMemberRepository.existsById(membershipId);
         if (!isMember) {
             throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        // Issue #121 — if a target consumer is specified, validate they are also a member
+        Long effectiveUserId = authenticatedUserId;
+        if (consumedForUserId != null) {
+            HouseholdMemberId targetMemberId = new HouseholdMemberId(consumedForUserId, household.getId());
+            if (!householdMemberRepository.existsById(targetMemberId)) {
+                throw new IllegalArgumentException("Target user is not a member of this household.");
+            }
+            effectiveUserId = consumedForUserId;
         }
 
         PantryItem pantryItem = pantryItemRepository.findByIdAndHouseholdId(itemId, householdId)
@@ -386,7 +407,8 @@ public class PantryService {
         int loggedQuantity = (int) Math.max(1, Math.round(consumeAmount));
         ConsumptionLog log = new ConsumptionLog();
         log.setHouseholdId(householdId);
-        log.setUserId(authenticatedUserId);
+        log.setUserId(effectiveUserId);           // Issue #121 — attributed consumer
+        log.setActorUserId(authenticatedUserId);  // Issue #121 — who clicked consume
         log.setPantryItemId(pantryItem.getId());
         log.setProductNameSnapshot(pantryItem.getName());
         log.setConsumedQuantity(loggedQuantity);
@@ -398,7 +420,7 @@ public class PantryService {
         // Issue #133 — only track micronutrients for package unit (g/ml multiplier requires package size)
         if ("package".equals(pantryItem.getAmountUnit())) {
             dailyNutrientIntakeService.recordConsumedPantryItem(
-                    authenticatedUserId,
+                    effectiveUserId,
                     pantryItem,
                     loggedQuantity,
                     log.getConsumedAt());

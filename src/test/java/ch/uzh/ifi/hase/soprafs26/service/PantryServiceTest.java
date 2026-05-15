@@ -1211,6 +1211,46 @@ class PantryServiceTest {
         assertEquals("g", result.getAmountUnit());
     }
 
+    // Issue #121 — consuming on behalf of another member
+    @Test
+    void consumeItem_withConsumedForUserId_writesEffectiveConsumerAndActor() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("package");
+        item.setKcalPerPackage(100.0);
+        item.setAmount(5.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(eq(new HouseholdMemberId(99L, 1L)))).thenReturn(true);
+        when(mockHouseholdMemberRepo.existsById(eq(new HouseholdMemberId(77L, 1L)))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        pantryService.consumeItem(1L, 10L, 1.0, null, false, 99L, 77L);
+
+        ArgumentCaptor<ConsumptionLog> captor = ArgumentCaptor.forClass(ConsumptionLog.class);
+        verify(mockConsumptionRepo).save(captor.capture());
+        assertEquals(77L, captor.getValue().getUserId());
+        assertEquals(99L, captor.getValue().getActorUserId());
+    }
+
+    // Issue #121 — reject non-member as consumedForUserId
+    @Test
+    void consumeItem_withNonMemberConsumedForUserId_throwsException() {
+        Household household = new Household();
+        household.setId(1L);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(eq(new HouseholdMemberId(99L, 1L)))).thenReturn(true);
+        when(mockHouseholdMemberRepo.existsById(eq(new HouseholdMemberId(55L, 1L)))).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> pantryService.consumeItem(1L, 10L, 1.0, null, false, 99L, 55L));
+    }
+
     // Issue #114 — total calories must use unit-aware formula for all 3 unit types
     @Test
     void calculateTotalCalories_success_withMixedUnits() {

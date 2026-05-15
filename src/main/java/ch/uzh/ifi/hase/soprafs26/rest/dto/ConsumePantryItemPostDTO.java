@@ -30,4 +30,15 @@ public class ConsumePantryItemPostDTO {
     public void setSkipCalorieLogging(Boolean skipCalorieLogging) {
         this.skipCalorieLogging = skipCalorieLogging;
     }
+
+    // Issue #121 — optional; null means the authenticated user is the consumer
+    private Long consumedForUserId;
+
+    public Long getConsumedForUserId() {
+        return consumedForUserId;
+    }
+
+    public void setConsumedForUserId(Long consumedForUserId) {
+        this.consumedForUserId = consumedForUserId;
+    }
 }

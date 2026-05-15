@@ -74,7 +74,8 @@ public class PantryController {
                 consumePostDTO.getAmount(),
                 consumePostDTO.getKcalPerPackage(),
                 Boolean.TRUE.equals(consumePostDTO.getSkipCalorieLogging()),
-                authenticatedUserId
+                authenticatedUserId,
+                consumePostDTO.getConsumedForUserId()  // Issue #121
         );
 
         ConsumePantryItemResponseDTO responseDTO = new ConsumePantryItemResponseDTO();
