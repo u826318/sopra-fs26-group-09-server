@@ -308,6 +308,24 @@ public class HouseholdService {
         long numDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         double avgDailyCalories = totalCalories / numDays;
 
+        // Issue #121 — group logs by userId, compute total and daily average per member
+        Map<Long, Double> calsByUser = logs.stream()
+                .filter(log -> log.getUserId() != null && log.getConsumedCalories() != null)
+                .collect(Collectors.groupingBy(
+                        ConsumptionLog::getUserId,
+                        Collectors.summingDouble(ConsumptionLog::getConsumedCalories)));
+
+        List<HouseholdStatsGetDTO.MemberCalorieDTO> memberBreakdown = calsByUser.entrySet().stream()
+                .map(entry -> {
+                    Long uid = entry.getKey();
+                    Double total = entry.getValue();
+                    String uname = userRepository.findById(uid)
+                            .map(User::getUsername)
+                            .orElse("Unknown user #" + uid);
+                    return new HouseholdStatsGetDTO.MemberCalorieDTO(uid, uname, total, total / numDays);
+                })
+                .collect(Collectors.toList());
+
         Double dailyTarget = householdBudgetRepository.findByHouseholdId(householdId)
                 .map(HouseholdBudget::getDailyCalorieTarget)
                 .orElse(null);
@@ -335,6 +353,7 @@ public class HouseholdService {
         dto.setTotalCaloriesConsumed(totalCalories);
         dto.setDailyBreakdown(dailyBreakdown);
         dto.setComparisonToBudget(comparison);
+        dto.setMemberBreakdown(memberBreakdown);
         return dto;
     }
 

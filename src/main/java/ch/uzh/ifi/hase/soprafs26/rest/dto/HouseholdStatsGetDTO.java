@@ -11,6 +11,10 @@ public class HouseholdStatsGetDTO {
     private Double totalCaloriesConsumed;
     private List<DailyBreakdownDTO> dailyBreakdown;
     private ComparisonToBudgetDTO comparisonToBudget;
+    private List<MemberCalorieDTO> memberBreakdown;
+
+    public List<MemberCalorieDTO> getMemberBreakdown() { return memberBreakdown; }
+    public void setMemberBreakdown(List<MemberCalorieDTO> memberBreakdown) { this.memberBreakdown = memberBreakdown; }
 
     public String getStartDate() {
         return startDate;
@@ -108,5 +112,32 @@ public class HouseholdStatsGetDTO {
         public Double getPercentageOfTarget() {
             return percentageOfTarget;
         }
+    }
+
+    // Issue #121 — per-member calorie summary returned alongside daily breakdown
+    public static class MemberCalorieDTO {
+        private Long userId;
+        private String username;
+        private Double totalCalories;
+        private Double averageDailyCalories;
+
+        public MemberCalorieDTO(Long userId, String username, Double totalCalories, Double averageDailyCalories) {
+            this.userId = userId;
+            this.username = username;
+            this.totalCalories = totalCalories;
+            this.averageDailyCalories = averageDailyCalories;
+        }
+
+        public Long getUserId() { return userId; }
+        public void setUserId(Long userId) { this.userId = userId; }
+
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+
+        public Double getTotalCalories() { return totalCalories; }
+        public void setTotalCalories(Double totalCalories) { this.totalCalories = totalCalories; }
+
+        public Double getAverageDailyCalories() { return averageDailyCalories; }
+        public void setAverageDailyCalories(Double averageDailyCalories) { this.averageDailyCalories = averageDailyCalories; }
     }
 }

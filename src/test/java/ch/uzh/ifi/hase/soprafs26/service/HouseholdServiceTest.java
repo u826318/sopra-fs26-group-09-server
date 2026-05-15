@@ -536,6 +536,45 @@ class HouseholdServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
 
+    // Issue #121 — stats response includes per-member daily average calorie breakdown
+    @Test
+    void getStats_includesMemberBreakdown() {
+        ConsumptionLog logAlice = new ConsumptionLog();
+        logAlice.setUserId(10L);
+        logAlice.setConsumedCalories(600.0);
+        logAlice.setConsumedAt(Instant.parse("2026-04-10T10:00:00Z"));
+
+        ConsumptionLog logBob = new ConsumptionLog();
+        logBob.setUserId(20L);
+        logBob.setConsumedCalories(400.0);
+        logBob.setConsumedAt(Instant.parse("2026-04-10T12:00:00Z"));
+
+        User alice = new User();
+        alice.setUsername("alice");
+
+        User bob = new User();
+        bob.setUsername("bob");
+
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 10L)))).thenReturn(true);
+        when(consumptionLogRepository.findByHouseholdIdAndConsumedAtBetween(eq(10L), any(), any()))
+                .thenReturn(List.of(logAlice, logBob));
+        when(householdBudgetRepository.findByHouseholdId(10L)).thenReturn(Optional.empty());
+        when(userRepository.findById(10L)).thenReturn(Optional.of(alice));
+        when(userRepository.findById(20L)).thenReturn(Optional.of(bob));
+
+        HouseholdStatsGetDTO result = householdService.getStats(10L, "2026-04-10", "2026-04-10", 1L);
+
+        List<HouseholdStatsGetDTO.MemberCalorieDTO> breakdown = result.getMemberBreakdown();
+        assertEquals(2, breakdown.size());
+
+        HouseholdStatsGetDTO.MemberCalorieDTO aliceDto = breakdown.stream()
+                .filter(m -> m.getUserId().equals(10L)).findFirst().orElseThrow();
+        assertEquals("alice", aliceDto.getUsername());
+        assertEquals(600.0, aliceDto.getTotalCalories(), 0.001);
+        assertEquals(600.0, aliceDto.getAverageDailyCalories(), 0.001); // 1-day range
+    }
+
     // ── getConsumptionLogs ─────────────────────────────────────────────────────
 
     @Test
