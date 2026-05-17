@@ -347,13 +347,16 @@ public class HouseholdService {
         }
 
         // Issue #124 — per-day breakdown for the requesting user (personal daily chart)
+        // Pre-filter by requester once (O(logs)) to avoid re-scanning all logs per day (O(days*logs))
+        List<ConsumptionLog> myLogs = logs.stream()
+                .filter(log -> requesterUserId.equals(log.getUserId()))
+                .collect(Collectors.toList());
         List<DailyBreakdownDTO> myDailyBreakdown = new ArrayList<>();
         LocalDate myDay = startDate;
         while (!myDay.isAfter(endDate)) {
             Instant dayStart = myDay.atStartOfDay().toInstant(ZoneOffset.UTC);
             Instant dayEnd = myDay.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
-            double myDayCalories = logs.stream()
-                    .filter(log -> requesterUserId.equals(log.getUserId()))
+            double myDayCalories = myLogs.stream()
                     .filter(log -> !log.getConsumedAt().isBefore(dayStart) && log.getConsumedAt().isBefore(dayEnd))
                     .map(ConsumptionLog::getConsumedCalories)
                     .filter(java.util.Objects::nonNull)
