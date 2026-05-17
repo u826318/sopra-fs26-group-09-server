@@ -12,9 +12,14 @@ public class HouseholdStatsGetDTO {
     private List<DailyBreakdownDTO> dailyBreakdown;
     private ComparisonToBudgetDTO comparisonToBudget;
     private List<MemberCalorieDTO> memberBreakdown;
+    // Issue #124 — per-day breakdown for the requesting user only (used for personal daily chart)
+    private List<DailyBreakdownDTO> myDailyBreakdown;
 
     public List<MemberCalorieDTO> getMemberBreakdown() { return memberBreakdown; }
     public void setMemberBreakdown(List<MemberCalorieDTO> memberBreakdown) { this.memberBreakdown = memberBreakdown; }
+
+    public List<DailyBreakdownDTO> getMyDailyBreakdown() { return myDailyBreakdown; }
+    public void setMyDailyBreakdown(List<DailyBreakdownDTO> myDailyBreakdown) { this.myDailyBreakdown = myDailyBreakdown; }
 
     public String getStartDate() {
         return startDate;

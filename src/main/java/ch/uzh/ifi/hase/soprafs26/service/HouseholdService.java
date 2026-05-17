@@ -346,6 +346,23 @@ public class HouseholdService {
             comparison = new ComparisonToBudgetDTO(status, diff, pct);
         }
 
+        // Issue #124 — per-day breakdown for the requesting user (personal daily chart)
+        List<DailyBreakdownDTO> myDailyBreakdown = new ArrayList<>();
+        LocalDate myDay = startDate;
+        while (!myDay.isAfter(endDate)) {
+            Instant dayStart = myDay.atStartOfDay().toInstant(ZoneOffset.UTC);
+            Instant dayEnd = myDay.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
+            double myDayCalories = logs.stream()
+                    .filter(log -> requesterUserId.equals(log.getUserId()))
+                    .filter(log -> !log.getConsumedAt().isBefore(dayStart) && log.getConsumedAt().isBefore(dayEnd))
+                    .map(ConsumptionLog::getConsumedCalories)
+                    .filter(java.util.Objects::nonNull)
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
+            myDailyBreakdown.add(new DailyBreakdownDTO(myDay.toString(), myDayCalories));
+            myDay = myDay.plusDays(1);
+        }
+
         HouseholdStatsGetDTO dto = new HouseholdStatsGetDTO();
         dto.setStartDate(startDateStr);
         dto.setEndDate(endDateStr);
@@ -355,6 +372,7 @@ public class HouseholdService {
         dto.setDailyBreakdown(dailyBreakdown);
         dto.setComparisonToBudget(comparison);
         dto.setMemberBreakdown(memberBreakdown);
+        dto.setMyDailyBreakdown(myDailyBreakdown); // Issue #124
         return dto;
     }
 
