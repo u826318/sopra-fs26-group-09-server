@@ -5,10 +5,10 @@ PACKAGE_DIR = Path(__file__).resolve().parent
 LOCAL_DATASET_DIR = PACKAGE_DIR.parent
 HELPER_SCRIPTS_DIR = LOCAL_DATASET_DIR.parent
 
-INPUT_FILE = HELPER_SCRIPTS_DIR / "openfoodfacts-products.jsonl.gz"
-OUTPUT_FILE = LOCAL_DATASET_DIR / "compact_relevant_preview.csv"
+INPUT_FILE = LOCAL_DATASET_DIR / "openfoodfacts-products.jsonl.gz"
+OUTPUT_FILE = LOCAL_DATASET_DIR / "local_dataset_builder_outputs/compact_relevant_preview.csv"
 
-MAX_ROWS_TO_WRITE = 5
+MAX_ROWS_TO_WRITE = None
 
 OUTPUT_COLUMNS = [
     "code",
@@ -40,9 +40,11 @@ NAME_COLUMNS = [
     "generic_name_hr",
 ]
 
-NUTRIENT_KEYS_TO_KEEP = [
+ENERGY_KCAL = [
     "energy-kcal",
-    "energy-kj",
+]
+
+CORE_NUTRIENT_KEYS = [
     "fat",
     "saturated-fat",
     "carbohydrates",
@@ -50,6 +52,9 @@ NUTRIENT_KEYS_TO_KEEP = [
     "fiber",
     "proteins",
     "salt",
+]
+
+MICRONUTRIENT_KEYS = [
     "sodium",
 
     "calcium",
@@ -83,3 +88,5 @@ NUTRIENT_KEYS_TO_KEEP = [
     "fluoride",
     "molybdenum",
 ]
+
+NUTRIENT_KEYS_TO_KEEP = ENERGY_KCAL + CORE_NUTRIENT_KEYS + MICRONUTRIENT_KEYS

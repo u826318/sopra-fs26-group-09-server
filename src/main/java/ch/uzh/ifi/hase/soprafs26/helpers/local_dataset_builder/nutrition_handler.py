@@ -2,7 +2,10 @@ from typing import Any
 
 from local_dataset_builder.config import NUTRIENT_KEYS_TO_KEEP
 from local_dataset_builder.text_utils import clean_scalar, ensure_mapping
-
+from local_dataset_builder.nutrition_utils import (
+    standardize_all_nutrients,
+    get_package_factor,
+)
 
 def first_not_none(*values: Any) -> Any:
     for value in values:
@@ -12,8 +15,8 @@ def first_not_none(*values: Any) -> Any:
     return None
 
 
-def extract_compact_from_nutrition(nutrition_value: Any) -> dict[str, Any]:
-    nutrition = ensure_mapping(nutrition_value)
+def extract_compact_from_nutrition(product: dict[str, Any]) -> dict[str, Any]:
+    nutrition = ensure_mapping(product)
 
     if not nutrition:
         return {}
@@ -44,18 +47,24 @@ def extract_compact_from_nutrition(nutrition_value: Any) -> dict[str, Any]:
         if value is None:
             continue
 
-        compact_nutrients[nutrient_key] = {
-            "value": value,
-            "unit": clean_scalar(nutrient.get("unit")),
-        }
+        unit = clean_scalar(nutrient.get("unit"))
+
+        if unit is None:
+            continue
+
+        package_factor = get_package_factor(product)
+
+        compact_nutrients[nutrient_key] = standardize_all_nutrients(
+            nutrient_key,
+            value,
+            unit,
+            package_factor
+        )
 
     if not compact_nutrients:
         return {}
 
-    return {
-        "per": clean_scalar(aggregated_set.get("per")),
-        "nutrients": compact_nutrients,
-    }
+    return compact_nutrients
 
 
 def extract_energy_kcal_fields(compact_nutrition: dict[str, Any]) -> tuple[str, str, str]:

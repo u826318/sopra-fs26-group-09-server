@@ -2,6 +2,10 @@ from typing import Any
 
 from local_dataset_builder.config import NUTRIENT_KEYS_TO_KEEP
 from local_dataset_builder.text_utils import clean_scalar, ensure_mapping
+from local_dataset_builder.nutrition_utils import (
+    standardize_all_nutrients,
+    get_package_factor,
+)
 
 
 def first_not_none(*values: Any) -> Any:
@@ -12,8 +16,9 @@ def first_not_none(*values: Any) -> Any:
     return None
 
 
-def build_compact_nutriments(nutriments_value: Any) -> dict[str, Any]:
-    nutriments = ensure_mapping(nutriments_value)
+def build_compact_nutriments(product: dict[str, Any]) -> dict[str, Any]:
+    nutriments = ensure_mapping(product.get(nutriments))
+    package_factor = get_package_factor(product)
 
     if not nutriments:
         return {}
@@ -21,31 +26,24 @@ def build_compact_nutriments(nutriments_value: Any) -> dict[str, Any]:
     compact_nutrients: dict[str, dict[str, Any]] = {}
 
     for nutrient_key in NUTRIENT_KEYS_TO_KEEP:
-        value = first_not_none(
-            nutriments.get(f"{nutrient_key}_100g"),
-            nutriments.get(f"{nutrient_key}_100ml"),
-            nutriments.get(f"{nutrient_key}_serving"),
-            nutriments.get(nutrient_key),
-        )
+        value = nutriments.get(f"{nutrient_key}_value"),
 
         if value is None:
             continue
 
-        unit = first_not_none(
-            nutriments.get(f"{nutrient_key}_unit"),
-            nutriments.get(f"{nutrient_key}_value_unit"),
-            "",
-        )
+        unit = nutriments.get(f"{nutrient_key}_unit")
 
-        compact_nutrients[nutrient_key] = {
-            "value": value,
-            "unit": clean_scalar(unit),
-        }
+        if unit is None:
+            continue
+
+        compact_nutrients[nutrient_key] = standardize_all_nutrients(
+            nutrient_key, 
+            value, 
+            unit, 
+            package_factor
+        )
 
     if not compact_nutrients:
         return {}
 
-    return {
-        "per": "100g",
-        "nutrients": compact_nutrients,
-    }
+    return compact_nutrients

@@ -14,9 +14,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.io.BufferedReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Component
 public class LocalDatasetBucketScanner {
+
+  private static final Logger log = LoggerFactory.getLogger(LocalDatasetLookupService.class);
 
   private static final String BUCKETS_DIRECTORY = "local-dataset/buckets/";
 
@@ -35,7 +42,7 @@ public class LocalDatasetBucketScanner {
     }
 
     try (
-        Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
+        Reader reader = openUtf8ReaderWithoutBom(resource);
         CSVParser parser = CSVFormat.DEFAULT.builder()
             .setHeader()
             .setSkipHeaderRecord(true)
@@ -44,32 +51,20 @@ public class LocalDatasetBucketScanner {
             .parse(reader)
     ) {
       for (CSVRecord record : parser) {
-        String rowBarcode = getFirstPresent(record, "code", "barcode", "_id", "id");
-
+        String rowBarcode = record.get("code");
+        
         if (barcode.equals(rowBarcode)) {
+          log.info("\n barcode found: '{}' \n", barcode);
           return Optional.of(toMap(record));
         }
-      }
-
+    }
+    
+      log.info("\n barcode not found: '{}' \n", barcode);
       return Optional.empty();
     }
     catch (IOException e) {
       throw new IllegalStateException("Failed to read local dataset bucket file: " + bucketPath, e);
     }
-  }
-
-  private String getFirstPresent(CSVRecord record, String... columnNames) {
-    for (String columnName : columnNames) {
-      if (record.isMapped(columnName)) {
-        String value = record.get(columnName);
-
-        if (value != null && !value.isBlank()) {
-          return value.trim();
-        }
-      }
-    }
-
-    return "";
   }
 
   private Map<String, String> toMap(CSVRecord record) {
@@ -80,5 +75,20 @@ public class LocalDatasetBucketScanner {
     }
 
     return row;
+  }
+
+  private Reader openUtf8ReaderWithoutBom(ClassPathResource resource) throws IOException {
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)
+    );
+
+    reader.mark(1);
+    int firstCharacter = reader.read();
+
+    if (firstCharacter != '\uFEFF' && firstCharacter != -1) {
+        reader.reset();
+    }
+
+    return reader;
   }
 }

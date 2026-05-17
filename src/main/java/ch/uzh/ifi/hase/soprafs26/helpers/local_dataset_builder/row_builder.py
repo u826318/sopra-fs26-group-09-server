@@ -23,8 +23,8 @@ def build_preview_row(product: dict[str, Any]) -> dict[str, str]:
     row["serving_quantity"] = csv_safe(product.get("serving_quantity"))
     row["serving_quantity_unit"] = csv_safe(product.get("serving_quantity_unit"))
 
-    nutrition_compact = extract_compact_from_nutrition(product.get("nutrition"))
-    nutriments_compact = build_compact_nutriments(product.get("nutriments"))
+    nutrition_compact = extract_compact_from_nutrition(product)
+    nutriments_compact = build_compact_nutriments(product)
 
     best_compact = nutrition_compact or nutriments_compact
     energy_value, energy_basis, energy_unit = extract_energy_kcal_fields(best_compact)
