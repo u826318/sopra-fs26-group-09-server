@@ -576,6 +576,43 @@ class HouseholdServiceTest {
         assertEquals(600.0, aliceDto.getAverageDailyCalories(), 0.001); // 1-day range
     }
 
+    // Issue #124 — myDailyBreakdown contains only the requesting user's logs
+    @Test
+    void getStats_myDailyBreakdown_containsOnlyRequesterLogs() {
+        ConsumptionLog logRequester = new ConsumptionLog();
+        logRequester.setUserId(1L);
+        logRequester.setConsumedCalories(700.0);
+        logRequester.setConsumedAt(Instant.parse("2026-04-10T10:00:00Z"));
+
+        ConsumptionLog logOtherMember = new ConsumptionLog();
+        logOtherMember.setUserId(99L);
+        logOtherMember.setConsumedCalories(500.0);
+        logOtherMember.setConsumedAt(Instant.parse("2026-04-10T12:00:00Z"));
+
+        User requester = new User();
+        requester.setId(1L);
+        requester.setUsername("requester");
+
+        User other = new User();
+        other.setId(99L);
+        other.setUsername("other");
+
+        when(householdRepository.existsById(10L)).thenReturn(true);
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 10L)))).thenReturn(true);
+        when(consumptionLogRepository.findByHouseholdIdAndConsumedAtBetween(eq(10L), any(), any()))
+                .thenReturn(List.of(logRequester, logOtherMember));
+        when(householdBudgetRepository.findByHouseholdId(10L)).thenReturn(Optional.empty());
+        when(userRepository.findAllById(anyIterable())).thenReturn(List.of(requester, other));
+
+        HouseholdStatsGetDTO result = householdService.getStats(10L, "2026-04-10", "2026-04-10", 1L);
+
+        assertNotNull(result.getMyDailyBreakdown());
+        assertEquals(1, result.getMyDailyBreakdown().size());
+        assertEquals("2026-04-10", result.getMyDailyBreakdown().get(0).getDate());
+        // Only requester's 700 kcal; other member's 500 kcal must not be included
+        assertEquals(700.0, result.getMyDailyBreakdown().get(0).getCaloriesConsumed(), 0.001);
+    }
+
     // ── getConsumptionLogs ─────────────────────────────────────────────────────
 
     @Test
