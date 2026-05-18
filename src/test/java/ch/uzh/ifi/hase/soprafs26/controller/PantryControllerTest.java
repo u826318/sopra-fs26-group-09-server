@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,12 +24,14 @@ import ch.uzh.ifi.hase.soprafs26.config.AuthFilter;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.exceptions.GlobalExceptionAdvice;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
+import ch.uzh.ifi.hase.soprafs26.service.MealFoodRecognitionService;
+import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+
 
 @WebMvcTest(PantryController.class)
 @Import(GlobalExceptionAdvice.class)
@@ -40,6 +42,10 @@ class PantryControllerTest {
 
         @MockitoBean
         private PantryService pantryService;
+
+        @MockitoBean
+
+        private MealFoodRecognitionService mealFoodRecognitionService;
 
         @MockitoBean
         private UserRepository userRepository;

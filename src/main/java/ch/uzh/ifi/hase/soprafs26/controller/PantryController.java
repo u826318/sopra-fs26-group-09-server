@@ -16,22 +16,27 @@ import org.springframework.web.multipart.MultipartFile;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumePantryItemResponseDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryBulkAddPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryOverviewGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs26.service.MealFoodRecognitionService;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
-
 
 @RestController
 public class PantryController {
 
     private final PantryService pantryService;
+    private final MealFoodRecognitionService mealFoodRecognitionService;
 
-    public PantryController(PantryService pantryService) {
+    public PantryController(
+            PantryService pantryService,
+            MealFoodRecognitionService mealFoodRecognitionService) {
         this.pantryService = pantryService;
+        this.mealFoodRecognitionService = mealFoodRecognitionService;
     }
 
     @PostMapping("/households/{householdId}/pantry")
@@ -41,7 +46,12 @@ public class PantryController {
             @PathVariable Long householdId,
             @RequestBody PantryItemPostDTO pantryItemPostDTO) {
 
-        PantryItem pantryItem = pantryService.addItem(householdId, pantryItemPostDTO, authenticatedUserId);
+        PantryItem pantryItem = pantryService.addItem(
+                householdId,
+                pantryItemPostDTO,
+                authenticatedUserId
+        );
+
         return DTOMapper.INSTANCE.convertEntityToPantryItemGetDTO(pantryItem);
     }
 
@@ -55,7 +65,9 @@ public class PantryController {
         List<PantryItem> saved = pantryService.bulkAddItems(
                 householdId,
                 bulkBody != null ? bulkBody.getItems() : null,
-                authenticatedUserId);
+                authenticatedUserId
+        );
+
         return saved.stream()
                 .map(DTOMapper.INSTANCE::convertEntityToPantryItemGetDTO)
                 .toList();
@@ -76,7 +88,7 @@ public class PantryController {
                 consumePostDTO.getKcalPerPackage(),
                 Boolean.TRUE.equals(consumePostDTO.getSkipCalorieLogging()),
                 authenticatedUserId,
-                consumePostDTO.getConsumedForUserId()  // Issue #121
+                consumePostDTO.getConsumedForUserId()
         );
 
         ConsumePantryItemResponseDTO responseDTO = new ConsumePantryItemResponseDTO();
@@ -88,13 +100,13 @@ public class PantryController {
         return responseDTO;
     }
 
-        @PostMapping("/households/{householdId}/pantry/{itemId}/consume/portion-estimate")
-        @ResponseStatus(HttpStatus.OK)
-        public PortionEstimateResponseDTO estimateMealPortion(
-                @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
-                @PathVariable Long householdId,
-                @PathVariable Long itemId,
-                @RequestParam("image") MultipartFile image) {
+    @PostMapping("/households/{householdId}/pantry/{itemId}/consume/portion-estimate")
+    @ResponseStatus(HttpStatus.OK)
+    public PortionEstimateResponseDTO estimateMealPortion(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @PathVariable Long itemId,
+            @RequestParam("image") MultipartFile image) {
 
         return pantryService.estimateMealPortion(
                 householdId,
@@ -102,8 +114,18 @@ public class PantryController {
                 image,
                 authenticatedUserId
         );
-        }
-        
+    }
+
+    @PostMapping("/households/{householdId}/meal/recognize-food")
+    @ResponseStatus(HttpStatus.OK)
+    public MealFoodRecognitionResponseDTO recognizeMealFood(
+            @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
+            @PathVariable Long householdId,
+            @RequestParam("image") MultipartFile image) {
+
+        return mealFoodRecognitionService.recognizeFood(image);
+    }
+
     @PostMapping("/households/{householdId}/pantry/{itemId}/remove")
     @ResponseStatus(HttpStatus.OK)
     public ConsumePantryItemResponseDTO removePantryItem(
@@ -134,7 +156,11 @@ public class PantryController {
             @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
             @PathVariable Long householdId) {
 
-        List<PantryItem> pantryItems = pantryService.getPantryItems(householdId, authenticatedUserId);
+        List<PantryItem> pantryItems = pantryService.getPantryItems(
+                householdId,
+                authenticatedUserId
+        );
+
         double totalCalories = pantryService.calculateTotalCalories(householdId);
 
         List<PantryItemGetDTO> itemDTOs = pantryItems.stream()
