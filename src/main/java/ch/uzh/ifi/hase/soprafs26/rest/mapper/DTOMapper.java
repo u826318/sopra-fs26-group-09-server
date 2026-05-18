@@ -64,6 +64,9 @@ public interface DTOMapper {
 	@Mapping(source = "name", target = "name")
 	@Mapping(source = "kcalPerPackage", target = "kcalPerPackage")
 	@Mapping(source = "count", target = "count")
+	@Mapping(source = "count", target = "amount")
+	@Mapping(source = "count", target = "initialAmount")
+	@Mapping(target = "amountUnit", constant = "package")
 	@Mapping(source = "addedAt", target = "addedAt")
 	PantryItemGetDTO convertEntityToPantryItemGetDTO(PantryItem pantryItem);
 	
