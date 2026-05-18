@@ -1,708 +1,913 @@
 {
-  "source_file": "local_product_dataset.csv",
+  "source_file": "local_dataset.csv",
+  "indexed_source_file": "local_dataset_indexed.csv",
   "bucket_count": 100,
-  "global_min_code": "00000000",
-  "global_max_code": "556236370868632515561280111132506485562501111335036445564501111321464172",
+  "product_index_base": 1,
+  "product_index_assignment": "barcode_ascending_1_based",
+  "global_min_code": "0",
+  "global_max_code": "84508514842351236505332685760784633209400459611193318226",
+  "global_min_product_index": 1,
+  "global_max_product_index": 4223442,
   "buckets": [
     {
       "bucket_id": 0,
       "filename": "bucket_000.csv",
-      "min_code": "00000000",
-      "max_code": "03448441",
-      "row_count": 43846
+      "min_code": "0",
+      "max_code": "3660119",
+      "min_product_index": 1,
+      "max_product_index": 42235,
+      "row_count": 42235
     },
     {
       "bucket_id": 1,
       "filename": "bucket_001.csv",
-      "min_code": "03448625",
-      "max_code": "18323637",
-      "row_count": 43846
+      "min_code": "3660195",
+      "max_code": "19896241",
+      "min_product_index": 42236,
+      "max_product_index": 84470,
+      "row_count": 42235
     },
     {
       "bucket_id": 2,
       "filename": "bucket_002.csv",
-      "min_code": "18323816",
-      "max_code": "23045989",
-      "row_count": 43846
+      "min_code": "19897213",
+      "max_code": "24038935",
+      "min_product_index": 84471,
+      "max_product_index": 126705,
+      "row_count": 42235
     },
     {
       "bucket_id": 3,
       "filename": "bucket_003.csv",
-      "min_code": "23046047",
-      "max_code": "44412135",
-      "row_count": 43846
+      "min_code": "24039116",
+      "max_code": "50129249",
+      "min_product_index": 126706,
+      "max_product_index": 168940,
+      "row_count": 42235
     },
     {
       "bucket_id": 4,
       "filename": "bucket_004.csv",
-      "min_code": "44412166",
-      "max_code": "0000403739569",
-      "row_count": 43845
+      "min_code": "50129256",
+      "max_code": "1765708859",
+      "min_product_index": 168941,
+      "max_product_index": 211175,
+      "row_count": 42235
     },
     {
       "bucket_id": 5,
       "filename": "bucket_005.csv",
-      "min_code": "0000403940300",
-      "max_code": "0011535501535",
-      "row_count": 43845
+      "min_code": "1766040424",
+      "max_code": "13087256321",
+      "min_product_index": 211176,
+      "max_product_index": 253410,
+      "row_count": 42235
     },
     {
       "bucket_id": 6,
       "filename": "bucket_006.csv",
-      "min_code": "0011535501542",
-      "max_code": "0021908136813",
-      "row_count": 43845
+      "min_code": "13087256338",
+      "max_code": "23198121302",
+      "min_product_index": 253411,
+      "max_product_index": 295645,
+      "row_count": 42235
     },
     {
       "bucket_id": 7,
       "filename": "bucket_007.csv",
-      "min_code": "0021908137179",
-      "max_code": "0033383310640",
-      "row_count": 43845
+      "min_code": "23198124303",
+      "max_code": "34000110353",
+      "min_product_index": 295646,
+      "max_product_index": 337880,
+      "row_count": 42235
     },
     {
       "bucket_id": 8,
       "filename": "bucket_008.csv",
-      "min_code": "0033383310657",
-      "max_code": "0041190078745",
-      "row_count": 43845
+      "min_code": "34000110483",
+      "max_code": "41190474448",
+      "min_product_index": 337881,
+      "max_product_index": 380115,
+      "row_count": 42235
     },
     {
       "bucket_id": 9,
       "filename": "bucket_009.csv",
-      "min_code": "0041190078752",
-      "max_code": "0041735060235",
-      "row_count": 43845
+      "min_code": "41190474455",
+      "max_code": "41735072207",
+      "min_product_index": 380116,
+      "max_product_index": 422350,
+      "row_count": 42235
     },
     {
       "bucket_id": 10,
       "filename": "bucket_010.csv",
-      "min_code": "0041735060259",
-      "max_code": "0051933052055",
-      "row_count": 43845
+      "min_code": "41735072238",
+      "max_code": "51756900083",
+      "min_product_index": 422351,
+      "max_product_index": 464585,
+      "row_count": 42235
     },
     {
       "bucket_id": 11,
       "filename": "bucket_011.csv",
-      "min_code": "0051933052079",
-      "max_code": "0062356545741",
-      "row_count": 43845
+      "min_code": "51756900090",
+      "max_code": "61969092208",
+      "min_product_index": 464586,
+      "max_product_index": 506820,
+      "row_count": 42235
     },
     {
       "bucket_id": 12,
       "filename": "bucket_012.csv",
-      "min_code": "0062356545765",
-      "max_code": "0070920476674",
-      "row_count": 43845
+      "min_code": "61969092222",
+      "max_code": "70796300189",
+      "min_product_index": 506821,
+      "max_product_index": 549055,
+      "row_count": 42235
     },
     {
       "bucket_id": 13,
       "filename": "bucket_013.csv",
-      "min_code": "0070920476681",
-      "max_code": "0074780377720",
-      "row_count": 43845
+      "min_code": "70796300202",
+      "max_code": "74265018049",
+      "min_product_index": 549056,
+      "max_product_index": 591290,
+      "row_count": 42235
     },
     {
       "bucket_id": 14,
       "filename": "bucket_014.csv",
-      "min_code": "0074780377737",
-      "max_code": "0079200085186",
-      "row_count": 43845
+      "min_code": "74265018117",
+      "max_code": "78742189512",
+      "min_product_index": 591291,
+      "max_product_index": 633525,
+      "row_count": 42235
     },
     {
       "bucket_id": 15,
       "filename": "bucket_015.csv",
-      "min_code": "0079200085292",
-      "max_code": "0096619130580",
-      "row_count": 43845
+      "min_code": "78742189529",
+      "max_code": "92163092077",
+      "min_product_index": 633526,
+      "max_product_index": 675760,
+      "row_count": 42235
     },
     {
       "bucket_id": 16,
       "filename": "bucket_016.csv",
-      "min_code": "0096619130962",
-      "max_code": "0200944008531",
-      "row_count": 43845
+      "min_code": "92163092220",
+      "max_code": "200030050673",
+      "min_product_index": 675761,
+      "max_product_index": 717995,
+      "row_count": 42235
     },
     {
       "bucket_id": 17,
       "filename": "bucket_017.csv",
-      "min_code": "0200944018370",
-      "max_code": "0210748014690",
-      "row_count": 43845
+      "min_code": "200030050680",
+      "max_code": "209206025842",
+      "min_product_index": 717996,
+      "max_product_index": 760230,
+      "row_count": 42235
     },
     {
       "bucket_id": 18,
       "filename": "bucket_018.csv",
-      "min_code": "0210748015024",
-      "max_code": "0246655607748",
-      "row_count": 43845
+      "min_code": "209207032474",
+      "max_code": "240400738305",
+      "min_product_index": 760231,
+      "max_product_index": 802465,
+      "row_count": 42235
     },
     {
       "bucket_id": 19,
       "filename": "bucket_019.csv",
-      "min_code": "0246655608622",
-      "max_code": "0313000200005",
-      "row_count": 43845
+      "min_code": "240401004492",
+      "max_code": "295390009041",
+      "min_product_index": 802466,
+      "max_product_index": 844700,
+      "row_count": 42235
     },
     {
       "bucket_id": 20,
       "filename": "bucket_020.csv",
-      "min_code": "0313001611862",
-      "max_code": "0625533027357",
-      "row_count": 43845
+      "min_code": "295390009225",
+      "max_code": "620255908021",
+      "min_product_index": 844701,
+      "max_product_index": 886935,
+      "row_count": 42235
     },
     {
       "bucket_id": 21,
       "filename": "bucket_021.csv",
-      "min_code": "0625534301005",
-      "max_code": "0658010121224",
-      "row_count": 43845
+      "min_code": "620255909028",
+      "max_code": "652217596212",
+      "min_product_index": 886936,
+      "max_product_index": 929170,
+      "row_count": 42235
     },
     {
       "bucket_id": 22,
       "filename": "bucket_022.csv",
-      "min_code": "0658010121231",
-      "max_code": "0708756002025",
-      "row_count": 43845
+      "min_code": "652217610741",
+      "max_code": "701662010542",
+      "min_product_index": 929171,
+      "max_product_index": 971405,
+      "row_count": 42235
     },
     {
       "bucket_id": 23,
       "filename": "bucket_023.csv",
-      "min_code": "0708756003039",
-      "max_code": "0738661008300",
-      "row_count": 43845
+      "min_code": "701662011198",
+      "max_code": "734027945159",
+      "min_product_index": 971406,
+      "max_product_index": 1013640,
+      "row_count": 42235
     },
     {
       "bucket_id": 24,
       "filename": "bucket_024.csv",
-      "min_code": "0738661008317",
-      "max_code": "0776992031086",
-      "row_count": 43845
+      "min_code": "734027971011",
+      "max_code": "769493101655",
+      "min_product_index": 1013641,
+      "max_product_index": 1055875,
+      "row_count": 42235
     },
     {
       "bucket_id": 25,
       "filename": "bucket_025.csv",
-      "min_code": "0776992032113",
-      "max_code": "0810345031153",
-      "row_count": 43845
+      "min_code": "769493101662",
+      "max_code": "810071909108",
+      "min_product_index": 1055876,
+      "max_product_index": 1098110,
+      "row_count": 42235
     },
     {
       "bucket_id": 26,
       "filename": "bucket_026.csv",
-      "min_code": "0810345031160",
-      "max_code": "0840031405128",
-      "row_count": 43845
+      "min_code": "810071909122",
+      "max_code": "826920001350",
+      "min_product_index": 1098111,
+      "max_product_index": 1140345,
+      "row_count": 42235
     },
     {
       "bucket_id": 27,
       "filename": "bucket_027.csv",
-      "min_code": "0840031405678",
-      "max_code": "0850078222305",
-      "row_count": 43845
+      "min_code": "826920001367",
+      "max_code": "850034128634",
+      "min_product_index": 1140346,
+      "max_product_index": 1182580,
+      "row_count": 42235
     },
     {
       "bucket_id": 28,
       "filename": "bucket_028.csv",
-      "min_code": "0850078255198",
-      "max_code": "0858900005102",
-      "row_count": 43845
+      "min_code": "850034147000",
+      "max_code": "856168004615",
+      "min_product_index": 1182581,
+      "max_product_index": 1224815,
+      "row_count": 42235
     },
     {
       "bucket_id": 29,
       "filename": "bucket_029.csv",
-      "min_code": "0858900005119",
-      "max_code": "0897044000697",
-      "row_count": 43845
+      "min_code": "856168004622",
+      "max_code": "882670098866",
+      "min_product_index": 1224816,
+      "max_product_index": 1267050,
+      "row_count": 42235
     },
     {
       "bucket_id": 30,
       "filename": "bucket_030.csv",
-      "min_code": "0897044000802",
-      "max_code": "2007030004471",
-      "row_count": 43845
+      "min_code": "882685000014",
+      "max_code": "2000000900889",
+      "min_product_index": 1267051,
+      "max_product_index": 1309285,
+      "row_count": 42235
     },
     {
       "bucket_id": 31,
       "filename": "bucket_031.csv",
-      "min_code": "2007030004488",
-      "max_code": "2153685004356",
-      "row_count": 43845
+      "min_code": "2000000900896",
+      "max_code": "2110201005006",
+      "min_product_index": 1309286,
+      "max_product_index": 1351520,
+      "row_count": 42235
     },
     {
       "bucket_id": 32,
       "filename": "bucket_032.csv",
-      "min_code": "2153685004752",
-      "max_code": "2257340003163",
-      "row_count": 43845
+      "min_code": "2110201005105",
+      "max_code": "2227415006573",
+      "min_product_index": 1351521,
+      "max_product_index": 1393755,
+      "row_count": 42235
     },
     {
       "bucket_id": 33,
       "filename": "bucket_033.csv",
-      "min_code": "2257340003446",
-      "max_code": "2353025002695",
-      "row_count": 43845
+      "min_code": "2227421000022",
+      "max_code": "2324352002306",
+      "min_product_index": 1393756,
+      "max_product_index": 1435990,
+      "row_count": 42235
     },
     {
       "bucket_id": 34,
       "filename": "bucket_034.csv",
-      "min_code": "2353025002756",
-      "max_code": "2531439006403",
-      "row_count": 43845
+      "min_code": "2324352002320",
+      "max_code": "2480990023551",
+      "min_product_index": 1435991,
+      "max_product_index": 1478225,
+      "row_count": 42235
     },
     {
       "bucket_id": 35,
       "filename": "bucket_035.csv",
-      "min_code": "2531440013902",
-      "max_code": "2726241005922",
-      "row_count": 43845
+      "min_code": "2480990023681",
+      "max_code": "2644735003080",
+      "min_product_index": 1478226,
+      "max_product_index": 1520460,
+      "row_count": 42235
     },
     {
       "bucket_id": 36,
       "filename": "bucket_036.csv",
-      "min_code": "2726242010635",
-      "max_code": "3017760715096",
-      "row_count": 43845
+      "min_code": "2644736007087",
+      "max_code": "2954512008888",
+      "min_product_index": 1520461,
+      "max_product_index": 1562695,
+      "row_count": 42235
     },
     {
       "bucket_id": 37,
       "filename": "bucket_037.csv",
-      "min_code": "3017760715195",
-      "max_code": "3123456789163",
-      "row_count": 43845
+      "min_code": "2954517007312",
+      "max_code": "3095756411016",
+      "min_product_index": 1562696,
+      "max_product_index": 1604930,
+      "row_count": 42235
     },
     {
       "bucket_id": 38,
       "filename": "bucket_038.csv",
-      "min_code": "3123456789187",
-      "max_code": "3245390036698",
-      "row_count": 43845
+      "min_code": "3095756419012",
+      "max_code": "3222477013506",
+      "min_product_index": 1604931,
+      "max_product_index": 1647165,
+      "row_count": 42235
     },
     {
       "bucket_id": 39,
       "filename": "bucket_039.csv",
-      "min_code": "3245390037138",
-      "max_code": "3263280121347",
-      "row_count": 43845
+      "min_code": "3222477013513",
+      "max_code": "3257983355772",
+      "min_product_index": 1647166,
+      "max_product_index": 1689400,
+      "row_count": 42235
     },
     {
       "bucket_id": 40,
       "filename": "bucket_040.csv",
-      "min_code": "3263280121361",
-      "max_code": "3281230001952",
-      "row_count": 43845
+      "min_code": "3257983356465",
+      "max_code": "3274664069018",
+      "min_product_index": 1689401,
+      "max_product_index": 1731635,
+      "row_count": 42235
     },
     {
       "bucket_id": 41,
       "filename": "bucket_041.csv",
-      "min_code": "3281230002034",
-      "max_code": "3346041395802",
-      "row_count": 43845
+      "min_code": "3274664069025",
+      "max_code": "3331480012212",
+      "min_product_index": 1731636,
+      "max_product_index": 1773870,
+      "row_count": 42235
     },
     {
       "bucket_id": 42,
       "filename": "bucket_042.csv",
-      "min_code": "3346041395819",
-      "max_code": "3416510001654",
-      "row_count": 43845
+      "min_code": "3331480012311",
+      "max_code": "3395328874271",
+      "min_product_index": 1773871,
+      "max_product_index": 1816105,
+      "row_count": 42235
     },
     {
       "bucket_id": 43,
       "filename": "bucket_043.csv",
-      "min_code": "3416510001685",
-      "max_code": "3492500068500",
-      "row_count": 43845
+      "min_code": "3395328874936",
+      "max_code": "3475880670266",
+      "min_product_index": 1816106,
+      "max_product_index": 1858340,
+      "row_count": 42235
     },
     {
       "bucket_id": 44,
       "filename": "bucket_044.csv",
-      "min_code": "3492500068517",
-      "max_code": "3561770005192",
-      "row_count": 43845
+      "min_code": "3475880670358",
+      "max_code": "3560071165888",
+      "min_product_index": 1858341,
+      "max_product_index": 1900575,
+      "row_count": 42235
     },
     {
       "bucket_id": 45,
       "filename": "bucket_045.csv",
-      "min_code": "3561770005208",
-      "max_code": "3660140938853",
-      "row_count": 43845
+      "min_code": "3560071165949",
+      "max_code": "3602019786264",
+      "min_product_index": 1900576,
+      "max_product_index": 1942810,
+      "row_count": 42235
     },
     {
       "bucket_id": 46,
       "filename": "bucket_046.csv",
-      "min_code": "3660140939058",
-      "max_code": "3700888909200",
-      "row_count": 43845
+      "min_code": "3602019786318",
+      "max_code": "3700613100049",
+      "min_product_index": 1942811,
+      "max_product_index": 1985045,
+      "row_count": 42235
     },
     {
       "bucket_id": 47,
       "filename": "bucket_047.csv",
-      "min_code": "3700888912514",
-      "max_code": "3760089880289",
-      "row_count": 43845
+      "min_code": "3700613100056",
+      "max_code": "3760077186850",
+      "min_product_index": 1985046,
+      "max_product_index": 2027280,
+      "row_count": 42235
     },
     {
       "bucket_id": 48,
       "filename": "bucket_048.csv",
-      "min_code": "3760089881538",
-      "max_code": "3760250162008",
-      "row_count": 43845
+      "min_code": "3760077186867",
+      "max_code": "3760239451703",
+      "min_product_index": 2027281,
+      "max_product_index": 2069515,
+      "row_count": 42235
     },
     {
       "bucket_id": 49,
       "filename": "bucket_049.csv",
-      "min_code": "3760250162015",
-      "max_code": "3770011247172",
-      "row_count": 43845
+      "min_code": "3760239451710",
+      "max_code": "3770011543113",
+      "min_product_index": 2069516,
+      "max_product_index": 2111750,
+      "row_count": 42235
     },
     {
       "bucket_id": 50,
       "filename": "bucket_050.csv",
-      "min_code": "3770011247202",
-      "max_code": "3881800000004",
-      "row_count": 43845
+      "min_code": "3770011543120",
+      "max_code": "4000186016501",
+      "min_product_index": 2111751,
+      "max_product_index": 2153985,
+      "row_count": 42235
     },
     {
       "bucket_id": 51,
       "filename": "bucket_051.csv",
-      "min_code": "3881804030052",
-      "max_code": "4007993019930",
-      "row_count": 43845
+      "min_code": "4000186020201",
+      "max_code": "4008366010967",
+      "min_product_index": 2153986,
+      "max_product_index": 2196220,
+      "row_count": 42235
     },
     {
       "bucket_id": 52,
       "filename": "bucket_052.csv",
-      "min_code": "4007993020042",
-      "max_code": "4024691111919",
-      "row_count": 43845
+      "min_code": "4008366010981",
+      "max_code": "4026584245565",
+      "min_product_index": 2196221,
+      "max_product_index": 2238455,
+      "row_count": 42235
     },
     {
       "bucket_id": 53,
       "filename": "bucket_053.csv",
-      "min_code": "4024691113814",
-      "max_code": "4056489295648",
-      "row_count": 43845
+      "min_code": "4026584250309",
+      "max_code": "4056489359890",
+      "min_product_index": 2238456,
+      "max_product_index": 2280690,
+      "row_count": 42235
     },
     {
       "bucket_id": 54,
       "filename": "bucket_054.csv",
-      "min_code": "4056489295716",
-      "max_code": "4061461584030",
-      "row_count": 43845
+      "min_code": "4056489359906",
+      "max_code": "4061461660239",
+      "min_product_index": 2280691,
+      "max_product_index": 2322925,
+      "row_count": 42235
     },
     {
       "bucket_id": 55,
       "filename": "bucket_055.csv",
-      "min_code": "4061461584047",
-      "max_code": "4088700067482",
-      "row_count": 43845
+      "min_code": "4061461660475",
+      "max_code": "4088600570648",
+      "min_product_index": 2322926,
+      "max_product_index": 2365160,
+      "row_count": 42235
     },
     {
       "bucket_id": 56,
       "filename": "bucket_056.csv",
-      "min_code": "4088700067499",
-      "max_code": "4260106871904",
-      "row_count": 43845
+      "min_code": "4088600570655",
+      "max_code": "4260057667090",
+      "min_product_index": 2365161,
+      "max_product_index": 2407395,
+      "row_count": 42235
     },
     {
       "bucket_id": 57,
       "filename": "bucket_057.csv",
-      "min_code": "4260106871966",
-      "max_code": "4306188387664",
-      "row_count": 43845
+      "min_code": "4260057667151",
+      "max_code": "4305615797076",
+      "min_product_index": 2407396,
+      "max_product_index": 2449630,
+      "row_count": 42235
     },
     {
       "bucket_id": 58,
       "filename": "bucket_058.csv",
-      "min_code": "4306188387756",
-      "max_code": "4388844004276",
-      "row_count": 43845
+      "min_code": "4305615797427",
+      "max_code": "4337256600132",
+      "min_product_index": 2449631,
+      "max_product_index": 2491865,
+      "row_count": 42235
     },
     {
       "bucket_id": 59,
       "filename": "bucket_059.csv",
-      "min_code": "4388844004603",
-      "max_code": "4712308172056",
-      "row_count": 43845
+      "min_code": "4337256600330",
+      "max_code": "4710085232819",
+      "min_product_index": 2491866,
+      "max_product_index": 2534100,
+      "row_count": 42235
     },
     {
       "bucket_id": 60,
       "filename": "bucket_060.csv",
-      "min_code": "4712308172124",
-      "max_code": "4865602000621",
-      "row_count": 43845
+      "min_code": "4710085234691",
+      "max_code": "4840913006685",
+      "min_product_index": 2534101,
+      "max_product_index": 2576335,
+      "row_count": 42235
     },
     {
       "bucket_id": 61,
       "filename": "bucket_061.csv",
-      "min_code": "4865602001055",
-      "max_code": "5000169134603",
-      "row_count": 43845
+      "min_code": "4840928000852",
+      "max_code": "5000159539401",
+      "min_product_index": 2576336,
+      "max_product_index": 2618570,
+      "row_count": 42235
     },
     {
       "bucket_id": 62,
       "filename": "bucket_062.csv",
-      "min_code": "5000169134610",
-      "max_code": "5020379176675",
-      "row_count": 43845
+      "min_code": "5000159539449",
+      "max_code": "5018010001820",
+      "min_product_index": 2618571,
+      "max_product_index": 2660805,
+      "row_count": 42235
     },
     {
       "bucket_id": 63,
       "filename": "bucket_063.csv",
-      "min_code": "5020379176873",
-      "max_code": "5057172820474",
-      "row_count": 43845
+      "min_code": "5018010001851",
+      "max_code": "5056517319321",
+      "min_product_index": 2660806,
+      "max_product_index": 2703040,
+      "row_count": 42235
     },
     {
       "bucket_id": 64,
       "filename": "bucket_064.csv",
-      "min_code": "5057172820870",
-      "max_code": "5060878780546",
-      "row_count": 43845
+      "min_code": "5056517319338",
+      "max_code": "5060691232048",
+      "min_product_index": 2703041,
+      "max_product_index": 2745275,
+      "row_count": 42235
     },
     {
       "bucket_id": 65,
       "filename": "bucket_065.csv",
-      "min_code": "5060878780553",
-      "max_code": "5310002251146",
-      "row_count": 43845
+      "min_code": "5060691232178",
+      "max_code": "5290008023308",
+      "min_product_index": 2745276,
+      "max_product_index": 2787510,
+      "row_count": 42235
     },
     {
       "bucket_id": 66,
       "filename": "bucket_066.csv",
-      "min_code": "5310002360749",
-      "max_code": "5410228214939",
-      "row_count": 43845
+      "min_code": "5290008023506",
+      "max_code": "5410103002118",
+      "min_product_index": 2787511,
+      "max_product_index": 2829745,
+      "row_count": 42235
     },
     {
       "bucket_id": 67,
       "filename": "bucket_067.csv",
-      "min_code": "5410228214946",
-      "max_code": "5600409202620",
-      "row_count": 43845
+      "min_code": "5410103002125",
+      "max_code": "5600315281658",
+      "min_product_index": 2829746,
+      "max_product_index": 2871980,
+      "row_count": 42235
     },
     {
       "bucket_id": 68,
       "filename": "bucket_068.csv",
-      "min_code": "5600409202637",
-      "max_code": "5712875800474",
-      "row_count": 43845
+      "min_code": "5600315281665",
+      "max_code": "5712873609185",
+      "min_product_index": 2871981,
+      "max_product_index": 2914215,
+      "row_count": 42235
     },
     {
       "bucket_id": 69,
       "filename": "bucket_069.csv",
-      "min_code": "5712875800498",
-      "max_code": "5907662200036",
-      "row_count": 43845
+      "min_code": "5712873610648",
+      "max_code": "5907796200186",
+      "min_product_index": 2914216,
+      "max_product_index": 2956450,
+      "row_count": 42235
     },
     {
       "bucket_id": 70,
       "filename": "bucket_070.csv",
-      "min_code": "5907662630239",
-      "max_code": "6111099000599",
-      "row_count": 43845
+      "min_code": "5907796200940",
+      "max_code": "6111250310383",
+      "min_product_index": 2956451,
+      "max_product_index": 2998685,
+      "row_count": 42235
     },
     {
       "bucket_id": 71,
       "filename": "bucket_071.csv",
-      "min_code": "6111099000605",
-      "max_code": "6281104970015",
-      "row_count": 43845
+      "min_code": "6111250310390",
+      "max_code": "6300047042631",
+      "min_product_index": 2998686,
+      "max_product_index": 3040920,
+      "row_count": 42235
     },
     {
       "bucket_id": 72,
       "filename": "bucket_072.csv",
-      "min_code": "6281104970046",
-      "max_code": "6953240773897",
-      "row_count": 43845
+      "min_code": "6300047052715",
+      "max_code": "7032069735190",
+      "min_product_index": 3040921,
+      "max_product_index": 3083155,
+      "row_count": 42235
     },
     {
       "bucket_id": 73,
       "filename": "bucket_073.csv",
-      "min_code": "6953240774139",
-      "max_code": "7317370102634",
-      "row_count": 43845
+      "min_code": "7032069735213",
+      "max_code": "7340191158146",
+      "min_product_index": 3083156,
+      "max_product_index": 3125390,
+      "row_count": 42235
     },
     {
       "bucket_id": 74,
       "filename": "bucket_074.csv",
-      "min_code": "7317370103334",
-      "max_code": "7503019292129",
-      "row_count": 43845
+      "min_code": "7340191158191",
+      "max_code": "7610034506770",
+      "min_product_index": 3125391,
+      "max_product_index": 3167625,
+      "row_count": 42235
     },
     {
       "bucket_id": 75,
       "filename": "bucket_075.csv",
-      "min_code": "7503019292136",
-      "max_code": "7613269882725",
-      "row_count": 43845
+      "min_code": "7610034506824",
+      "max_code": "7613379126740",
+      "min_product_index": 3167626,
+      "max_product_index": 3209860,
+      "row_count": 42235
     },
     {
       "bucket_id": 76,
       "filename": "bucket_076.csv",
-      "min_code": "7613269882749",
-      "max_code": "7640145773129",
-      "row_count": 43845
+      "min_code": "7613379127228",
+      "max_code": "7702001072026",
+      "min_product_index": 3209861,
+      "max_product_index": 3252095,
+      "row_count": 42235
     },
     {
       "bucket_id": 77,
       "filename": "bucket_077.csv",
-      "min_code": "7640145773167",
-      "max_code": "7804666271605",
-      "row_count": 43845
+      "min_code": "7702001072064",
+      "max_code": "7891097101748",
+      "min_product_index": 3252096,
+      "max_product_index": 3294330,
+      "row_count": 42235
     },
     {
       "bucket_id": 78,
       "filename": "bucket_078.csv",
-      "min_code": "7804666271681",
-      "max_code": "8000340560815",
-      "row_count": 43845
+      "min_code": "7891097101854",
+      "max_code": "8000704022034",
+      "min_product_index": 3294331,
+      "max_product_index": 3336565,
+      "row_count": 42235
     },
     {
       "bucket_id": 79,
       "filename": "bucket_079.csv",
-      "min_code": "8000340560839",
-      "max_code": "8002724004182",
-      "row_count": 43845
+      "min_code": "8000704022294",
+      "max_code": "8003100012425",
+      "min_product_index": 3336566,
+      "max_product_index": 3378800,
+      "row_count": 42235
     },
     {
       "bucket_id": 80,
       "filename": "bucket_080.csv",
-      "min_code": "8002724004205",
-      "max_code": "8006540460948",
-      "row_count": 43845
+      "min_code": "8003100012722",
+      "max_code": "8007270126968",
+      "min_product_index": 3378801,
+      "max_product_index": 3421035,
+      "row_count": 42235
     },
     {
       "bucket_id": 81,
       "filename": "bucket_081.csv",
-      "min_code": "8006540464786",
-      "max_code": "8016301589283",
-      "row_count": 43845
+      "min_code": "8007270127019",
+      "max_code": "8017596040787",
+      "min_product_index": 3421036,
+      "max_product_index": 3463270,
+      "row_count": 42235
     },
     {
       "bucket_id": 82,
       "filename": "bucket_082.csv",
-      "min_code": "8016302000008",
-      "max_code": "8029322001016",
-      "row_count": 43845
+      "min_code": "8017596041012",
+      "max_code": "8030582020655",
+      "min_product_index": 3463271,
+      "max_product_index": 3505505,
+      "row_count": 42235
     },
     {
       "bucket_id": 83,
       "filename": "bucket_083.csv",
-      "min_code": "8029322001023",
-      "max_code": "8051160730162",
-      "row_count": 43845
+      "min_code": "8030582020679",
+      "max_code": "8051770851134",
+      "min_product_index": 3505506,
+      "max_product_index": 3547740,
+      "row_count": 42235
     },
     {
       "bucket_id": 84,
       "filename": "bucket_084.csv",
-      "min_code": "8051160730209",
-      "max_code": "8410069018281",
-      "row_count": 43845
+      "min_code": "8051770851158",
+      "max_code": "8410100021553",
+      "min_product_index": 3547741,
+      "max_product_index": 3589975,
+      "row_count": 42235
     },
     {
       "bucket_id": 85,
       "filename": "bucket_085.csv",
-      "min_code": "8410069018298",
-      "max_code": "8412064118508",
-      "row_count": 43845
+      "min_code": "8410100021560",
+      "max_code": "8412289000145",
+      "min_product_index": 3589976,
+      "max_product_index": 3632210,
+      "row_count": 42235
     },
     {
       "bucket_id": 86,
       "filename": "bucket_086.csv",
-      "min_code": "8412064202061",
-      "max_code": "8422107000882",
-      "row_count": 43845
+      "min_code": "8412289000169",
+      "max_code": "8422410818624",
+      "min_product_index": 3632211,
+      "max_product_index": 3674445,
+      "row_count": 42235
     },
     {
       "bucket_id": 87,
       "filename": "bucket_087.csv",
-      "min_code": "8422107000899",
-      "max_code": "8431876301465",
-      "row_count": 43845
+      "min_code": "8422410818631",
+      "max_code": "8433065002368",
+      "min_product_index": 3674446,
+      "max_product_index": 3716680,
+      "row_count": 42235
     },
     {
       "bucket_id": 88,
       "filename": "bucket_088.csv",
-      "min_code": "8431876301526",
-      "max_code": "8436578486847",
-      "row_count": 43845
+      "min_code": "8433065003082",
+      "max_code": "8436604830064",
+      "min_product_index": 3716681,
+      "max_product_index": 3758915,
+      "row_count": 42235
     },
     {
       "bucket_id": 89,
       "filename": "bucket_089.csv",
-      "min_code": "8436578486861",
-      "max_code": "8480000202949",
-      "row_count": 43845
+      "min_code": "8436604850031",
+      "max_code": "8480000667571",
+      "min_product_index": 3758916,
+      "max_product_index": 3801150,
+      "row_count": 42235
     },
     {
       "bucket_id": 90,
       "filename": "bucket_090.csv",
-      "min_code": "8480000202963",
-      "max_code": "8607100450876",
-      "row_count": 43845
+      "min_code": "8480000667588",
+      "max_code": "8682214708839",
+      "min_product_index": 3801151,
+      "max_product_index": 3843385,
+      "row_count": 42235
     },
     {
       "bucket_id": 91,
       "filename": "bucket_091.csv",
-      "min_code": "8607100510433",
-      "max_code": "8711200369201",
-      "row_count": 43845
+      "min_code": "8682214708877",
+      "max_code": "8711596594164",
+      "min_product_index": 3843386,
+      "max_product_index": 3885620,
+      "row_count": 42235
     },
     {
       "bucket_id": 92,
       "filename": "bucket_092.csv",
-      "min_code": "8711200369331",
-      "max_code": "8718868063151",
-      "row_count": 43845
+      "min_code": "8711596595000",
+      "max_code": "8718907400817",
+      "min_product_index": 3885621,
+      "max_product_index": 3927855,
+      "row_count": 42235
     },
     {
       "bucket_id": 93,
       "filename": "bucket_093.csv",
-      "min_code": "8718868063168",
-      "max_code": "8850229101123",
-      "row_count": 43845
+      "min_code": "8718907400824",
+      "max_code": "8850267112174",
+      "min_product_index": 3927856,
+      "max_product_index": 3970090,
+      "row_count": 42235
     },
     {
       "bucket_id": 94,
       "filename": "bucket_094.csv",
-      "min_code": "8850229101727",
-      "max_code": "8908001017206",
-      "row_count": 43845
+      "min_code": "8850267112181",
+      "max_code": "8908021743000",
+      "min_product_index": 3970091,
+      "max_product_index": 4012325,
+      "row_count": 42235
     },
     {
       "bucket_id": 95,
       "filename": "bucket_095.csv",
-      "min_code": "8908001017213",
-      "max_code": "9088883514440",
-      "row_count": 43845
+      "min_code": "8908021745363",
+      "max_code": "9100000720661",
+      "min_product_index": 4012326,
+      "max_product_index": 4054560,
+      "row_count": 42235
     },
     {
       "bucket_id": 96,
       "filename": "bucket_096.csv",
-      "min_code": "9088883515539",
-      "max_code": "9329998003253",
-      "row_count": 43845
+      "min_code": "9100000720708",
+      "max_code": "9332366008279",
+      "min_product_index": 4054561,
+      "max_product_index": 4096795,
+      "row_count": 42235
     },
     {
       "bucket_id": 97,
       "filename": "bucket_097.csv",
-      "min_code": "9329998003260",
-      "max_code": "9556046238040",
-      "row_count": 43845
+      "min_code": "9332366008293",
+      "max_code": "9556074385402",
+      "min_product_index": 4096796,
+      "max_product_index": 4139030,
+      "row_count": 42235
     },
     {
       "bucket_id": 98,
       "filename": "bucket_098.csv",
-      "min_code": "9556046700011",
-      "max_code": "694019602121002858",
-      "row_count": 43845
+      "min_code": "9556074988115",
+      "max_code": "707126802719001638",
+      "min_product_index": 4139031,
+      "max_product_index": 4181265,
+      "row_count": 42235
     },
     {
       "bucket_id": 99,
       "filename": "bucket_099.csv",
-      "min_code": "694019902222002789",
-      "max_code": "556236370868632515561280111132506485562501111335036445564501111321464172",
-      "row_count": 43845
+      "min_code": "707129603019001581",
+      "max_code": "84508514842351236505332685760784633209400459611193318226",
+      "min_product_index": 4181266,
+      "max_product_index": 4223442,
+      "row_count": 42177
     }
   ]
 }
