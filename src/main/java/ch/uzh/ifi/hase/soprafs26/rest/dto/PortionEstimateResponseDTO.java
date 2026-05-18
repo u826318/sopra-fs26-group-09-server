@@ -2,25 +2,18 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 public class PortionEstimateResponseDTO {
 
-    private Double suggestedAmount;
-    private String estimatedRange;
+    private String status;
     private String message;
-    private boolean manualFallback;
+    private Double suggestedMinAmount;
+    private Double suggestedMaxAmount;
+    private String unit;
 
-    public Double getSuggestedAmount() {
-        return suggestedAmount;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSuggestedAmount(Double suggestedAmount) {
-        this.suggestedAmount = suggestedAmount;
-    }
-
-    public String getEstimatedRange() {
-        return estimatedRange;
-    }
-
-    public void setEstimatedRange(String estimatedRange) {
-        this.estimatedRange = estimatedRange;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -31,11 +24,27 @@ public class PortionEstimateResponseDTO {
         this.message = message;
     }
 
-    public boolean isManualFallback() {
-        return manualFallback;
+    public Double getSuggestedMinAmount() {
+        return suggestedMinAmount;
     }
 
-    public void setManualFallback(boolean manualFallback) {
-        this.manualFallback = manualFallback;
+    public void setSuggestedMinAmount(Double suggestedMinAmount) {
+        this.suggestedMinAmount = suggestedMinAmount;
+    }
+
+    public Double getSuggestedMaxAmount() {
+        return suggestedMaxAmount;
+    }
+
+    public void setSuggestedMaxAmount(Double suggestedMaxAmount) {
+        this.suggestedMaxAmount = suggestedMaxAmount;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

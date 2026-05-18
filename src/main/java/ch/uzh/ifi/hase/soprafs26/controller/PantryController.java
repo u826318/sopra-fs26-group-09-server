@@ -24,6 +24,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 
+
 @RestController
 public class PantryController {
 

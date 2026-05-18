@@ -1,15 +1,14 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
-import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 
 class MealPortionEstimateServiceTest {
 
@@ -17,33 +16,7 @@ class MealPortionEstimateServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new MealPortionEstimateService();
-    }
-
-    @Test
-    void estimatePortion_returnsManualFallbackWhenCvServiceIsUnavailable() {
-        PantryItem item = new PantryItem();
-        item.setId(10L);
-        item.setName("Rice");
-        item.setAmount(3.0);
-        item.setAmountUnit("package");
-
-        MockMultipartFile image = new MockMultipartFile(
-                "image",
-                "meal.png",
-                "image/png",
-                "fake-image".getBytes()
-        );
-
-        PortionEstimateResponseDTO result = service.estimatePortion(item, image);
-
-        assertNull(result.getSuggestedAmount());
-        assertNull(result.getEstimatedRange());
-        assertTrue(result.isManualFallback());
-        assertEquals(
-                "Automatic portion estimation is currently unavailable. Please enter the consumed amount manually.",
-                result.getMessage()
-        );
+        service = new MealPortionEstimateService(mock(WebClient.class));
     }
 
     @Test
