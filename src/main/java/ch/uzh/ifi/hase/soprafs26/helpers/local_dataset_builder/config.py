@@ -1,13 +1,50 @@
+import os
 from pathlib import Path
 
+from local_dataset_builder.nutrient_index import (
+    CORE_NUTRIENT_KEYS,
+    CORE_NUTRITION_KEYS,
+    ENERGY_KCAL,
+    MICRONUTRIENT_KEYS,
+    NUTRIENT_KEYS_TO_KEEP,
+)
 
+
+# This file lives inside:
+#
+#   <dataset_dir>/local_dataset_builder/config.py
+#
+# By default, the raw Open Food Facts dump and generated outputs live in
+# the parent directory of this helper package:
+#
+#   <dataset_dir>/openfoodfacts-products.jsonl.gz
+#   <dataset_dir>/local_dataset_builder_outputs/
+#
+# You can override the directory without editing code:
+#
+#   LOCAL_DATASET_DIR=/path/to/dataset-dir python -m local_dataset_builder.main
+#
 PACKAGE_DIR = Path(__file__).resolve().parent
-LOCAL_DATASET_DIR = PACKAGE_DIR.parent
-HELPER_SCRIPTS_DIR = LOCAL_DATASET_DIR.parent
+DATASET_DIR = Path(os.environ.get("LOCAL_DATASET_DIR", PACKAGE_DIR.parent)).resolve()
 
-INPUT_FILE = LOCAL_DATASET_DIR / "openfoodfacts-products.jsonl.gz"
-OUTPUT_FILE = LOCAL_DATASET_DIR / "local_dataset_builder_outputs/compact_relevant_preview.csv"
+INPUT_FILE = Path(
+    os.environ.get("OFF_INPUT_FILE", DATASET_DIR / "openfoodfacts-products.jsonl.gz")
+).resolve()
 
+OUTPUT_DIR = Path(
+    os.environ.get("LOCAL_DATASET_OUTPUT_DIR", DATASET_DIR / "local_dataset_builder_outputs")
+).resolve()
+
+OUTPUT_FILE = OUTPUT_DIR / "local_dataset.csv"
+INDEXED_OUTPUT_FILE = OUTPUT_DIR / "local_dataset_indexed.csv"
+PRODUCT_INDEX_COLUMN = "product_index"
+
+LOCAL_DATASET_OUTPUT_DIR = OUTPUT_DIR / "local-dataset"
+BUCKETS_DIR = LOCAL_DATASET_OUTPUT_DIR / "buckets"
+MANIFEST_FILE = LOCAL_DATASET_OUTPUT_DIR / "manifest.json"
+BUCKET_COUNT = 100
+
+# Set to a small integer for smoke tests. Use None for the full dataset.
 MAX_ROWS_TO_WRITE = None
 
 OUTPUT_COLUMNS = [
@@ -16,16 +53,21 @@ OUTPUT_COLUMNS = [
     "name_candidates",
     "product_quantity",
     "product_quantity_unit",
+    "package_quantity",
+    "package_quantity_unit",
     "serving_quantity",
     "serving_quantity_unit",
-    "energy_kcal_value",
-    "energy_kcal_basis",
-    "energy_kcal_unit",
-    "nutrition_compact",
-    "nutriments_compact",
+    # "g" means nutrition values are standardized per 100g.
+    # "ml" means nutrition values are standardized per 100ml.
+    "nutrition_basis_unit",
+    "nutrition",
     "image_1",
     "image_2",
 ]
+
+# The raw compact CSV produced by main.py does not have product_index yet.
+# product_index is assigned by bucket_writer.py after sorting rows by barcode.
+INDEXED_OUTPUT_COLUMNS = [PRODUCT_INDEX_COLUMN, *OUTPUT_COLUMNS]
 
 NAME_COLUMNS = [
     "product_name",
@@ -39,54 +81,3 @@ NAME_COLUMNS = [
     "generic_name_it",
     "generic_name_hr",
 ]
-
-ENERGY_KCAL = [
-    "energy-kcal",
-]
-
-CORE_NUTRIENT_KEYS = [
-    "fat",
-    "saturated-fat",
-    "carbohydrates",
-    "sugars",
-    "fiber",
-    "proteins",
-    "salt",
-]
-
-MICRONUTRIENT_KEYS = [
-    "sodium",
-
-    "calcium",
-    "choline",
-    "copper",
-    "iodine",
-    "iron",
-    "magnesium",
-    "manganese",
-    "phosphorus",
-    "potassium",
-    "selenium",
-    "zinc",
-
-    "vitamin-a",
-    "vitamin-b1",
-    "vitamin-b2",
-    "vitamin-b6",
-    "vitamin-b12",
-    "vitamin-c",
-    "vitamin-d",
-    "vitamin-e",
-    "vitamin-k",
-    "vitamin-b9",
-    "vitamin-pp",
-    "pantothenic-acid",
-
-    "biotin",
-    "chloride",
-    "chromium",
-    "fluoride",
-    "molybdenum",
-]
-
-NUTRIENT_KEYS_TO_KEEP = ENERGY_KCAL + CORE_NUTRIENT_KEYS + MICRONUTRIENT_KEYS

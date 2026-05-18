@@ -6,7 +6,7 @@ def clean_scalar(value: Any) -> str:
     if value is None:
         return ""
 
-    text = str(value).strip()
+    text = str(value).replace("\x00", "").strip()
 
     return text
 
@@ -16,9 +16,9 @@ def csv_safe(value: Any) -> str:
         return ""
 
     if isinstance(value, (dict, list)):
-        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+        return json.dumps(value, ensure_ascii=False).replace("\x00", "")
 
-    text = str(value)
+    text = str(value).replace("\x00", "")
     stripped = text.strip()
 
     return stripped

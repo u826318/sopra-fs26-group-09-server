@@ -1,37 +1,50 @@
 from typing import Any
 
 from local_dataset_builder.config import NUTRIENT_KEYS_TO_KEEP
-from local_dataset_builder.text_utils import clean_scalar, ensure_mapping
 from local_dataset_builder.nutrition_utils import (
-    standardize_all_nutrients,
-    get_package_factor,
+    SOURCE_BASIS_ASSUMED_100,
+    add_standardized_per100_nutrient,
+    choose_best_per100_group,
+    first_not_none,
+    normalize_source_basis,
 )
-
-def first_not_none(*values: Any) -> Any:
-    for value in values:
-        if value is not None:
-            return value
-
-    return None
+from local_dataset_builder.text_utils import clean_scalar, ensure_mapping
 
 
-def extract_compact_from_nutrition(product: dict[str, Any]) -> dict[str, Any]:
-    nutrition = ensure_mapping(product)
+def extract_compact_from_nutrition(product: dict[str, Any]) -> tuple[dict[str, float], str | None]:
+    """Extract standardized per-100 nutrients from newer OFF `nutrition`.
+
+    Output is a flat name-keyed nutrient dictionary plus one basis unit:
+    - basis_unit = "g"  -> nutrient values are per 100g
+    - basis_unit = "ml" -> nutrient values are per 100ml
+
+    If the source is per serving and serving quantity is available, values are
+    converted to per 100g/ml. If serving quantity is unavailable, those nutrients
+    are skipped.
+    """
+    nutrition = ensure_mapping(product.get("nutrition"))
 
     if not nutrition:
-        return {}
+        return {}, None
 
     aggregated_set = nutrition.get("aggregated_set")
 
     if not isinstance(aggregated_set, dict):
-        return {}
+        return {}, None
 
     raw_nutrients = aggregated_set.get("nutrients")
 
     if not isinstance(raw_nutrients, dict):
-        return {}
+        return {}, None
 
-    compact_nutrients: dict[str, dict[str, Any]] = {}
+    source_basis = normalize_source_basis(
+        first_not_none(
+            aggregated_set.get("per"),
+            product.get("nutrition_data_per"),
+        )
+    ) or SOURCE_BASIS_ASSUMED_100
+
+    grouped_by_basis_unit: dict[str, dict[str, float]] = {}
 
     for nutrient_key in NUTRIENT_KEYS_TO_KEEP:
         nutrient = raw_nutrients.get(nutrient_key)
@@ -49,37 +62,16 @@ def extract_compact_from_nutrition(product: dict[str, Any]) -> dict[str, Any]:
 
         unit = clean_scalar(nutrient.get("unit"))
 
-        if unit is None:
+        if not unit:
             continue
 
-        package_factor = get_package_factor(product)
-
-        compact_nutrients[nutrient_key] = standardize_all_nutrients(
+        add_standardized_per100_nutrient(
+            grouped_by_basis_unit,
+            product,
+            source_basis,
             nutrient_key,
             value,
             unit,
-            package_factor
         )
 
-    if not compact_nutrients:
-        return {}
-
-    return compact_nutrients
-
-
-def extract_energy_kcal_fields(compact_nutrition: dict[str, Any]) -> tuple[str, str, str]:
-    nutrients = compact_nutrition.get("nutrients")
-
-    if not isinstance(nutrients, dict):
-        return "", "", ""
-
-    energy_kcal = nutrients.get("energy-kcal")
-
-    if not isinstance(energy_kcal, dict):
-        return "", "", ""
-
-    return (
-        clean_scalar(energy_kcal.get("value")),
-        clean_scalar(compact_nutrition.get("per")),
-        clean_scalar(energy_kcal.get("unit")),
-    )
+    return choose_best_per100_group(grouped_by_basis_unit)

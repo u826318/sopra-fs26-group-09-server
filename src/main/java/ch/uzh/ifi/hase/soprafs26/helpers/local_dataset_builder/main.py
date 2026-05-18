@@ -1,4 +1,5 @@
-from local_dataset_builder.config import INPUT_FILE, OUTPUT_FILE, MAX_ROWS_TO_WRITE
+from local_dataset_builder.config import INPUT_FILE, MAX_ROWS_TO_WRITE, OUTPUT_FILE
+from local_dataset_builder.dataset_writer import write_dataset
 
 
 def main() -> None:
@@ -8,10 +9,10 @@ def main() -> None:
 
     if not INPUT_FILE.exists():
         print("\nInput file does not exist yet.")
-        print("Put openfoodfacts-products.jsonl.gz in helper-scripts/.")
+        print(f"Put openfoodfacts-products.jsonl.gz here: {INPUT_FILE.parent.resolve()}")
         return
 
-    print("\nInput file found. Package wiring works.")
+    write_dataset(INPUT_FILE, OUTPUT_FILE, MAX_ROWS_TO_WRITE)
 
 
 if __name__ == "__main__":

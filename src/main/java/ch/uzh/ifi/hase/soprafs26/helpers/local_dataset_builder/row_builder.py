@@ -3,9 +3,11 @@ from typing import Any
 from local_dataset_builder.config import OUTPUT_COLUMNS
 from local_dataset_builder.image_handler import extract_image_1, extract_image_2
 from local_dataset_builder.name_extractor import extract_name_candidates
-from local_dataset_builder.nutrition_handler import (
-    extract_compact_from_nutrition,
-    extract_energy_kcal_fields,
+from local_dataset_builder.nutrient_index import encode_nutrients_by_index
+from local_dataset_builder.nutrition_handler import extract_compact_from_nutrition
+from local_dataset_builder.nutrition_utils import (
+    get_normalized_package_quantity,
+    get_normalized_serving_quantity,
 )
 from local_dataset_builder.nutriments_handler import build_compact_nutriments
 from local_dataset_builder.text_utils import clean_scalar, csv_safe
@@ -20,21 +22,27 @@ def build_preview_row(product: dict[str, Any]) -> dict[str, str]:
 
     row["product_quantity"] = csv_safe(product.get("product_quantity"))
     row["product_quantity_unit"] = csv_safe(product.get("product_quantity_unit"))
-    row["serving_quantity"] = csv_safe(product.get("serving_quantity"))
-    row["serving_quantity_unit"] = csv_safe(product.get("serving_quantity_unit"))
 
-    nutrition_compact = extract_compact_from_nutrition(product)
-    nutriments_compact = build_compact_nutriments(product)
+    package_quantity, package_unit = get_normalized_package_quantity(product)
+    serving_quantity, serving_unit = get_normalized_serving_quantity(product)
 
-    best_compact = nutrition_compact or nutriments_compact
-    energy_value, energy_basis, energy_unit = extract_energy_kcal_fields(best_compact)
+    row["package_quantity"] = csv_safe(package_quantity)
+    row["package_quantity_unit"] = csv_safe(package_unit)
+    row["serving_quantity"] = csv_safe(serving_quantity)
+    row["serving_quantity_unit"] = csv_safe(serving_unit)
 
-    row["energy_kcal_value"] = csv_safe(energy_value)
-    row["energy_kcal_basis"] = csv_safe(energy_basis)
-    row["energy_kcal_unit"] = csv_safe(energy_unit)
+    nutrition_compact, nutrition_basis_unit = extract_compact_from_nutrition(product)
+    nutriments_compact, nutriments_basis_unit = build_compact_nutriments(product)
 
-    row["nutrition_compact"] = csv_safe(nutrition_compact)
-    row["nutriments_compact"] = csv_safe(nutriments_compact)
+    # Prefer the newer Open Food Facts nutrition field. Fall back to legacy
+    # nutriments only when the newer field cannot produce standardized nutrients.
+    standardized_nutrients = nutrition_compact or nutriments_compact
+    basis_unit = nutrition_basis_unit if nutrition_compact else nutriments_basis_unit
+
+    indexed_nutrition = encode_nutrients_by_index(standardized_nutrients)
+
+    row["nutrition_basis_unit"] = csv_safe(basis_unit)
+    row["nutrition"] = csv_safe(indexed_nutrition) if indexed_nutrition else ""
 
     row["image_1"] = csv_safe(extract_image_1(product.get("images")))
     row["image_2"] = csv_safe(extract_image_2(product.get("images")))

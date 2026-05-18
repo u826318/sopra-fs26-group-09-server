@@ -1,49 +1,68 @@
 from typing import Any
 
 from local_dataset_builder.config import NUTRIENT_KEYS_TO_KEEP
-from local_dataset_builder.text_utils import clean_scalar, ensure_mapping
 from local_dataset_builder.nutrition_utils import (
-    standardize_all_nutrients,
-    get_package_factor,
+    SOURCE_BASIS_100G,
+    SOURCE_BASIS_100ML,
+    SOURCE_BASIS_ASSUMED_100,
+    SOURCE_BASIS_SERVING,
+    add_standardized_per100_nutrient,
+    basis_from_product_nutrition_data_per,
+    choose_best_per100_group,
+    first_not_none,
 )
+from local_dataset_builder.text_utils import ensure_mapping
 
 
-def first_not_none(*values: Any) -> Any:
-    for value in values:
-        if value is not None:
-            return value
+def build_compact_nutriments(product: dict[str, Any]) -> tuple[dict[str, float], str | None]:
+    """Extract standardized per-100 nutrients from legacy OFF `nutriments`.
 
-    return None
-
-
-def build_compact_nutriments(product: dict[str, Any]) -> dict[str, Any]:
-    nutriments = ensure_mapping(product.get(nutriments))
-    package_factor = get_package_factor(product)
+    Values are standardized into one flat dictionary whose values mean either
+    per 100g or per 100ml, depending on the returned basis unit.
+    """
+    nutriments = ensure_mapping(product.get("nutriments"))
 
     if not nutriments:
-        return {}
+        return {}, None
 
-    compact_nutrients: dict[str, dict[str, Any]] = {}
+    grouped_by_basis_unit: dict[str, dict[str, float]] = {}
+    value_basis = basis_from_product_nutrition_data_per(product) or SOURCE_BASIS_ASSUMED_100
 
     for nutrient_key in NUTRIENT_KEYS_TO_KEEP:
-        value = nutriments.get(f"{nutrient_key}_value"),
-
-        if value is None:
-            continue
-
-        unit = nutriments.get(f"{nutrient_key}_unit")
+        unit = first_not_none(
+            nutriments.get(f"{nutrient_key}_unit"),
+            nutriments.get(f"{nutrient_key}_value_unit"),
+        )
 
         if unit is None:
             continue
 
-        compact_nutrients[nutrient_key] = standardize_all_nutrients(
-            nutrient_key, 
-            value, 
-            unit, 
-            package_factor
-        )
+        # Prefer explicitly basis-tagged values. Per-serving values are converted
+        # to per 100g/ml when serving quantity is available. Fall back to
+        # *_value / bare key using nutrition_data_per if present; otherwise treat
+        # it as assumed per 100 and infer g/ml from package/serving metadata.
+        candidates = [
+            (nutriments.get(f"{nutrient_key}_100g"), SOURCE_BASIS_100G),
+            (nutriments.get(f"{nutrient_key}_100ml"), SOURCE_BASIS_100ML),
+            (nutriments.get(f"{nutrient_key}_serving"), SOURCE_BASIS_SERVING),
+            (nutriments.get(f"{nutrient_key}_value"), value_basis),
+            (nutriments.get(nutrient_key), value_basis),
+        ]
 
-    if not compact_nutrients:
-        return {}
+        for value, source_basis in candidates:
+            if value is None:
+                continue
 
-    return compact_nutrients
+            added = add_standardized_per100_nutrient(
+                grouped_by_basis_unit,
+                product,
+                source_basis,
+                nutrient_key,
+                value,
+                unit,
+            )
+
+            if added:
+                break
+
+    return choose_best_per100_group(grouped_by_basis_unit)
