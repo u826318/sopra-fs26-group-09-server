@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemMicronutrientsRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
 
 @Service
 @Transactional
@@ -24,6 +25,75 @@ public class PantryItemMicronutrientService {
 
     public PantryItemMicronutrientService(PantryItemMicronutrientsRepository pantryItemMicronutrientsRepository) {
         this.pantryItemMicronutrientsRepository = pantryItemMicronutrientsRepository;
+    }
+
+    public void upsertMicronutrientsPerPackageFromLocalDataset(
+            PantryItem pantryItem,
+            LocalDatasetProductDTO product
+    ) {
+        if (pantryItem == null
+                || pantryItem.getId() == null
+                || product == null
+                || product.getNutrition() == null
+                || product.getNutrition().getMicronutrients() == null
+                || product.getNutrition().getMicronutrients().isEmpty()) {
+            return;
+        }
+
+        BigDecimal packageBasisAmount = parseBigDecimalOrNull(product.getPackageQuantity());
+        if (packageBasisAmount == null || packageBasisAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+
+        String basisUnit = normalizeUnit(product.getNutrition().getBasisUnit());
+        String packageUnit = normalizeUnit(product.getPackageQuantityUnit());
+        if (basisUnit == null || packageUnit == null || !basisUnit.equals(packageUnit)) {
+            return;
+        }
+
+        Map<String, LocalDatasetProductDTO.NutrientAmountDTO> micronutrientValuesPer100 =
+                product.getNutrition().getMicronutrients();
+
+        PantryItemMicronutrients micronutrients = pantryItemMicronutrientsRepository
+                .findByPantryItemId(pantryItem.getId())
+                .orElseGet(PantryItemMicronutrients::new);
+
+        micronutrients.setPantryItem(pantryItem);
+        micronutrients.setPackageQuantity(formatPackageQuantity(product.getPackageQuantity(), product.getPackageQuantityUnit()));
+        micronutrients.setPackageGrams(packageBasisAmount);
+
+        micronutrients.setBiotin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "biotin"));
+        micronutrients.setCalcium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "calcium"));
+        micronutrients.setChloride(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "chloride"));
+        micronutrients.setCholine(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "choline"));
+        micronutrients.setChromium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "chromium"));
+        micronutrients.setCopper(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "copper"));
+        micronutrients.setFluoride(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "fluoride"));
+        micronutrients.setFolate(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b9"));
+        micronutrients.setIodine(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "iodine"));
+        micronutrients.setIron(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "iron"));
+        micronutrients.setMagnesium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "magnesium"));
+        micronutrients.setManganese(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "manganese"));
+        micronutrients.setMolybdenum(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "molybdenum"));
+        micronutrients.setNiacin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-pp"));
+        micronutrients.setPantothenicAcid(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "pantothenic-acid"));
+        micronutrients.setPhosphorus(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "phosphorus"));
+        micronutrients.setPotassium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "potassium"));
+        micronutrients.setRiboflavin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b2"));
+        micronutrients.setSelenium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "selenium"));
+        micronutrients.setSodium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "sodium"));
+        micronutrients.setThiamin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b1"));
+        micronutrients.setVitaminA(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-a"));
+        micronutrients.setVitaminB12(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b12"));
+        micronutrients.setVitaminB6(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b6"));
+        micronutrients.setVitaminC(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-c"));
+        micronutrients.setVitaminD(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-d"));
+        micronutrients.setVitaminE(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-e"));
+        micronutrients.setVitaminK(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-k"));
+        micronutrients.setZinc(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "zinc"));
+
+        pantryItem.setMicronutrients(micronutrients);
+        pantryItemMicronutrientsRepository.save(micronutrients);
     }
 
     public void upsertMicronutrientsPerPackage(
@@ -80,6 +150,65 @@ public class PantryItemMicronutrientService {
 
         pantryItem.setMicronutrients(micronutrients);
         pantryItemMicronutrientsRepository.save(micronutrients);
+    }
+
+    private BigDecimal calculateLocalPackageAmount(
+            Map<String, LocalDatasetProductDTO.NutrientAmountDTO> micronutrientsPer100,
+            BigDecimal packageBasisAmount,
+            String nutrientKey
+    ) {
+        BigDecimal per100Micrograms = findLocalPer100Micrograms(micronutrientsPer100, nutrientKey);
+        if (per100Micrograms == null) {
+            return null;
+        }
+
+        return per100Micrograms
+                .multiply(packageBasisAmount)
+                .divide(ONE_HUNDRED, 6, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal findLocalPer100Micrograms(
+            Map<String, LocalDatasetProductDTO.NutrientAmountDTO> micronutrientsPer100,
+            String nutrientKey
+    ) {
+        LocalDatasetProductDTO.NutrientAmountDTO amount = micronutrientsPer100.get(nutrientKey);
+        if (amount == null || amount.getValue() == null) {
+            return null;
+        }
+
+        BigDecimal value = parseBigDecimalOrNull(amount.getValue());
+        if (value == null) {
+            return null;
+        }
+
+        return convertToMicrograms(value, amount.getUnit());
+    }
+
+    private String normalizeUnit(String unit) {
+        String cleaned = parseStringOrNull(unit);
+        if (cleaned == null) {
+            return null;
+        }
+
+        String normalized = cleaned.toLowerCase(Locale.ROOT);
+        if (normalized.equals("g") || normalized.equals("ml")) {
+            return normalized;
+        }
+
+        return null;
+    }
+
+    private String formatPackageQuantity(Double packageQuantity, String packageQuantityUnit) {
+        if (packageQuantity == null) {
+            return null;
+        }
+
+        String unit = parseStringOrNull(packageQuantityUnit);
+        if (unit == null) {
+            return String.valueOf(packageQuantity);
+        }
+
+        return packageQuantity + " " + unit;
     }
 
     private BigDecimal calculatePackageAmount(

@@ -23,6 +23,9 @@ import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
 import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 
 
@@ -47,6 +50,8 @@ public class PantryService {
     private final PantryItemMicronutrientService pantryItemMicronutrientService;
     private final DailyNutrientIntakeService dailyNutrientIntakeService;
     private final MealPortionEstimateService mealPortionEstimateService;
+    private final LocalDatasetLookupService localDatasetLookupService;
+    private final LocalDatasetProductMapper localDatasetProductMapper;
 
     public PantryService(
             PantryItemRepository pantryItemRepository,
@@ -57,7 +62,9 @@ public class PantryService {
             PantryBroadcastService pantryBroadcastService,
             PantryItemMicronutrientService pantryItemMicronutrientService,
             DailyNutrientIntakeService dailyNutrientIntakeService,
-            MealPortionEstimateService mealPortionEstimateService
+            MealPortionEstimateService mealPortionEstimateService,
+            LocalDatasetLookupService localDatasetLookupService,
+            LocalDatasetProductMapper localDatasetProductMapper
     ) {
         this.pantryItemRepository = pantryItemRepository;
         this.consumptionLogRepository = consumptionLogRepository;
@@ -68,6 +75,8 @@ public class PantryService {
         this.pantryItemMicronutrientService = pantryItemMicronutrientService;
         this.dailyNutrientIntakeService = dailyNutrientIntakeService;
         this.mealPortionEstimateService = mealPortionEstimateService;
+        this.localDatasetLookupService = localDatasetLookupService;
+        this.localDatasetProductMapper = localDatasetProductMapper;
     }
 
     // Issue #114 — unit-aware calorie calculation for a single consume operation
@@ -142,22 +151,23 @@ public class PantryService {
         }
 
         String normalizedBarcode = pantryItemPostDTO.getBarcode() != null ? pantryItemPostDTO.getBarcode().trim() : null;
-        String normalizedName = pantryItemPostDTO.getName().trim();
+        Integer quantity = derivePackageQuantityIfWhole(pantryItemPostDTO);
+        LocalDatasetProductDTO localProduct = lookupLocalProductByBarcode(normalizedBarcode);
+        String normalizedName = cleanOrFallback(localProduct.getName(), normalizedBarcode);
 
         PantryItem saved = mergeOrCreatePantryItem(
                 householdId,
-                normalizedBarcode,
+                cleanOrFallback(localProduct.getBarcode(), normalizedBarcode),
                 normalizedName,
                 pantryItemPostDTO.getAmountUnit(),
                 pantryItemPostDTO.getAmount(),
-                pantryItemPostDTO.getKcalPerPackage(),
+                calculateKcalPerPackage(localProduct),
                 pantryItemPostDTO.getKcalPer100g(),
                 pantryItemPostDTO.getKcalPer100ml()
         );
-        pantryItemMicronutrientService.upsertMicronutrientsPerPackage(
+        pantryItemMicronutrientService.upsertMicronutrientsPerPackageFromLocalDataset(
                 saved,
-                pantryItemPostDTO.getPackageQuantity(),
-                pantryItemPostDTO.getNutriments());
+                localProduct);
 
         broadcastItemAdded(householdId, saved, authenticatedUserId);
 
@@ -197,20 +207,21 @@ public class PantryService {
         List<PantryItem> savedItems = new ArrayList<>(items.size());
         for (PantryItemPostDTO dto : items) {
             String normalizedBarcode = dto.getBarcode() != null ? dto.getBarcode().trim() : null;
-            String normalizedName = dto.getName().trim();
+            Integer quantity = derivePackageQuantityIfWhole(dto);
+            LocalDatasetProductDTO localProduct = lookupLocalProductByBarcode(normalizedBarcode);
+            String normalizedName = cleanOrFallback(localProduct.getName(), normalizedBarcode);
             PantryItem saved = mergeOrCreatePantryItem(
                     householdId,
-                    normalizedBarcode,
+                    cleanOrFallback(localProduct.getBarcode(), normalizedBarcode),
                     normalizedName,
                     dto.getAmountUnit(),
                     dto.getAmount(),
-                    dto.getKcalPerPackage(),
+                    calculateKcalPerPackage(localProduct),
                     dto.getKcalPer100g(),
                     dto.getKcalPer100ml());
-            pantryItemMicronutrientService.upsertMicronutrientsPerPackage(
+            pantryItemMicronutrientService.upsertMicronutrientsPerPackageFromLocalDataset(
                     saved,
-                    dto.getPackageQuantity(),
-                    dto.getNutriments());
+                    localProduct);
             savedItems.add(saved);
             broadcastItemAdded(householdId, saved, authenticatedUserId);
         }
@@ -229,9 +240,71 @@ public class PantryService {
         if (dto.getAmountUnit() == null || !VALID_AMOUNT_UNITS.contains(dto.getAmountUnit())) {
             throw new IllegalArgumentException("Amount unit must be one of: g, ml, package.");
         }
-        if (dto.getName() == null || dto.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Product name must not be empty.");
+        if (dto.getBarcode() == null || dto.getBarcode().trim().isEmpty()) {
+            throw new IllegalArgumentException("Barcode must not be empty.");
         }
+    }
+
+    private LocalDatasetProductDTO lookupLocalProductByBarcode(String barcode) {
+        return localDatasetLookupService.findRawRowByBarcode(barcode)
+                .map(localDatasetProductMapper::toDto)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "No local dataset product found for barcode " + barcode
+                ));
+    }
+
+    private Double calculateKcalPerPackage(LocalDatasetProductDTO product) {
+        if (product == null
+                || product.getNutrition() == null
+                || product.getNutrition().getCoreNutrition() == null) {
+            return 0.0;
+        }
+
+        LocalDatasetProductDTO.NutrientAmountDTO energy =
+                product.getNutrition().getCoreNutrition().get("energy-kcal");
+
+        if (energy == null || energy.getValue() == null) {
+            return 0.0;
+        }
+
+        String basisUnit = product.getNutrition().getBasisUnit();
+        String packageUnit = product.getPackageQuantityUnit();
+        Double packageQuantity = product.getPackageQuantity();
+
+        if (basisUnit == null
+                || packageUnit == null
+                || packageQuantity == null
+                || packageQuantity <= 0
+                || !basisUnit.equals(packageUnit)) {
+            return 0.0;
+        }
+
+        return energy.getValue() * packageQuantity / 100.0;
+    }
+
+    private String cleanOrFallback(String value, String fallback) {
+        if (value == null || value.trim().isEmpty()) {
+            return fallback;
+        }
+
+        return value.trim();
+    }
+
+    private Integer derivePackageQuantityIfWhole(PantryItemPostDTO dto) {
+        if (dto == null || dto.getAmount() == null || dto.getAmountUnit() == null) {
+            return null;
+        }
+        if (!"package".equalsIgnoreCase(dto.getAmountUnit().trim())) {
+            return null;
+        }
+
+        double amount = dto.getAmount();
+        if (amount <= 0 || amount > Integer.MAX_VALUE || amount % 1 != 0) {
+            return null;
+        }
+
+        return (int) amount;
     }
 
     private void broadcastItemAdded(Long householdId, PantryItem saved, Long authenticatedUserId) {
