@@ -46,7 +46,27 @@ public class DailyNutrientIntakeService {
             Integer consumedQuantity,
             Instant consumedAt
     ) {
-        if (userId == null || pantryItem == null || pantryItem.getId() == null || consumedQuantity == null || consumedQuantity <= 0) {
+        if (consumedQuantity == null || consumedQuantity <= 0) {
+            return null;
+        }
+        return recordConsumedPantryItem(userId, pantryItem, BigDecimal.valueOf(consumedQuantity.longValue()), consumedAt);
+    }
+
+    /**
+     * Records consumed micronutrients using a multiplier against the pantry item's stored nutrition basis.
+     * For example, if values are stored per 100g and the user consumed 50g, multiplier = 0.5.
+     */
+    public DailyNutrientIntake recordConsumedPantryItem(
+            Long userId,
+            PantryItem pantryItem,
+            BigDecimal nutritionBasisMultiplier,
+            Instant consumedAt
+    ) {
+        if (userId == null
+                || pantryItem == null
+                || pantryItem.getId() == null
+                || nutritionBasisMultiplier == null
+                || nutritionBasisMultiplier.compareTo(BigDecimal.ZERO) <= 0) {
             return null;
         }
 
@@ -59,13 +79,12 @@ public class DailyNutrientIntakeService {
 
         Instant resolvedConsumedAt = consumedAt == null ? Instant.now() : consumedAt;
         LocalDate intakeDate = LocalDate.ofInstant(resolvedConsumedAt, APPLICATION_ZONE);
-        BigDecimal multiplier = BigDecimal.valueOf(consumedQuantity.longValue());
 
         DailyNutrientIntake dailyIntake = dailyNutrientIntakeRepository
                 .findByUserIdAndIntakeDate(userId, intakeDate)
                 .orElseGet(() -> createEmptyDailyIntake(userId, intakeDate));
 
-        addConsumedMicronutrients(dailyIntake, pantryItemMicronutrients, multiplier);
+        addConsumedMicronutrients(dailyIntake, pantryItemMicronutrients, nutritionBasisMultiplier);
         return dailyNutrientIntakeRepository.save(dailyIntake);
     }
 
@@ -112,14 +131,14 @@ public class DailyNutrientIntakeService {
         dailyIntake.setZinc(add(dailyIntake.getZinc(), pantryItemMicronutrients.getZinc(), multiplier));
     }
 
-    private BigDecimal add(BigDecimal currentValue, BigDecimal consumedPackageValue, BigDecimal multiplier) {
-        if (consumedPackageValue == null || multiplier == null) {
+    private BigDecimal add(BigDecimal currentValue, BigDecimal nutrientPerBasisValue, BigDecimal multiplier) {
+        if (nutrientPerBasisValue == null || multiplier == null) {
             return currentValue;
         }
 
         BigDecimal baseValue = currentValue == null ? BigDecimal.ZERO : currentValue;
         return baseValue
-                .add(consumedPackageValue.multiply(multiplier))
+                .add(nutrientPerBasisValue.multiply(multiplier))
                 .setScale(NUTRIENT_SCALE, RoundingMode.HALF_UP);
     }
 }

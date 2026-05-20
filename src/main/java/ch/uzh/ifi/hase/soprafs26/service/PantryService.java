@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.time.Instant;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +17,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.ConsumptionLog;
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.ConsumptionLogRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.HouseholdMemberRepository;
@@ -40,6 +43,7 @@ public class PantryService {
 
     // Issue #114 — allowed values for amountUnit
     private static final Set<String> VALID_AMOUNT_UNITS = Set.of("g", "ml", "package");
+    private static final Set<String> VALID_CONSUMPTION_UNITS = Set.of("g", "ml", "package", "serving");
 
     private final PantryItemRepository pantryItemRepository;
     private final ConsumptionLogRepository consumptionLogRepository;
@@ -79,17 +83,29 @@ public class PantryService {
         this.localDatasetProductMapper = localDatasetProductMapper;
     }
 
-    // Issue #114 — unit-aware calorie calculation for a single consume operation
-    private Double computeConsumedCalories(PantryItem item, double consumedAmount) {
-        String unit = item.getAmountUnit();
-        if ("g".equals(unit) && item.getKcalPer100g() != null && item.getKcalPer100g() > 0) {
-            return item.getKcalPer100g() * consumedAmount / 100.0;
-        }
-        if ("ml".equals(unit) && item.getKcalPer100ml() != null && item.getKcalPer100ml() > 0) {
-            return item.getKcalPer100ml() * consumedAmount / 100.0;
-        }
+    // Issue #114/#consume-units — unit-aware calorie calculation for a single consume operation.
+    private Double computeConsumedCalories(PantryItem item, String consumedUnit, double consumedAmount) {
+        String unit = normalizeConsumptionUnit(consumedUnit, item);
         if ("package".equals(unit) && item.getKcalPerPackage() != null && item.getKcalPerPackage() > 0) {
             return item.getKcalPerPackage() * consumedAmount;
+        }
+
+        BigDecimal consumedBasisAmount = resolveConsumedBasisAmount(item, unit, BigDecimal.valueOf(consumedAmount));
+        if (consumedBasisAmount == null || item.getMicronutrients() == null) {
+            return null;
+        }
+
+        String basisUnit = item.getMicronutrients().getNutritionBasisUnit();
+        BigDecimal basisAmount = item.getMicronutrients().getNutritionBasisAmount();
+        if (basisAmount == null || basisAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
+
+        if ("g".equals(basisUnit) && item.getKcalPer100g() != null && item.getKcalPer100g() > 0) {
+            return item.getKcalPer100g() * consumedBasisAmount.doubleValue() / basisAmount.doubleValue();
+        }
+        if ("ml".equals(basisUnit) && item.getKcalPer100ml() != null && item.getKcalPer100ml() > 0) {
+            return item.getKcalPer100ml() * consumedBasisAmount.doubleValue() / basisAmount.doubleValue();
         }
         return null;
     }
@@ -162,10 +178,10 @@ public class PantryService {
                 pantryItemPostDTO.getAmountUnit(),
                 pantryItemPostDTO.getAmount(),
                 calculateKcalPerPackage(localProduct),
-                pantryItemPostDTO.getKcalPer100g(),
-                pantryItemPostDTO.getKcalPer100ml()
+                calculateKcalPer100g(localProduct),
+                calculateKcalPer100ml(localProduct)
         );
-        pantryItemMicronutrientService.upsertMicronutrientsPerPackageFromLocalDataset(
+        pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                 saved,
                 localProduct);
 
@@ -217,9 +233,9 @@ public class PantryService {
                     dto.getAmountUnit(),
                     dto.getAmount(),
                     calculateKcalPerPackage(localProduct),
-                    dto.getKcalPer100g(),
-                    dto.getKcalPer100ml());
-            pantryItemMicronutrientService.upsertMicronutrientsPerPackageFromLocalDataset(
+                    calculateKcalPer100g(localProduct),
+                    calculateKcalPer100ml(localProduct));
+            pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                     saved,
                     localProduct);
             savedItems.add(saved);
@@ -281,6 +297,35 @@ public class PantryService {
         }
 
         return energy.getValue() * packageQuantity / 100.0;
+    }
+
+
+    private Double calculateKcalPer100g(LocalDatasetProductDTO product) {
+        return calculateKcalPerBasisUnit(product, "g");
+    }
+
+    private Double calculateKcalPer100ml(LocalDatasetProductDTO product) {
+        return calculateKcalPerBasisUnit(product, "ml");
+    }
+
+    private Double calculateKcalPerBasisUnit(LocalDatasetProductDTO product, String expectedBasisUnit) {
+        if (product == null
+                || product.getNutrition() == null
+                || product.getNutrition().getCoreNutrition() == null
+                || product.getNutrition().getBasisAmount() == null
+                || product.getNutrition().getBasisAmount() <= 0
+                || product.getNutrition().getBasisUnit() == null
+                || !expectedBasisUnit.equalsIgnoreCase(product.getNutrition().getBasisUnit())) {
+            return null;
+        }
+
+        LocalDatasetProductDTO.NutrientAmountDTO energy =
+                product.getNutrition().getCoreNutrition().get("energy-kcal");
+        if (energy == null || energy.getValue() == null) {
+            return null;
+        }
+
+        return energy.getValue() * 100.0 / product.getNutrition().getBasisAmount();
     }
 
     private String cleanOrFallback(String value, String fallback) {
@@ -411,7 +456,7 @@ public class PantryService {
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {
-        return consumeItem(householdId, itemId, amount, null, false, authenticatedUserId, null);
+        return consumeItem(householdId, itemId, amount, null, null, false, authenticatedUserId, null);
     }
 
     public ConsumeResult consumeItem(
@@ -421,13 +466,14 @@ public class PantryService {
             Double kcalPerPackageOverride,
             boolean skipCalorieLogging,
             Long authenticatedUserId) {
-        return consumeItem(householdId, itemId, amount, kcalPerPackageOverride, skipCalorieLogging, authenticatedUserId, null);
+        return consumeItem(householdId, itemId, amount, null, kcalPerPackageOverride, skipCalorieLogging, authenticatedUserId, null);
     }
 
     public ConsumeResult consumeItem(
             Long householdId,
             Long itemId,
             Double amount,
+            String amountUnit,
             Double kcalPerPackageOverride,
             boolean skipCalorieLogging,
             Long authenticatedUserId,
@@ -463,7 +509,15 @@ public class PantryService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
         double consumeAmount = amount;
-        if (consumeAmount > safeAmount(pantryItem.getAmount())) {
+        String consumedUnit = normalizeConsumptionUnit(amountUnit, pantryItem);
+        if (!VALID_CONSUMPTION_UNITS.contains(consumedUnit)) {
+            throw new IllegalArgumentException("Amount unit must be one of: g, ml, serving, package.");
+        }
+
+        BigDecimal inventoryAmountToSubtract = resolveInventoryAmountToSubtract(
+                pantryItem, consumedUnit, BigDecimal.valueOf(consumeAmount));
+        if (inventoryAmountToSubtract != null
+                && inventoryAmountToSubtract.doubleValue() > safeAmount(pantryItem.getAmount())) {
             throw new IllegalArgumentException("Consumed quantity exceeds available quantity.");
         }
 
@@ -472,9 +526,7 @@ public class PantryService {
             pantryItemRepository.save(pantryItem);
         }
 
-        double remainingAmount = safeAmount(pantryItem.getAmount()) - consumeAmount;
-        // Issue #114 — unit-aware calorie formula; Issue #133 — supports partial amounts
-        Double consumedCalories = skipCalorieLogging ? null : computeConsumedCalories(pantryItem, consumeAmount);
+        Double consumedCalories = skipCalorieLogging ? null : computeConsumedCalories(pantryItem, consumedUnit, consumeAmount);
 
         // Issue #133 — log consumed amount rounded to nearest int for display in activity feed
         int loggedQuantity = (int) Math.max(1, Math.round(consumeAmount));
@@ -485,17 +537,18 @@ public class PantryService {
         log.setPantryItemId(pantryItem.getId());
         log.setProductNameSnapshot(pantryItem.getName());
         log.setConsumedQuantity(loggedQuantity);
-        // Issue #133 — persist unit so activity feed can display "200g" instead of "200×"
-        log.setConsumedUnit(pantryItem.getAmountUnit());
+        log.setConsumedUnit(consumedUnit);
         log.setConsumedCalories(consumedCalories);
         log.setConsumedAt(Instant.now());
         consumptionLogRepository.save(log);
-        // Issue #133 — only track micronutrients for package unit (g/ml multiplier requires package size)
-        if ("package".equals(pantryItem.getAmountUnit())) {
+
+        BigDecimal nutrientMultiplier = resolveNutritionBasisMultiplier(
+                pantryItem, consumedUnit, BigDecimal.valueOf(consumeAmount));
+        if (!skipCalorieLogging && nutrientMultiplier != null) {
             dailyNutrientIntakeService.recordConsumedPantryItem(
                     effectiveUserId,
                     pantryItem,
-                    loggedQuantity,
+                    nutrientMultiplier,
                     log.getConsumedAt());
         }
 
@@ -503,14 +556,21 @@ public class PantryService {
         result.setItemId(pantryItem.getId());
         result.setConsumedCalories(consumedCalories);
 
+        double remainingAmount = safeAmount(pantryItem.getAmount());
+        if (inventoryAmountToSubtract != null) {
+            remainingAmount = safeAmount(pantryItem.getAmount()) - inventoryAmountToSubtract.doubleValue();
+        }
+
         if (remainingAmount <= 0) {
             pantryItemRepository.delete(pantryItem);
             result.setRemainingAmount(0.0);
             result.setRemoved(true);
         }
         else {
-            pantryItem.setAmount(remainingAmount);
-            pantryItemRepository.save(pantryItem);
+            if (inventoryAmountToSubtract != null) {
+                pantryItem.setAmount(remainingAmount);
+                pantryItemRepository.save(pantryItem);
+            }
             result.setRemainingAmount(remainingAmount);
             result.setRemoved(false);
         }
@@ -526,6 +586,98 @@ public class PantryService {
         pantryBroadcastService.broadcastPantryUpdate(householdId, msg);
 
         return result;
+    }
+
+
+    private String normalizeConsumptionUnit(String requestedUnit, PantryItem item) {
+        String unit = requestedUnit == null || requestedUnit.trim().isEmpty()
+                ? (item == null ? null : item.getAmountUnit())
+                : requestedUnit.trim().toLowerCase();
+        return unit;
+    }
+
+    private BigDecimal resolveNutritionBasisMultiplier(PantryItem item, String consumedUnit, BigDecimal consumedAmount) {
+        if (item == null || item.getMicronutrients() == null || consumedAmount == null) {
+            return null;
+        }
+
+        PantryItemMicronutrients micronutrients = item.getMicronutrients();
+        BigDecimal basisAmount = micronutrients.getNutritionBasisAmount();
+        if (basisAmount == null || basisAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
+
+        BigDecimal consumedBasisAmount = resolveConsumedBasisAmount(item, consumedUnit, consumedAmount);
+        if (consumedBasisAmount == null || consumedBasisAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
+
+        return consumedBasisAmount.divide(basisAmount, 10, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal resolveConsumedBasisAmount(PantryItem item, String consumedUnit, BigDecimal consumedAmount) {
+        if (item == null || item.getMicronutrients() == null || consumedUnit == null || consumedAmount == null) {
+            return null;
+        }
+
+        PantryItemMicronutrients micronutrients = item.getMicronutrients();
+        String basisUnit = micronutrients.getNutritionBasisUnit();
+        if (basisUnit == null) {
+            return null;
+        }
+
+        if (basisUnit.equals(consumedUnit)) {
+            return consumedAmount;
+        }
+        if ("serving".equals(consumedUnit)
+                && basisUnit.equals(micronutrients.getServingQuantityUnit())
+                && isPositive(micronutrients.getServingQuantityValue())) {
+            return consumedAmount.multiply(micronutrients.getServingQuantityValue());
+        }
+        if ("package".equals(consumedUnit)
+                && basisUnit.equals(micronutrients.getPackageQuantityUnit())
+                && isPositive(micronutrients.getPackageQuantityValue())) {
+            return consumedAmount.multiply(micronutrients.getPackageQuantityValue());
+        }
+
+        return null;
+    }
+
+    private BigDecimal resolveInventoryAmountToSubtract(PantryItem item, String consumedUnit, BigDecimal consumedAmount) {
+        if (item == null || consumedUnit == null || consumedAmount == null) {
+            return null;
+        }
+
+        String inventoryUnit = item.getAmountUnit();
+        if (consumedUnit.equals(inventoryUnit)) {
+            return consumedAmount;
+        }
+
+        PantryItemMicronutrients micronutrients = item.getMicronutrients();
+        if (micronutrients == null) {
+            return null;
+        }
+
+        if ("package".equals(inventoryUnit)) {
+            BigDecimal consumedBasisAmount = resolveConsumedBasisAmount(item, consumedUnit, consumedAmount);
+            BigDecimal packageQuantity = micronutrients.getPackageQuantityValue();
+            if (consumedBasisAmount != null && isPositive(packageQuantity)) {
+                return consumedBasisAmount.divide(packageQuantity, 10, RoundingMode.HALF_UP);
+            }
+        }
+
+        if (("g".equals(inventoryUnit) || "ml".equals(inventoryUnit))) {
+            BigDecimal consumedBasisAmount = resolveConsumedBasisAmount(item, consumedUnit, consumedAmount);
+            if (consumedBasisAmount != null && inventoryUnit.equals(micronutrients.getNutritionBasisUnit())) {
+                return consumedBasisAmount;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isPositive(BigDecimal value) {
+        return value != null && value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public ConsumeResult removeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {

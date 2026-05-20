@@ -4,6 +4,7 @@ public class ConsumePantryItemPostDTO {
 
     // Issue #133 — amount replaces quantity (Integer) to support partial/portion consumption
     private Double amount;
+    private String amountUnit;
     private Double kcalPerPackage;
     private Boolean skipCalorieLogging;
 
@@ -13,6 +14,14 @@ public class ConsumePantryItemPostDTO {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getAmountUnit() {
+        return amountUnit;
+    }
+
+    public void setAmountUnit(String amountUnit) {
+        this.amountUnit = amountUnit;
     }
 
     public Double getKcalPerPackage() {

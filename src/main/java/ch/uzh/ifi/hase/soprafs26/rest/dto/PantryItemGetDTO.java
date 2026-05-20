@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import java.time.Instant;
+import java.util.List;
 
 public class PantryItemGetDTO {
 
@@ -19,6 +20,17 @@ public class PantryItemGetDTO {
     private Double kcalPer100g;
     // populated when amountUnit = "ml"
     private Double kcalPer100ml;
+
+    // Local dataset nutrition/conversion metadata. Nutrient values are stored per nutrition basis,
+    // usually per 100g or per 100ml. Package/serving metadata is optional and controls consume options.
+    private Double nutritionBasisAmount;
+    private String nutritionBasisUnit;
+    private Double packageQuantity;
+    private String packageQuantityUnit;
+    private Double servingQuantity;
+    private String servingQuantityUnit;
+    private List<String> availableConsumptionUnits;
+
     private Instant addedAt;
 
     public Long getId() {
@@ -75,6 +87,27 @@ public class PantryItemGetDTO {
 
     public Double getKcalPer100ml() { return kcalPer100ml; }
     public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
+
+    public Double getNutritionBasisAmount() { return nutritionBasisAmount; }
+    public void setNutritionBasisAmount(Double nutritionBasisAmount) { this.nutritionBasisAmount = nutritionBasisAmount; }
+
+    public String getNutritionBasisUnit() { return nutritionBasisUnit; }
+    public void setNutritionBasisUnit(String nutritionBasisUnit) { this.nutritionBasisUnit = nutritionBasisUnit; }
+
+    public Double getPackageQuantity() { return packageQuantity; }
+    public void setPackageQuantity(Double packageQuantity) { this.packageQuantity = packageQuantity; }
+
+    public String getPackageQuantityUnit() { return packageQuantityUnit; }
+    public void setPackageQuantityUnit(String packageQuantityUnit) { this.packageQuantityUnit = packageQuantityUnit; }
+
+    public Double getServingQuantity() { return servingQuantity; }
+    public void setServingQuantity(Double servingQuantity) { this.servingQuantity = servingQuantity; }
+
+    public String getServingQuantityUnit() { return servingQuantityUnit; }
+    public void setServingQuantityUnit(String servingQuantityUnit) { this.servingQuantityUnit = servingQuantityUnit; }
+
+    public List<String> getAvailableConsumptionUnits() { return availableConsumptionUnits; }
+    public void setAvailableConsumptionUnits(List<String> availableConsumptionUnits) { this.availableConsumptionUnits = availableConsumptionUnits; }
 
     public Instant getAddedAt() {
         return addedAt;
