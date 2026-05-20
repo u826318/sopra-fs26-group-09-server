@@ -30,4 +30,21 @@ public class LocalDatasetBucketFinder {
 
     return Optional.empty();
   }
+
+  public Optional<LocalDatasetBucket> findBucketForProductIndex(
+      Long productIndex,
+      List<LocalDatasetBucket> buckets
+  ) {
+    if (productIndex == null || buckets == null || buckets.isEmpty()) {
+      return Optional.empty();
+    }
+
+    for (LocalDatasetBucket bucket : buckets) {
+      if (bucket.containsProductIndex(productIndex)) {
+        return Optional.of(bucket);
+      }
+    }
+
+    return Optional.empty();
+  }
 }

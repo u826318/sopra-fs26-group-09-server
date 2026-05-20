@@ -30,6 +30,8 @@ public class AuthFilter extends OncePerRequestFilter {
                 || path.startsWith("/ws")
                 || path.equals("/users/register")
                 || path.equals("/users/login")
+                || path.equals("/products/search")
+                || path.equals("/local-dataset/products/lookup-by-index")
                 || path.equals("/products/lookup");
     }
 

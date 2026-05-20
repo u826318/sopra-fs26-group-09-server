@@ -46,13 +46,42 @@ public class LocalDatasetManifestLoader {
     long rowCount = bucketNode.path("row_count").asLong();
     String minBarcode = bucketNode.path("min_code").asText(null);
     String maxBarcode = bucketNode.path("max_code").asText(null);
+    Long minProductIndex = readOptionalLong(bucketNode, "min_product_index");
+    Long maxProductIndex = readOptionalLong(bucketNode, "max_product_index");
 
     return new LocalDatasetBucket(
         bucketId,
         filename,
         rowCount,
         minBarcode,
-        maxBarcode
+        maxBarcode,
+        minProductIndex,
+        maxProductIndex
     );
+  }
+
+  private Long readOptionalLong(JsonNode node, String fieldName) {
+    JsonNode value = node.path(fieldName);
+
+    if (value.isMissingNode() || value.isNull()) {
+      return null;
+    }
+
+    if (value.isNumber()) {
+      return value.asLong();
+    }
+
+    String textValue = value.asText(null);
+
+    if (textValue == null || textValue.isBlank()) {
+      return null;
+    }
+
+    try {
+      return Long.parseLong(textValue.trim());
+    }
+    catch (NumberFormatException ignored) {
+      return null;
+    }
   }
 }
