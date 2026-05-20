@@ -1,11 +1,16 @@
 package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 
 import org.mapstruct.*;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import org.mapstruct.factory.Mappers;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Household;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
+import ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients;
 import ch.uzh.ifi.hase.soprafs26.entity.UserPersonalProfile;
 import ch.uzh.ifi.hase.soprafs26.entity.DailyNutrientIntake;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdGetDTO;
@@ -68,7 +73,63 @@ public interface DTOMapper {
 	@Mapping(source = "initialAmount", target = "initialAmount")
 	@Mapping(source = "amountUnit", target = "amountUnit")
 	@Mapping(source = "addedAt", target = "addedAt")
+	@Mapping(target = "nutritionBasisAmount", ignore = true)
+	@Mapping(target = "nutritionBasisUnit", ignore = true)
+	@Mapping(target = "packageQuantity", ignore = true)
+	@Mapping(target = "packageQuantityUnit", ignore = true)
+	@Mapping(target = "servingQuantity", ignore = true)
+	@Mapping(target = "servingQuantityUnit", ignore = true)
+	@Mapping(target = "availableConsumptionUnits", ignore = true)
 	PantryItemGetDTO convertEntityToPantryItemGetDTO(PantryItem pantryItem);
+
+	@AfterMapping
+	default void enrichPantryItemGetDTO(PantryItem pantryItem, @MappingTarget PantryItemGetDTO dto) {
+		if (pantryItem == null || dto == null || pantryItem.getMicronutrients() == null) {
+			return;
+		}
+
+		PantryItemMicronutrients micronutrients = pantryItem.getMicronutrients();
+		dto.setNutritionBasisAmount(toDouble(micronutrients.getNutritionBasisAmount()));
+		dto.setNutritionBasisUnit(micronutrients.getNutritionBasisUnit());
+		dto.setPackageQuantity(toDouble(micronutrients.getPackageQuantityValue()));
+		dto.setPackageQuantityUnit(micronutrients.getPackageQuantityUnit());
+		dto.setServingQuantity(toDouble(micronutrients.getServingQuantityValue()));
+		dto.setServingQuantityUnit(micronutrients.getServingQuantityUnit());
+		dto.setAvailableConsumptionUnits(buildAvailableConsumptionUnits(pantryItem, micronutrients));
+	}
+
+	default List<String> buildAvailableConsumptionUnits(PantryItem pantryItem, PantryItemMicronutrients micronutrients) {
+		List<String> units = new ArrayList<>();
+		String basisUnit = micronutrients.getNutritionBasisUnit();
+		BigDecimal basisAmount = micronutrients.getNutritionBasisAmount();
+		boolean hasBasis = isPositive(basisAmount) && ("g".equals(basisUnit) || "ml".equals(basisUnit));
+
+		if (hasBasis) {
+			units.add(basisUnit);
+		}
+		if (hasBasis
+				&& isPositive(micronutrients.getServingQuantityValue())
+				&& basisUnit.equals(micronutrients.getServingQuantityUnit())) {
+			units.add("serving");
+		}
+		if (hasBasis
+				&& isPositive(micronutrients.getPackageQuantityValue())
+				&& basisUnit.equals(micronutrients.getPackageQuantityUnit())) {
+			units.add("package");
+		}
+		if (units.isEmpty() && pantryItem != null && pantryItem.getAmountUnit() != null) {
+			units.add(pantryItem.getAmountUnit());
+		}
+		return units;
+	}
+
+	default boolean isPositive(BigDecimal value) {
+		return value != null && value.compareTo(BigDecimal.ZERO) > 0;
+	}
+
+	default Double toDouble(BigDecimal value) {
+		return value == null ? null : value.doubleValue();
+	}
 	
 	@Mapping(source = "id", target = "id")
 	@Mapping(source = "user.id", target = "userId")

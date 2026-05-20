@@ -85,6 +85,7 @@ public class PantryController {
                 householdId,
                 itemId,
                 consumePostDTO.getAmount(),
+                consumePostDTO.getAmountUnit(),
                 consumePostDTO.getKcalPerPackage(),
                 Boolean.TRUE.equals(consumePostDTO.getSkipCalorieLogging()),
                 authenticatedUserId,

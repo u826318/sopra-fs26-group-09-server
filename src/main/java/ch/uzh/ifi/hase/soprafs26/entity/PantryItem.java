@@ -59,7 +59,7 @@ public class PantryItem implements Serializable {
     @Column(nullable = false, updatable = false)
     private Instant addedAt;
 
-    @OneToOne(mappedBy = "pantryItem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "pantryItem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private PantryItemMicronutrients micronutrients;
 
     public Long getId() {

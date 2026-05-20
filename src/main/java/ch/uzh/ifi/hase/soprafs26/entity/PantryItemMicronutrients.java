@@ -33,6 +33,24 @@ public class PantryItemMicronutrients implements Serializable {
     private BigDecimal packageGrams;
 
     @Column(precision = 24, scale = 6)
+    private BigDecimal nutritionBasisAmount;
+
+    @Column
+    private String nutritionBasisUnit;
+
+    @Column(precision = 24, scale = 6)
+    private BigDecimal packageQuantityValue;
+
+    @Column
+    private String packageQuantityUnit;
+
+    @Column(precision = 24, scale = 6)
+    private BigDecimal servingQuantityValue;
+
+    @Column
+    private String servingQuantityUnit;
+
+    @Column(precision = 24, scale = 6)
     private BigDecimal biotin;
 
     @Column(precision = 24, scale = 6)
@@ -130,6 +148,24 @@ public class PantryItemMicronutrients implements Serializable {
 
     public BigDecimal getPackageGrams() { return packageGrams; }
     public void setPackageGrams(BigDecimal packageGrams) { this.packageGrams = packageGrams; }
+
+    public BigDecimal getNutritionBasisAmount() { return nutritionBasisAmount; }
+    public void setNutritionBasisAmount(BigDecimal nutritionBasisAmount) { this.nutritionBasisAmount = nutritionBasisAmount; }
+
+    public String getNutritionBasisUnit() { return nutritionBasisUnit; }
+    public void setNutritionBasisUnit(String nutritionBasisUnit) { this.nutritionBasisUnit = nutritionBasisUnit; }
+
+    public BigDecimal getPackageQuantityValue() { return packageQuantityValue; }
+    public void setPackageQuantityValue(BigDecimal packageQuantityValue) { this.packageQuantityValue = packageQuantityValue; }
+
+    public String getPackageQuantityUnit() { return packageQuantityUnit; }
+    public void setPackageQuantityUnit(String packageQuantityUnit) { this.packageQuantityUnit = packageQuantityUnit; }
+
+    public BigDecimal getServingQuantityValue() { return servingQuantityValue; }
+    public void setServingQuantityValue(BigDecimal servingQuantityValue) { this.servingQuantityValue = servingQuantityValue; }
+
+    public String getServingQuantityUnit() { return servingQuantityUnit; }
+    public void setServingQuantityUnit(String servingQuantityUnit) { this.servingQuantityUnit = servingQuantityUnit; }
 
     public BigDecimal getBiotin() { return biotin; }
     public void setBiotin(BigDecimal biotin) { this.biotin = biotin; }

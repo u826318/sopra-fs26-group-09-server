@@ -27,73 +27,94 @@ public class PantryItemMicronutrientService {
         this.pantryItemMicronutrientsRepository = pantryItemMicronutrientsRepository;
     }
 
-    public void upsertMicronutrientsPerPackageFromLocalDataset(
+    /**
+     * Stores local-dataset micronutrients on their native nutrition basis, usually per 100g or 100ml.
+     * Package and serving quantities are kept only as optional conversion metadata for later consumption.
+     */
+    public void upsertMicronutrientsPerBasisFromLocalDataset(
             PantryItem pantryItem,
             LocalDatasetProductDTO product
     ) {
-        if (pantryItem == null
-                || pantryItem.getId() == null
-                || product == null
-                || product.getNutrition() == null
-                || product.getNutrition().getMicronutrients() == null
-                || product.getNutrition().getMicronutrients().isEmpty()) {
+        if (pantryItem == null || pantryItem.getId() == null || product == null) {
             return;
         }
-
-        BigDecimal packageBasisAmount = parseBigDecimalOrNull(product.getPackageQuantity());
-        if (packageBasisAmount == null || packageBasisAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            return;
-        }
-
-        String basisUnit = normalizeUnit(product.getNutrition().getBasisUnit());
-        String packageUnit = normalizeUnit(product.getPackageQuantityUnit());
-        if (basisUnit == null || packageUnit == null || !basisUnit.equals(packageUnit)) {
-            return;
-        }
-
-        Map<String, LocalDatasetProductDTO.NutrientAmountDTO> micronutrientValuesPer100 =
-                product.getNutrition().getMicronutrients();
 
         PantryItemMicronutrients micronutrients = pantryItemMicronutrientsRepository
                 .findByPantryItemId(pantryItem.getId())
                 .orElseGet(PantryItemMicronutrients::new);
 
         micronutrients.setPantryItem(pantryItem);
-        micronutrients.setPackageQuantity(formatPackageQuantity(product.getPackageQuantity(), product.getPackageQuantityUnit()));
-        micronutrients.setPackageGrams(packageBasisAmount);
 
-        micronutrients.setBiotin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "biotin"));
-        micronutrients.setCalcium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "calcium"));
-        micronutrients.setChloride(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "chloride"));
-        micronutrients.setCholine(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "choline"));
-        micronutrients.setChromium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "chromium"));
-        micronutrients.setCopper(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "copper"));
-        micronutrients.setFluoride(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "fluoride"));
-        micronutrients.setFolate(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b9"));
-        micronutrients.setIodine(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "iodine"));
-        micronutrients.setIron(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "iron"));
-        micronutrients.setMagnesium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "magnesium"));
-        micronutrients.setManganese(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "manganese"));
-        micronutrients.setMolybdenum(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "molybdenum"));
-        micronutrients.setNiacin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-pp"));
-        micronutrients.setPantothenicAcid(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "pantothenic-acid"));
-        micronutrients.setPhosphorus(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "phosphorus"));
-        micronutrients.setPotassium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "potassium"));
-        micronutrients.setRiboflavin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b2"));
-        micronutrients.setSelenium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "selenium"));
-        micronutrients.setSodium(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "sodium"));
-        micronutrients.setThiamin(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b1"));
-        micronutrients.setVitaminA(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-a"));
-        micronutrients.setVitaminB12(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b12"));
-        micronutrients.setVitaminB6(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-b6"));
-        micronutrients.setVitaminC(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-c"));
-        micronutrients.setVitaminD(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-d"));
-        micronutrients.setVitaminE(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-e"));
-        micronutrients.setVitaminK(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "vitamin-k"));
-        micronutrients.setZinc(calculateLocalPackageAmount(micronutrientValuesPer100, packageBasisAmount, "zinc"));
+        BigDecimal nutritionBasisAmount = null;
+        String nutritionBasisUnit = null;
+        Map<String, LocalDatasetProductDTO.NutrientAmountDTO> micronutrientValuesPerBasis = null;
+        if (product.getNutrition() != null) {
+            nutritionBasisAmount = parseBigDecimalOrNull(product.getNutrition().getBasisAmount());
+            nutritionBasisUnit = normalizeUnit(product.getNutrition().getBasisUnit());
+            micronutrientValuesPerBasis = product.getNutrition().getMicronutrients();
+        }
+
+        micronutrients.setNutritionBasisAmount(nutritionBasisAmount);
+        micronutrients.setNutritionBasisUnit(nutritionBasisUnit);
+
+        BigDecimal packageQuantity = parseBigDecimalOrNull(product.getPackageQuantity());
+        String packageUnit = normalizeUnit(product.getPackageQuantityUnit());
+        micronutrients.setPackageQuantity(formatPackageQuantity(product.getPackageQuantity(), product.getPackageQuantityUnit()));
+        micronutrients.setPackageGrams(packageQuantity); // kept for backward compatibility; may represent g or ml in new local-dataset flow
+        micronutrients.setPackageQuantityValue(packageQuantity);
+        micronutrients.setPackageQuantityUnit(packageUnit);
+
+        BigDecimal servingQuantity = parseBigDecimalOrNull(product.getServingQuantity());
+        String servingUnit = normalizeUnit(product.getServingQuantityUnit());
+        micronutrients.setServingQuantityValue(servingQuantity);
+        micronutrients.setServingQuantityUnit(servingUnit);
+
+        if (micronutrientValuesPerBasis != null && !micronutrientValuesPerBasis.isEmpty()) {
+            micronutrients.setBiotin(findLocalPer100Micrograms(micronutrientValuesPerBasis, "biotin"));
+            micronutrients.setCalcium(findLocalPer100Micrograms(micronutrientValuesPerBasis, "calcium"));
+            micronutrients.setChloride(findLocalPer100Micrograms(micronutrientValuesPerBasis, "chloride"));
+            micronutrients.setCholine(findLocalPer100Micrograms(micronutrientValuesPerBasis, "choline"));
+            micronutrients.setChromium(findLocalPer100Micrograms(micronutrientValuesPerBasis, "chromium"));
+            micronutrients.setCopper(findLocalPer100Micrograms(micronutrientValuesPerBasis, "copper"));
+            micronutrients.setFluoride(findLocalPer100Micrograms(micronutrientValuesPerBasis, "fluoride"));
+            micronutrients.setFolate(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-b9"));
+            micronutrients.setIodine(findLocalPer100Micrograms(micronutrientValuesPerBasis, "iodine"));
+            micronutrients.setIron(findLocalPer100Micrograms(micronutrientValuesPerBasis, "iron"));
+            micronutrients.setMagnesium(findLocalPer100Micrograms(micronutrientValuesPerBasis, "magnesium"));
+            micronutrients.setManganese(findLocalPer100Micrograms(micronutrientValuesPerBasis, "manganese"));
+            micronutrients.setMolybdenum(findLocalPer100Micrograms(micronutrientValuesPerBasis, "molybdenum"));
+            micronutrients.setNiacin(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-pp"));
+            micronutrients.setPantothenicAcid(findLocalPer100Micrograms(micronutrientValuesPerBasis, "pantothenic-acid"));
+            micronutrients.setPhosphorus(findLocalPer100Micrograms(micronutrientValuesPerBasis, "phosphorus"));
+            micronutrients.setPotassium(findLocalPer100Micrograms(micronutrientValuesPerBasis, "potassium"));
+            micronutrients.setRiboflavin(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-b2"));
+            micronutrients.setSelenium(findLocalPer100Micrograms(micronutrientValuesPerBasis, "selenium"));
+            micronutrients.setSodium(findLocalPer100Micrograms(micronutrientValuesPerBasis, "sodium"));
+            micronutrients.setThiamin(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-b1"));
+            micronutrients.setVitaminA(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-a"));
+            micronutrients.setVitaminB12(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-b12"));
+            micronutrients.setVitaminB6(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-b6"));
+            micronutrients.setVitaminC(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-c"));
+            micronutrients.setVitaminD(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-d"));
+            micronutrients.setVitaminE(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-e"));
+            micronutrients.setVitaminK(findLocalPer100Micrograms(micronutrientValuesPerBasis, "vitamin-k"));
+            micronutrients.setZinc(findLocalPer100Micrograms(micronutrientValuesPerBasis, "zinc"));
+        }
 
         pantryItem.setMicronutrients(micronutrients);
         pantryItemMicronutrientsRepository.save(micronutrients);
+    }
+
+    /**
+     * @deprecated Local dataset nutrients are now stored per nutrition basis, not per package.
+     * Kept as a compatibility shim for older call sites.
+     */
+    @Deprecated
+    public void upsertMicronutrientsPerPackageFromLocalDataset(
+            PantryItem pantryItem,
+            LocalDatasetProductDTO product
+    ) {
+        upsertMicronutrientsPerBasisFromLocalDataset(pantryItem, product);
     }
 
     public void upsertMicronutrientsPerPackage(
