@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs26.entity;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,6 +56,9 @@ public class PantryItem implements Serializable {
     // kcalPer100ml: used when amountUnit = "ml"
     @Column
     private Double kcalPer100ml;
+
+    @Column
+    private LocalDate expirationDate;
 
     @Column(nullable = false, updatable = false)
     private Instant addedAt;
@@ -116,6 +120,14 @@ public class PantryItem implements Serializable {
 
     public Double getKcalPer100ml() { return kcalPer100ml; }
     public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
+
+    public LocalDate getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 
     public Instant getAddedAt() {
         return addedAt;

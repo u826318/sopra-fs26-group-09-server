@@ -191,7 +191,8 @@ public class PantryService {
                 pantryItemPostDTO.getAmount(),
                 kcalPerPackage,
                 kcalPer100g,
-                kcalPer100ml
+                kcalPer100ml,
+                pantryItemPostDTO.getExpirationDate()
         );
         pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                 saved,
@@ -250,7 +251,8 @@ public class PantryService {
                     dto.getAmount(),
                     kcalPerPackage,
                     kcalPer100g,
-                    kcalPer100ml);
+                    kcalPer100ml,
+                    dto.getExpirationDate());
             pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                     saved,
                     localProduct);
@@ -401,7 +403,8 @@ public class PantryService {
             Double amount,
             Double kcalPerPackage,
             Double kcalPer100g,
-            Double kcalPer100ml
+            Double kcalPer100ml,
+            java.time.LocalDate expirationDate
     ) {
         String normalizedBarcode = normalizeBarcode(barcode);
 
@@ -420,6 +423,9 @@ public class PantryService {
             matchingItem.setKcalPer100g(kcalPer100g);
             matchingItem.setKcalPer100ml(kcalPer100ml);
             matchingItem.setAmount(safeAmount(matchingItem.getAmount()) + safeAmount(amount));
+            if (expirationDate != null) {
+                matchingItem.setExpirationDate(expirationDate);
+            }
             return pantryItemRepository.save(matchingItem);
         }
 
@@ -433,6 +439,7 @@ public class PantryService {
         pantryItem.setKcalPerPackage(kcalPerPackage);
         pantryItem.setKcalPer100g(kcalPer100g);
         pantryItem.setKcalPer100ml(kcalPer100ml);
+        pantryItem.setExpirationDate(expirationDate);
         pantryItem.setAddedAt(Instant.now());
 
         return pantryItemRepository.save(pantryItem);

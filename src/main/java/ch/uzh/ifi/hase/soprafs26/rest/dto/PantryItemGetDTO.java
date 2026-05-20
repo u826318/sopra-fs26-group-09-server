@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 public class PantryItemGetDTO {
@@ -30,6 +31,8 @@ public class PantryItemGetDTO {
     private Double servingQuantity;
     private String servingQuantityUnit;
     private List<String> availableConsumptionUnits;
+
+    private LocalDate expirationDate;
 
     private Instant addedAt;
 
@@ -108,6 +111,9 @@ public class PantryItemGetDTO {
 
     public List<String> getAvailableConsumptionUnits() { return availableConsumptionUnits; }
     public void setAvailableConsumptionUnits(List<String> availableConsumptionUnits) { this.availableConsumptionUnits = availableConsumptionUnits; }
+
+    public LocalDate getExpirationDate() { return expirationDate; }
+    public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }
 
     public Instant getAddedAt() {
         return addedAt;
