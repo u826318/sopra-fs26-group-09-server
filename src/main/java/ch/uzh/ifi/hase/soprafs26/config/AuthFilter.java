@@ -29,8 +29,7 @@ public class AuthFilter extends OncePerRequestFilter {
         return "OPTIONS".equalsIgnoreCase(method)
                 || path.startsWith("/ws")
                 || path.equals("/users/register")
-                || path.equals("/users/login")
-                || path.equals("/products/lookup");
+                || path.equals("/users/login");
     }
 
     @Override

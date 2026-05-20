@@ -92,6 +92,13 @@ public class PantryService {
 
         BigDecimal consumedBasisAmount = resolveConsumedBasisAmount(item, unit, BigDecimal.valueOf(consumedAmount));
         if (consumedBasisAmount == null || item.getMicronutrients() == null) {
+            // Fallback for g/ml items that have kcal fields but no micronutrients stored
+            if ("g".equals(unit) && item.getKcalPer100g() != null && item.getKcalPer100g() > 0) {
+                return item.getKcalPer100g() * consumedAmount / 100.0;
+            }
+            if ("ml".equals(unit) && item.getKcalPer100ml() != null && item.getKcalPer100ml() > 0) {
+                return item.getKcalPer100ml() * consumedAmount / 100.0;
+            }
             return null;
         }
 
@@ -167,9 +174,14 @@ public class PantryService {
         }
 
         String normalizedBarcode = pantryItemPostDTO.getBarcode() != null ? pantryItemPostDTO.getBarcode().trim() : null;
+        String normalizedDtoName = pantryItemPostDTO.getName() != null ? pantryItemPostDTO.getName().trim() : null;
         Integer quantity = derivePackageQuantityIfWhole(pantryItemPostDTO);
         LocalDatasetProductDTO localProduct = lookupLocalProductByBarcode(normalizedBarcode);
-        String normalizedName = cleanOrFallback(localProduct.getName(), normalizedBarcode);
+        String normalizedName = cleanOrFallback(localProduct.getName(), normalizedDtoName != null ? normalizedDtoName : normalizedBarcode);
+
+        Double kcalPerPackage = firstNonNull(calculateKcalPerPackage(localProduct), pantryItemPostDTO.getKcalPerPackage());
+        Double kcalPer100g = firstNonNull(calculateKcalPer100g(localProduct), pantryItemPostDTO.getKcalPer100g());
+        Double kcalPer100ml = firstNonNull(calculateKcalPer100ml(localProduct), pantryItemPostDTO.getKcalPer100ml());
 
         PantryItem saved = mergeOrCreatePantryItem(
                 householdId,
@@ -177,9 +189,9 @@ public class PantryService {
                 normalizedName,
                 pantryItemPostDTO.getAmountUnit(),
                 pantryItemPostDTO.getAmount(),
-                calculateKcalPerPackage(localProduct),
-                calculateKcalPer100g(localProduct),
-                calculateKcalPer100ml(localProduct)
+                kcalPerPackage,
+                kcalPer100g,
+                kcalPer100ml
         );
         pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                 saved,
@@ -223,18 +235,22 @@ public class PantryService {
         List<PantryItem> savedItems = new ArrayList<>(items.size());
         for (PantryItemPostDTO dto : items) {
             String normalizedBarcode = dto.getBarcode() != null ? dto.getBarcode().trim() : null;
+            String normalizedDtoName = dto.getName() != null ? dto.getName().trim() : null;
             Integer quantity = derivePackageQuantityIfWhole(dto);
             LocalDatasetProductDTO localProduct = lookupLocalProductByBarcode(normalizedBarcode);
-            String normalizedName = cleanOrFallback(localProduct.getName(), normalizedBarcode);
+            String normalizedName = cleanOrFallback(localProduct.getName(), normalizedDtoName != null ? normalizedDtoName : normalizedBarcode);
+            Double kcalPerPackage = firstNonNull(calculateKcalPerPackage(localProduct), dto.getKcalPerPackage());
+            Double kcalPer100g = firstNonNull(calculateKcalPer100g(localProduct), dto.getKcalPer100g());
+            Double kcalPer100ml = firstNonNull(calculateKcalPer100ml(localProduct), dto.getKcalPer100ml());
             PantryItem saved = mergeOrCreatePantryItem(
                     householdId,
                     cleanOrFallback(localProduct.getBarcode(), normalizedBarcode),
                     normalizedName,
                     dto.getAmountUnit(),
                     dto.getAmount(),
-                    calculateKcalPerPackage(localProduct),
-                    calculateKcalPer100g(localProduct),
-                    calculateKcalPer100ml(localProduct));
+                    kcalPerPackage,
+                    kcalPer100g,
+                    kcalPer100ml);
             pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                     saved,
                     localProduct);
@@ -256,18 +272,15 @@ public class PantryService {
         if (dto.getAmountUnit() == null || !VALID_AMOUNT_UNITS.contains(dto.getAmountUnit())) {
             throw new IllegalArgumentException("Amount unit must be one of: g, ml, package.");
         }
-        if (dto.getBarcode() == null || dto.getBarcode().trim().isEmpty()) {
-            throw new IllegalArgumentException("Barcode must not be empty.");
-        }
     }
 
     private LocalDatasetProductDTO lookupLocalProductByBarcode(String barcode) {
+        if (barcode == null || barcode.isBlank()) {
+            return new LocalDatasetProductDTO();
+        }
         return localDatasetLookupService.findRawRowByBarcode(barcode)
                 .map(localDatasetProductMapper::toDto)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "No local dataset product found for barcode " + barcode
-                ));
+                .orElse(new LocalDatasetProductDTO());
     }
 
     private Double calculateKcalPerPackage(LocalDatasetProductDTO product) {
@@ -334,6 +347,10 @@ public class PantryService {
         }
 
         return value.trim();
+    }
+
+    private Double firstNonNull(Double primary, Double fallback) {
+        return primary != null ? primary : fallback;
     }
 
     private Integer derivePackageQuantityIfWhole(PantryItemPostDTO dto) {
