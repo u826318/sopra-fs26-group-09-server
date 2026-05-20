@@ -37,6 +37,8 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
 import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 
 class PantryServiceTest {
@@ -51,6 +53,8 @@ class PantryServiceTest {
     private DailyNutrientIntakeService mockDailyNutrientIntakeService;
     private PantryService pantryService;
     private MealPortionEstimateService mockMealPortionEstimateService;
+    private LocalDatasetLookupService mockLocalDatasetLookupService;
+    private LocalDatasetProductMapper mockLocalDatasetProductMapper;
 
     @BeforeEach
     void setUp() {
@@ -63,6 +67,8 @@ class PantryServiceTest {
         mockMicronutrientService = mock(PantryItemMicronutrientService.class);
         mockDailyNutrientIntakeService = mock(DailyNutrientIntakeService.class);
         mockMealPortionEstimateService = mock(MealPortionEstimateService.class);
+        mockLocalDatasetLookupService = mock(LocalDatasetLookupService.class);
+        mockLocalDatasetProductMapper = mock(LocalDatasetProductMapper.class);
 
         pantryService = new PantryService(
                 mockPantryRepo,
@@ -73,7 +79,9 @@ class PantryServiceTest {
                 mockBroadcastService,
                 mockMicronutrientService,
                 mockDailyNutrientIntakeService,
-                mockMealPortionEstimateService
+                mockMealPortionEstimateService,
+                mockLocalDatasetLookupService,
+                mockLocalDatasetProductMapper
         );
 
         when(mockUserRepo.findById(anyLong())).thenReturn(Optional.empty());
@@ -1229,7 +1237,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(eq(new HouseholdMemberId(77L, 1L)))).thenReturn(true);
         when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
 
-        pantryService.consumeItem(1L, 10L, 1.0, null, false, 99L, 77L);
+        pantryService.consumeItem(1L, 10L, 1.0, null, null, false, 99L, 77L);
 
         ArgumentCaptor<ConsumptionLog> captor = ArgumentCaptor.forClass(ConsumptionLog.class);
         verify(mockConsumptionRepo).save(captor.capture());
@@ -1248,7 +1256,7 @@ class PantryServiceTest {
         when(mockHouseholdMemberRepo.existsById(eq(new HouseholdMemberId(55L, 1L)))).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class,
-                () -> pantryService.consumeItem(1L, 10L, 1.0, null, false, 99L, 55L));
+                () -> pantryService.consumeItem(1L, 10L, 1.0, null, null, false, 99L, 55L));
     }
 
     // Issue #114 — total calories must use unit-aware formula for all 3 unit types

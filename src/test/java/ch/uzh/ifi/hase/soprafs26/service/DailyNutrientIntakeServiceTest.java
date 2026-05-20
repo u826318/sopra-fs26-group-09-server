@@ -136,7 +136,7 @@ class DailyNutrientIntakeServiceTest {
         assertNull(service.recordConsumedPantryItem(null, pantryItem(1L), 1, Instant.now()));
         assertNull(service.recordConsumedPantryItem(1L, null, 1, Instant.now()));
         assertNull(service.recordConsumedPantryItem(1L, pantryItem(null), 1, Instant.now()));
-        assertNull(service.recordConsumedPantryItem(1L, pantryItem(1L), null, Instant.now()));
+        assertNull(service.recordConsumedPantryItem(1L, pantryItem(1L), (Integer) null, Instant.now()));
         assertNull(service.recordConsumedPantryItem(1L, pantryItem(1L), 0, Instant.now()));
 
         when(micronutrientsRepository.findByPantryItemId(1L)).thenReturn(Optional.empty());

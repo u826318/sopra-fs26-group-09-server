@@ -75,7 +75,7 @@ class PantryControllerTest {
         result.setConsumedCalories(200.0);
         result.setRemoved(false);
 
-        when(pantryService.consumeItem(1L, 10L, 2.0, null, false, 99L, null)).thenReturn(result);
+        when(pantryService.consumeItem(1L, 10L, 2.0, null, null, false, 99L, null)).thenReturn(result);
 
         String requestBody = """
                 {
@@ -95,7 +95,7 @@ class PantryControllerTest {
 
         @Test
         void consumePantryItem_invalidQuantity_returnsBadRequest() throws Exception {
-        when(pantryService.consumeItem(1L, 10L, 0.0, null, false, 99L, null))
+        when(pantryService.consumeItem(1L, 10L, 0.0, null, null, false, 99L, null))
                 .thenThrow(new IllegalArgumentException("Quantity must be greater than zero."));
 
         String requestBody = """

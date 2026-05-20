@@ -274,14 +274,14 @@ public class PantryService {
         if (product == null
                 || product.getNutrition() == null
                 || product.getNutrition().getCoreNutrition() == null) {
-            return 0.0;
+            return null;
         }
 
         LocalDatasetProductDTO.NutrientAmountDTO energy =
                 product.getNutrition().getCoreNutrition().get("energy-kcal");
 
         if (energy == null || energy.getValue() == null) {
-            return 0.0;
+            return null;
         }
 
         String basisUnit = product.getNutrition().getBasisUnit();
@@ -293,7 +293,7 @@ public class PantryService {
                 || packageQuantity == null
                 || packageQuantity <= 0
                 || !basisUnit.equals(packageUnit)) {
-            return 0.0;
+            return null;
         }
 
         return energy.getValue() * packageQuantity / 100.0;
