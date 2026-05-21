@@ -68,6 +68,7 @@ public interface DTOMapper {
 	@Mapping(source = "barcode", target = "barcode")
 	@Mapping(source = "name", target = "name")
 	@Mapping(source = "kcalPerPackage", target = "kcalPerPackage")
+	@Mapping(source = "kcalPerServing", target = "kcalPerServing")
 	// Issue #114 — map new amount/unit fields; kcal fields have matching names so no explicit mapping needed
 	@Mapping(source = "amount", target = "amount")
 	@Mapping(source = "initialAmount", target = "initialAmount")

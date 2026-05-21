@@ -15,6 +15,7 @@ public class ProductDTO {
   private Boolean localFallback;
   private String dataSource;
   private Double caloriesPerPackage;
+  private Double caloriesPerServing;
 
   private List<String> stores;
   private List<String> storeTags;
@@ -56,6 +57,9 @@ public class ProductDTO {
 
   public Double getCaloriesPerPackage() { return caloriesPerPackage; }
   public void setCaloriesPerPackage(Double caloriesPerPackage) { this.caloriesPerPackage = caloriesPerPackage; }
+
+  public Double getCaloriesPerServing() { return caloriesPerServing; }
+  public void setCaloriesPerServing(Double caloriesPerServing) { this.caloriesPerServing = caloriesPerServing; }
 
   public List<String> getStores() { return stores; }
   public void setStores(List<String> stores) { this.stores = stores; }

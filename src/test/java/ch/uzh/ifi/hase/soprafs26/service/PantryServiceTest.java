@@ -1147,7 +1147,7 @@ class PantryServiceTest {
             () -> pantryService.addItem(1L, postDTO, 99L)
         );
 
-        assertEquals("Amount unit must be one of: g, ml, package.", exception.getMessage());
+        assertEquals("Amount unit must be one of: g, ml, package, serving.", exception.getMessage());
     }
 
     // Issue #114 — same barcode + same unit → accumulate amount, not create new row
