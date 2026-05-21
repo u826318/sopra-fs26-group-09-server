@@ -4,6 +4,27 @@
 
 ## Technologies Used
 
+- **Java 17** and **Spring Boot 4** for the backend REST API and application
+  structure.
+- **Spring Web MVC** for controllers and authenticated HTTP endpoints.
+- **Spring Data JPA** and **Hibernate** for persistence of users, households,
+  pantry items, consumption logs, health goals, and nutrition-related entities.
+- **H2** as the local in-memory development and test database.
+- **Gradle** for dependency management, builds, and test execution.
+- **OpenAI API** for receipt OCR and structured extraction of receipt line
+  items.
+- **OpenFoodFacts API** and a bundled **local product dataset** for product
+  lookup, barcode resolution, product-name search, nutrition metadata, and
+  receipt item matching.
+- **RecipeAPI.io** for external recipe recommendations, with a curated local
+  JSON recipe catalog and dynamic pantry-based recipe generation as fallbacks.
+- **Jackson** for JSON parsing and mapping external API responses into backend
+  DTOs.
+- **JUnit 5**, **Mockito**, and **Spring MockMvc** for service, controller, and
+  integration tests.
+- **Google App Engine** for backend deployment through the GitHub Actions
+  workflow.
+
 ## High-Level Components
 
 ## Launch & Deployment
