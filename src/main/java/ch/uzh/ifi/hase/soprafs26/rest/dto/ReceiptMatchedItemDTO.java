@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 import java.util.Map;
 import java.util.List;
 
+import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductSearchResponseDTO;
+
 public class ReceiptMatchedItemDTO {
   private String description;
   private String quantity;
@@ -17,6 +19,7 @@ public class ReceiptMatchedItemDTO {
   private String normalizedDescription;
   private ProductDTO matchedProduct;
   private List<ReceiptProductCandidateDTO> candidateProducts;
+  private LocalDatasetProductSearchResponseDTO productSearch;
   private ReceiptPantryItemSuggestionDTO suggestedPantryItem;
 
   public String getDescription() {
@@ -121,6 +124,14 @@ public class ReceiptMatchedItemDTO {
 
   public void setCandidateProducts(List<ReceiptProductCandidateDTO> candidateProducts) {
     this.candidateProducts = candidateProducts;
+  }
+
+  public LocalDatasetProductSearchResponseDTO getProductSearch() {
+    return productSearch;
+  }
+
+  public void setProductSearch(LocalDatasetProductSearchResponseDTO productSearch) {
+    this.productSearch = productSearch;
   }
 
   public ReceiptPantryItemSuggestionDTO getSuggestedPantryItem() {

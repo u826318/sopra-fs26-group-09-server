@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,20 +27,17 @@ public class LocalDatasetNameSearchService {
   private final NameSearchTextNormalizer normalizer;
   private final NameSearchIndexRepository indexRepository;
   private final LocalDatasetProductIndexResolver productIndexResolver;
-  private final NameSearchAuxiliaryFilter auxiliaryFilter;
   private final NameSearchScorer scorer;
 
   public LocalDatasetNameSearchService(
       NameSearchTextNormalizer normalizer,
       NameSearchIndexRepository indexRepository,
       LocalDatasetProductIndexResolver productIndexResolver,
-      NameSearchAuxiliaryFilter auxiliaryFilter,
       NameSearchScorer scorer
   ) {
     this.normalizer = normalizer;
     this.indexRepository = indexRepository;
     this.productIndexResolver = productIndexResolver;
-    this.auxiliaryFilter = auxiliaryFilter;
     this.scorer = scorer;
   }
 
@@ -56,16 +52,15 @@ public class LocalDatasetNameSearchService {
       return respondNotEnoughInformation(response);
     }
 
-    try (Connection connection = indexRepository.openConnection()) {
-      long connectionOpenedAt = System.nanoTime();
-      List<TokenInfo> knownTokens = indexRepository.loadTokenInfo(connection, tokens);
+    try {
+      long indexReadyAt = System.nanoTime();
+      List<TokenInfo> knownTokens = indexRepository.loadTokenInfo(tokens);
       long tokenInfoLoadedAt = System.nanoTime();
       if (knownTokens.isEmpty()) {
         return respondNoKnownTokens(response, tokens);
       }
 
       CandidateSelection selection = indexRepository.selectAnchorsAndCandidates(
-          connection,
           knownTokens,
           TARGET_CANDIDATE_COUNT,
           QUERY_CANDIDATE_LIMIT
@@ -77,51 +72,59 @@ public class LocalDatasetNameSearchService {
         return respondNoMatch(response);
       }
       if (selection.tooBroad()) {
-        return respondTooBroad(response);
+        return attachTooManyMatchesSample(
+            response,
+            selection,
+            tokens,
+            limit,
+            startedAt,
+            tokenizedAt,
+            indexReadyAt,
+            tokenInfoLoadedAt,
+            candidateSelectionDoneAt
+        );
       }
 
       return rankAndAttachCandidates(
-          connection,
           response,
           selection,
           tokens,
           limit,
           startedAt,
           tokenizedAt,
-          connectionOpenedAt,
+          indexReadyAt,
           tokenInfoLoadedAt,
           candidateSelectionDoneAt
       );
     }
-    catch (SQLException | IOException | RuntimeException ex) {
+    catch (IOException | RuntimeException ex) {
       log.warn("Local dataset name search failed.", ex);
       throw new ResponseStatusException(
           HttpStatus.SERVICE_UNAVAILABLE,
-          "Local product name search is unavailable. Check sqlite-jdbc, local-dataset/name-index.sqlite, and product_metadata table.",
+          "Local product name search is unavailable. Check local-dataset/name-index/manifest.json and CSV/GZIP shards.",
           ex
       );
     }
   }
 
   private LocalDatasetProductSearchResponseDTO rankAndAttachCandidates(
-      Connection connection,
       LocalDatasetProductSearchResponseDTO response,
       CandidateSelection selection,
       List<String> tokens,
       int limit,
       long startedAt,
       long tokenizedAt,
-      long connectionOpenedAt,
+      long indexReadyAt,
       long tokenInfoLoadedAt,
       long candidateSelectionDoneAt
-  ) throws SQLException {
+  ) throws IOException {
     List<String> anchorTokens = response.getAnchorTokens();
     List<String> auxiliaryTokens = response.getAuxiliaryTokens();
 
-    List<ProductRow> productRows = productIndexResolver.resolveProductRows(connection, selection.candidates());
+    List<ProductRow> productRows = productIndexResolver.resolveProductRows(selection.candidates());
     long productRowsResolvedAt = System.nanoTime();
 
-    List<ProductRow> rankingPool = auxiliaryFilter.apply(productRows, anchorTokens, auxiliaryTokens);
+    List<ProductRow> rankingPool = productRows;
     long auxiliaryFilterDoneAt = System.nanoTime();
 
     List<LocalDatasetProductSearchCandidateDTO> candidates = rankingPool.stream()
@@ -134,7 +137,7 @@ public class LocalDatasetNameSearchService {
 
     log.info(
         "[NAME_SEARCH_TIMING] query='{}' tokens={} anchorTokens={} auxiliaryTokens={} rawCandidates={} resolvedRows={} rankingRows={} "
-            + "tokenizeMs={} openSqliteMs={} tokenInfoMs={} candidateSelectMs={} resolveRowsMs={} auxFilterMs={} scoreSortMs={} totalMs={}",
+            + "tokenizeMs={} indexReadyMs={} tokenInfoMs={} candidateSelectMs={} resolveRowsMs={} auxRankMs={} scoreSortMs={} totalMs={}",
         response.getQuery(),
         tokens,
         anchorTokens,
@@ -143,8 +146,8 @@ public class LocalDatasetNameSearchService {
         productRows.size(),
         rankingPool.size(),
         ms(tokenizedAt - startedAt),
-        ms(connectionOpenedAt - tokenizedAt),
-        ms(tokenInfoLoadedAt - connectionOpenedAt),
+        ms(indexReadyAt - tokenizedAt),
+        ms(tokenInfoLoadedAt - indexReadyAt),
         ms(candidateSelectionDoneAt - tokenInfoLoadedAt),
         ms(productRowsResolvedAt - candidateSelectionDoneAt),
         ms(auxiliaryFilterDoneAt - productRowsResolvedAt),
@@ -154,7 +157,7 @@ public class LocalDatasetNameSearchService {
 
     if (candidates.isEmpty()) {
       response.setStatus("NO_MATCH");
-      response.setMessage(resolveEmptyCandidateMessage(auxiliaryTokens, productRows));
+      response.setMessage(resolveEmptyCandidateMessage(productRows));
       return response;
     }
 
@@ -162,6 +165,74 @@ public class LocalDatasetNameSearchService {
     response.setMessage("Choose one of the matching local dataset products.");
     response.setCandidates(candidates);
     return response;
+  }
+
+  private LocalDatasetProductSearchResponseDTO attachTooManyMatchesSample(
+      LocalDatasetProductSearchResponseDTO response,
+      CandidateSelection selection,
+      List<String> tokens,
+      int limit,
+      long startedAt,
+      long tokenizedAt,
+      long indexReadyAt,
+      long tokenInfoLoadedAt,
+      long candidateSelectionDoneAt
+  ) throws IOException {
+    long productRowsResolvedAt;
+    long scoringDoneAt;
+    Set<Long> sampledProductIndices = stableSample(selection.candidates(), response.getNormalizedQuery(), limit);
+    List<ProductRow> sampledRows = productIndexResolver.resolveProductRows(sampledProductIndices);
+    productRowsResolvedAt = System.nanoTime();
+
+    List<LocalDatasetProductSearchCandidateDTO> candidates = sampledRows.stream()
+        .map(product -> scorer.score(product, tokens, response.getAnchorTokens(), response.getAuxiliaryTokens()))
+        .sorted(Comparator.comparingDouble(ScoredProduct::score).reversed())
+        .map(ScoredProduct::toDto)
+        .toList();
+    scoringDoneAt = System.nanoTime();
+
+    log.info(
+        "[NAME_SEARCH_TIMING] query='{}' status=TOO_MANY_MATCHES tokens={} anchorTokens={} auxiliaryTokens={} rawCandidates={} sampledRows={} "
+            + "tokenizeMs={} indexReadyMs={} tokenInfoMs={} candidateSelectMs={} resolveRowsMs={} scoreSortMs={} totalMs={}",
+        response.getQuery(),
+        tokens,
+        response.getAnchorTokens(),
+        response.getAuxiliaryTokens(),
+        selection.candidates().size(),
+        sampledRows.size(),
+        ms(tokenizedAt - startedAt),
+        ms(indexReadyAt - tokenizedAt),
+        ms(tokenInfoLoadedAt - indexReadyAt),
+        ms(candidateSelectionDoneAt - tokenInfoLoadedAt),
+        ms(productRowsResolvedAt - candidateSelectionDoneAt),
+        ms(scoringDoneAt - productRowsResolvedAt),
+        ms(scoringDoneAt - startedAt)
+    );
+
+    response.setStatus("TOO_MANY_MATCHES");
+    response.setMessage("Too many potential matches. Please provide the full name of the item or use barcode lookup.");
+    response.setCandidates(candidates);
+    return response;
+  }
+
+  private Set<Long> stableSample(Set<Long> productIndices, String normalizedQuery, int limit) {
+    if (productIndices == null || productIndices.isEmpty()) {
+      return Set.of();
+    }
+
+    return productIndices.stream()
+        .sorted(Comparator.comparingLong(productIndex -> stableSampleKey(normalizedQuery, productIndex)))
+        .limit(limit)
+        .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+  }
+
+  private long stableSampleKey(String normalizedQuery, Long productIndex) {
+    String value = (normalizedQuery == null ? "" : normalizedQuery) + ":" + productIndex;
+    long hash = 1125899906842597L;
+    for (int i = 0; i < value.length(); i += 1) {
+      hash = 31 * hash + value.charAt(i);
+    }
+    return hash == Long.MIN_VALUE ? 0 : Math.abs(hash);
   }
 
   private void populateSelectionMetadata(
@@ -211,15 +282,9 @@ public class LocalDatasetNameSearchService {
     return response;
   }
 
-  private LocalDatasetProductSearchResponseDTO respondTooBroad(LocalDatasetProductSearchResponseDTO response) {
-    response.setStatus("TOO_BROAD");
-    response.setMessage("Too many products matched this search. Please provide a more specific product name, brand, or package detail.");
-    return response;
-  }
-
-  private String resolveEmptyCandidateMessage(List<String> auxiliaryTokens, List<ProductRow> productRows) {
-    if (!auxiliaryTokens.isEmpty() && !productRows.isEmpty()) {
-      return "No local dataset products matched the remaining shorthand letters after the anchor words were applied.";
+  private String resolveEmptyCandidateMessage(List<ProductRow> productRows) {
+    if (!productRows.isEmpty()) {
+      return "The token index found products, but no product candidates could be prepared for display.";
     }
     return "The token index found products, but product_metadata rows could not be resolved by product_index.";
   }

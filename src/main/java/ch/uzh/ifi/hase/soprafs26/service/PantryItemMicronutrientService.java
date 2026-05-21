@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemMicronutrientsRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemMicronutrientPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
 
 @Service
@@ -105,6 +106,82 @@ public class PantryItemMicronutrientService {
         pantryItemMicronutrientsRepository.save(micronutrients);
     }
 
+
+    /**
+     * Stores manually entered micronutrients on the same nutrition basis used by the manual calorie field:
+     * per 100g, per 100ml, or per package. Values are normalized to micrograms internally so daily
+     * intake calculations can reuse the existing multiplier logic.
+     */
+    public void upsertManualMicronutrientsPerBasis(
+            PantryItem pantryItem,
+            String amountUnit,
+            Map<String, PantryItemMicronutrientPostDTO> manualMicronutrients
+    ) {
+        if (pantryItem == null || pantryItem.getId() == null || manualMicronutrients == null || manualMicronutrients.isEmpty()) {
+            return;
+        }
+
+        String basisUnit = normalizeManualBasisUnit(amountUnit);
+        if (basisUnit == null) {
+            return;
+        }
+
+        PantryItemMicronutrients micronutrients = pantryItemMicronutrientsRepository
+                .findByPantryItemId(pantryItem.getId())
+                .orElseGet(PantryItemMicronutrients::new);
+
+        micronutrients.setPantryItem(pantryItem);
+        micronutrients.setNutritionBasisAmount("package".equals(basisUnit) ? BigDecimal.ONE : ONE_HUNDRED);
+        micronutrients.setNutritionBasisUnit(basisUnit);
+
+        if ("package".equals(basisUnit)) {
+            micronutrients.setPackageQuantityValue(BigDecimal.ONE);
+            micronutrients.setPackageQuantityUnit("package");
+            micronutrients.setPackageQuantity("1 package");
+        }
+        else {
+            micronutrients.setPackageQuantityValue(null);
+            micronutrients.setPackageQuantityUnit(null);
+            micronutrients.setPackageQuantity(null);
+        }
+        micronutrients.setPackageGrams(null);
+        micronutrients.setServingQuantityValue(null);
+        micronutrients.setServingQuantityUnit(null);
+
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "biotin");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "calcium");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "chloride");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "choline");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "chromium");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "copper");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "fluoride");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "folate");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "iodine");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "iron");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "magnesium");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "manganese");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "molybdenum");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "niacin");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "pantothenicAcid");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "phosphorus");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "potassium");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "riboflavin");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "selenium");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "sodium");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "thiamin");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminA");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminB12");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminB6");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminC");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminD");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminE");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "vitaminK");
+        applyManualMicronutrientValue(micronutrients, manualMicronutrients, "zinc");
+
+        pantryItem.setMicronutrients(micronutrients);
+        pantryItemMicronutrientsRepository.save(micronutrients);
+    }
+
     /**
      * @deprecated Local dataset nutrients are now stored per nutrition basis, not per package.
      * Kept as a compatibility shim for older call sites.
@@ -171,6 +248,74 @@ public class PantryItemMicronutrientService {
 
         pantryItem.setMicronutrients(micronutrients);
         pantryItemMicronutrientsRepository.save(micronutrients);
+    }
+
+
+    private void applyManualMicronutrientValue(
+            PantryItemMicronutrients micronutrients,
+            Map<String, PantryItemMicronutrientPostDTO> manualMicronutrients,
+            String nutrientKey
+    ) {
+        BigDecimal value = parseManualMicronutrientValue(manualMicronutrients.get(nutrientKey));
+        switch (nutrientKey) {
+            case "biotin": micronutrients.setBiotin(value); break;
+            case "calcium": micronutrients.setCalcium(value); break;
+            case "chloride": micronutrients.setChloride(value); break;
+            case "choline": micronutrients.setCholine(value); break;
+            case "chromium": micronutrients.setChromium(value); break;
+            case "copper": micronutrients.setCopper(value); break;
+            case "fluoride": micronutrients.setFluoride(value); break;
+            case "folate": micronutrients.setFolate(value); break;
+            case "iodine": micronutrients.setIodine(value); break;
+            case "iron": micronutrients.setIron(value); break;
+            case "magnesium": micronutrients.setMagnesium(value); break;
+            case "manganese": micronutrients.setManganese(value); break;
+            case "molybdenum": micronutrients.setMolybdenum(value); break;
+            case "niacin": micronutrients.setNiacin(value); break;
+            case "pantothenicAcid": micronutrients.setPantothenicAcid(value); break;
+            case "phosphorus": micronutrients.setPhosphorus(value); break;
+            case "potassium": micronutrients.setPotassium(value); break;
+            case "riboflavin": micronutrients.setRiboflavin(value); break;
+            case "selenium": micronutrients.setSelenium(value); break;
+            case "sodium": micronutrients.setSodium(value); break;
+            case "thiamin": micronutrients.setThiamin(value); break;
+            case "vitaminA": micronutrients.setVitaminA(value); break;
+            case "vitaminB12": micronutrients.setVitaminB12(value); break;
+            case "vitaminB6": micronutrients.setVitaminB6(value); break;
+            case "vitaminC": micronutrients.setVitaminC(value); break;
+            case "vitaminD": micronutrients.setVitaminD(value); break;
+            case "vitaminE": micronutrients.setVitaminE(value); break;
+            case "vitaminK": micronutrients.setVitaminK(value); break;
+            case "zinc": micronutrients.setZinc(value); break;
+            default: break;
+        }
+    }
+
+    private BigDecimal parseManualMicronutrientValue(PantryItemMicronutrientPostDTO nutrient) {
+        if (nutrient == null || nutrient.getValue() == null || nutrient.getValue() <= 0) {
+            return null;
+        }
+
+        BigDecimal value = parseBigDecimalOrNull(nutrient.getValue());
+        if (value == null) {
+            return null;
+        }
+
+        return convertToMicrograms(value, nutrient.getUnit());
+    }
+
+    private String normalizeManualBasisUnit(String unit) {
+        String cleaned = parseStringOrNull(unit);
+        if (cleaned == null) {
+            return null;
+        }
+
+        String normalized = cleaned.toLowerCase(Locale.ROOT);
+        if (normalized.equals("g") || normalized.equals("ml") || normalized.equals("package")) {
+            return normalized;
+        }
+
+        return null;
     }
 
     private BigDecimal calculateLocalPackageAmount(

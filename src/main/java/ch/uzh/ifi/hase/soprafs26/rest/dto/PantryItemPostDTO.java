@@ -24,6 +24,8 @@ public class PantryItemPostDTO {
     private Double kcalPerServing;
     private String packageQuantity;
     private Map<String, Object> nutriments;
+    private Boolean manualEntry;
+    private Map<String, PantryItemMicronutrientPostDTO> micronutrients;
 
     public String getBarcode() {
         return barcode;
@@ -82,4 +84,21 @@ public class PantryItemPostDTO {
     public void setNutriments(Map<String, Object> nutriments) {
         this.nutriments = nutriments;
     }
+
+    public Boolean getManualEntry() {
+        return manualEntry;
+    }
+
+    public void setManualEntry(Boolean manualEntry) {
+        this.manualEntry = manualEntry;
+    }
+
+    public Map<String, PantryItemMicronutrientPostDTO> getMicronutrients() {
+        return micronutrients;
+    }
+
+    public void setMicronutrients(Map<String, PantryItemMicronutrientPostDTO> micronutrients) {
+        this.micronutrients = micronutrients;
+    }
 }
+

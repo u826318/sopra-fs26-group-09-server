@@ -4,7 +4,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductSearch
 
 import java.util.Set;
 
-record TokenInfo(String token, Long tokenId, Integer productCount) {}
+record TokenInfo(String token, Integer productCount, java.util.List<Long> productIndices) {}
 
 record CandidateSelection(Set<Long> candidates, Set<String> anchorTokens, boolean tooBroad) {}
 
