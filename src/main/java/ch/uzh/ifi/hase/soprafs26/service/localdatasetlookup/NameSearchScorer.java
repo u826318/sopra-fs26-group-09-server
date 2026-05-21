@@ -39,12 +39,16 @@ public class NameSearchScorer {
     }
 
     score += levenshteinSimilarity(normalizedQuery, searchText) * 80.0;
-    score += auxiliaryWordPrefixBonus(product, anchorTokens, auxiliaryTokens);
+    score += auxiliaryBonus(product, anchorTokens, auxiliaryTokens, searchText);
     return new ScoredProduct(product, Double.isFinite(score) ? score : 0.0);
   }
 
-
-  private double auxiliaryWordPrefixBonus(ProductRow product, List<String> anchorTokens, List<String> auxiliaryTokens) {
+  private double auxiliaryBonus(
+      ProductRow product,
+      List<String> anchorTokens,
+      List<String> auxiliaryTokens,
+      String searchText
+  ) {
     String compactAuxiliary = normalizer.compactText(String.join("", auxiliaryTokens));
     if (compactAuxiliary.isBlank()) {
       return 0.0;
@@ -55,6 +59,44 @@ public class NameSearchScorer {
       return 0.0;
     }
 
+    String auxiliaryCandidateText = String.join(" ", candidateWords);
+    String compactCandidateText = normalizer.compactText(auxiliaryCandidateText);
+    if (compactCandidateText.isBlank()) {
+      return 0.0;
+    }
+
+    double bonus = 0.0;
+    long presentAuxiliaryTokens = auxiliaryTokens.stream()
+        .filter(token -> token != null && !token.isBlank())
+        .filter(searchText::contains)
+        .count();
+    bonus += presentAuxiliaryTokens * 55.0;
+
+    if (!auxiliaryTokens.isEmpty() && presentAuxiliaryTokens == auxiliaryTokens.size()) {
+      bonus += 160.0;
+    }
+
+    if (containsAllCharactersWithCounts(compactAuxiliary, compactCandidateText)) {
+      bonus += 220.0;
+    }
+
+    if (isOrderedSubsequence(compactAuxiliary, compactCandidateText)) {
+      bonus += 340.0;
+    }
+
+    if (compactCandidateText.contains(compactAuxiliary)) {
+      bonus += 180.0;
+    }
+
+    if (compactCandidateText.startsWith(compactAuxiliary)) {
+      bonus += 220.0;
+    }
+
+    bonus += auxiliaryWordPrefixBonus(compactAuxiliary, candidateWords);
+    return bonus;
+  }
+
+  private double auxiliaryWordPrefixBonus(String compactAuxiliary, List<String> candidateWords) {
     int matchedWordCount = bestPrefixChunkMatchWordCount(compactAuxiliary, candidateWords);
     if (matchedWordCount <= 0) {
       return 0.0;
@@ -66,6 +108,14 @@ public class NameSearchScorer {
     }
     if (matchedWordCount <= 2) {
       bonus += 40.0;
+    }
+
+    int leadingMatchedWordCount = bestPrefixChunkMatchFrom(compactAuxiliary, candidateWords, 0, 0, 0);
+    if (leadingMatchedWordCount > 0) {
+      bonus += 180.0;
+      if (leadingMatchedWordCount == matchedWordCount) {
+        bonus += 80.0;
+      }
     }
     return bonus;
   }
@@ -102,6 +152,36 @@ public class NameSearchScorer {
     }
 
     return product.brand();
+  }
+
+  private boolean containsAllCharactersWithCounts(String needle, String haystack) {
+    if (needle == null || needle.isBlank() || haystack == null || haystack.isBlank()) {
+      return false;
+    }
+
+    java.util.Map<Integer, Long> haystackCounts = haystack.chars()
+        .boxed()
+        .collect(Collectors.groupingBy(character -> character, Collectors.counting()));
+
+    java.util.Map<Integer, Long> needleCounts = needle.chars()
+        .boxed()
+        .collect(Collectors.groupingBy(character -> character, Collectors.counting()));
+
+    return needleCounts.entrySet().stream()
+        .allMatch(entry -> haystackCounts.getOrDefault(entry.getKey(), 0L) >= entry.getValue());
+  }
+
+  private boolean isOrderedSubsequence(String needle, String haystack) {
+    if (needle == null || needle.isBlank() || haystack == null || haystack.isBlank()) {
+      return false;
+    }
+    int needleIndex = 0;
+    for (int i = 0; i < haystack.length() && needleIndex < needle.length(); i += 1) {
+      if (haystack.charAt(i) == needle.charAt(needleIndex)) {
+        needleIndex += 1;
+      }
+    }
+    return needleIndex == needle.length();
   }
 
   private int bestPrefixChunkMatchWordCount(String compactAuxiliary, List<String> candidateWords) {

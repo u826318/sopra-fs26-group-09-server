@@ -1,0 +1,44 @@
+{
+  "schema_version": "name_index_csv_v1",
+  "generated_at": "2026-05-21T19:18:19.139809+00:00",
+  "source_sqlite": "name_index.sqlite",
+  "source_counts": {
+    "tokens": 469306,
+    "postings": 18225977,
+    "product_metadata": 4223442
+  },
+  "written_counts": {
+    "token_rows": 469306,
+    "product_metadata_rows": 4223442
+  },
+  "token_postings": {
+    "directory": "token-postings",
+    "shard_count": 256,
+    "shard_pattern": "shard_%03d.csv.gz",
+    "shard_strategy": "crc32(token_utf8) % shard_count",
+    "columns": [
+      "token",
+      "product_count",
+      "posting_encoding",
+      "product_indices"
+    ],
+    "posting_encoding": "delta-space-separated",
+    "decode_rule": "If delta encoded, product indices are cumulative sums of the integers in product_indices."
+  },
+  "product_metadata": {
+    "directory": "product-metadata",
+    "shard_count": 256,
+    "shard_pattern": "shard_%03d.csv.gz",
+    "shard_strategy": "product_index % shard_count",
+    "columns": [
+      "product_index",
+      "brands",
+      "name_candidates"
+    ]
+  },
+  "runtime_notes": [
+    "This index is intended to be read as streams from application resources.",
+    "It replaces SQLite at runtime to avoid copying a large SQLite file to /tmp on App Engine Standard.",
+    "Full product details should still be resolved by product_index using the existing local dataset lookup after the user selects a candidate."
+  ]
+}
