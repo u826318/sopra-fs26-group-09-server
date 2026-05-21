@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class ProductController {
@@ -40,14 +39,14 @@ public class ProductController {
 
   @GetMapping("/products/lookup")
   @ResponseStatus(HttpStatus.OK)
-  public LocalDatasetProductDTO lookupByBarcode(@RequestParam("barcode") String barcode) {
-    return lookupLocalDatasetProductByBarcode(barcode);
+  public ProductDTO lookupByBarcode(@RequestParam("barcode") String barcode) {
+    return openFoodFactsService.lookupByBarcode(barcode);
   }
 
   @GetMapping("/products/barcode/{barcode}")
   @ResponseStatus(HttpStatus.OK)
-  public LocalDatasetProductDTO lookupByBarcodePath(@PathVariable("barcode") String barcode) {
-    return lookupLocalDatasetProductByBarcode(barcode);
+  public ProductDTO lookupByBarcodePath(@PathVariable("barcode") String barcode) {
+    return openFoodFactsService.lookupByBarcode(barcode);
   }
 
   @GetMapping("/products/index/{productIndex}")

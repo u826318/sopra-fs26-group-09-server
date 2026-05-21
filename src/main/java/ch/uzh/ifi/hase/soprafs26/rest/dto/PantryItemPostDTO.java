@@ -1,11 +1,13 @@
 package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public class PantryItemPostDTO {
 
     private String barcode;
     private String name;
+    private LocalDate expirationDate;
     private Double kcalPerPackage;
     // Issue #114 — amount in the unit chosen by the user
     private Double amount;
@@ -56,6 +58,9 @@ public class PantryItemPostDTO {
 
     public Double getKcalPer100ml() { return kcalPer100ml; }
     public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
+
+    public LocalDate getExpirationDate() { return expirationDate; }
+    public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }
 
     public String getPackageQuantity() {
         return packageQuantity;
