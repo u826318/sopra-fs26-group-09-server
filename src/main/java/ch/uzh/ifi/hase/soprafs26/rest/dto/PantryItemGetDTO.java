@@ -21,6 +21,8 @@ public class PantryItemGetDTO {
     private Double kcalPer100g;
     // populated when amountUnit = "ml"
     private Double kcalPer100ml;
+    // populated when amountUnit = "serving"
+    private Double kcalPerServing;
 
     // Local dataset nutrition/conversion metadata. Nutrient values are stored per nutrition basis,
     // usually per 100g or per 100ml. Package/serving metadata is optional and controls consume options.
@@ -90,6 +92,9 @@ public class PantryItemGetDTO {
 
     public Double getKcalPer100ml() { return kcalPer100ml; }
     public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
+
+    public Double getKcalPerServing() { return kcalPerServing; }
+    public void setKcalPerServing(Double kcalPerServing) { this.kcalPerServing = kcalPerServing; }
 
     public Double getNutritionBasisAmount() { return nutritionBasisAmount; }
     public void setNutritionBasisAmount(Double nutritionBasisAmount) { this.nutritionBasisAmount = nutritionBasisAmount; }

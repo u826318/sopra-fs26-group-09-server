@@ -42,7 +42,7 @@ public class PantryService {
     public static final int MAX_ITEMS_PER_BULK_REQUEST = 100;
 
     // Issue #114 — allowed values for amountUnit
-    private static final Set<String> VALID_AMOUNT_UNITS = Set.of("g", "ml", "package");
+    private static final Set<String> VALID_AMOUNT_UNITS = Set.of("g", "ml", "package", "serving");
     private static final Set<String> VALID_CONSUMPTION_UNITS = Set.of("g", "ml", "package", "serving");
 
     private final PantryItemRepository pantryItemRepository;
@@ -88,6 +88,9 @@ public class PantryService {
         String unit = normalizeConsumptionUnit(consumedUnit, item);
         if ("package".equals(unit) && item.getKcalPerPackage() != null && item.getKcalPerPackage() > 0) {
             return item.getKcalPerPackage() * consumedAmount;
+        }
+        if ("serving".equals(unit) && item.getKcalPerServing() != null && item.getKcalPerServing() > 0) {
+            return item.getKcalPerServing() * consumedAmount;
         }
 
         BigDecimal consumedBasisAmount = resolveConsumedBasisAmount(item, unit, BigDecimal.valueOf(consumedAmount));
@@ -143,6 +146,9 @@ public class PantryService {
             else if ("package".equals(unit) && item.getKcalPerPackage() != null) {
                 totalCalories += item.getKcalPerPackage() * amount;
             }
+            else if ("serving".equals(unit) && item.getKcalPerServing() != null) {
+                totalCalories += item.getKcalPerServing() * amount;
+            }
         }
 
         return totalCalories;
@@ -182,6 +188,7 @@ public class PantryService {
         Double kcalPerPackage = firstNonNull(calculateKcalPerPackage(localProduct), pantryItemPostDTO.getKcalPerPackage());
         Double kcalPer100g = firstNonNull(calculateKcalPer100g(localProduct), pantryItemPostDTO.getKcalPer100g());
         Double kcalPer100ml = firstNonNull(calculateKcalPer100ml(localProduct), pantryItemPostDTO.getKcalPer100ml());
+        Double kcalPerServing = pantryItemPostDTO.getKcalPerServing();
 
         PantryItem saved = mergeOrCreatePantryItem(
                 householdId,
@@ -192,6 +199,7 @@ public class PantryService {
                 kcalPerPackage,
                 kcalPer100g,
                 kcalPer100ml,
+                kcalPerServing,
                 pantryItemPostDTO.getExpirationDate()
         );
         pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
@@ -243,6 +251,7 @@ public class PantryService {
             Double kcalPerPackage = firstNonNull(calculateKcalPerPackage(localProduct), dto.getKcalPerPackage());
             Double kcalPer100g = firstNonNull(calculateKcalPer100g(localProduct), dto.getKcalPer100g());
             Double kcalPer100ml = firstNonNull(calculateKcalPer100ml(localProduct), dto.getKcalPer100ml());
+            Double kcalPerServing = dto.getKcalPerServing();
             PantryItem saved = mergeOrCreatePantryItem(
                     householdId,
                     cleanOrFallback(localProduct.getBarcode(), normalizedBarcode),
@@ -252,6 +261,7 @@ public class PantryService {
                     kcalPerPackage,
                     kcalPer100g,
                     kcalPer100ml,
+                    kcalPerServing,
                     dto.getExpirationDate());
             pantryItemMicronutrientService.upsertMicronutrientsPerBasisFromLocalDataset(
                     saved,
@@ -272,7 +282,7 @@ public class PantryService {
             throw new IllegalArgumentException("Amount must be greater than zero.");
         }
         if (dto.getAmountUnit() == null || !VALID_AMOUNT_UNITS.contains(dto.getAmountUnit())) {
-            throw new IllegalArgumentException("Amount unit must be one of: g, ml, package.");
+            throw new IllegalArgumentException("Amount unit must be one of: g, ml, package, serving.");
         }
     }
 
@@ -404,6 +414,7 @@ public class PantryService {
             Double kcalPerPackage,
             Double kcalPer100g,
             Double kcalPer100ml,
+            Double kcalPerServing,
             java.time.LocalDate expirationDate
     ) {
         String normalizedBarcode = normalizeBarcode(barcode);
@@ -422,6 +433,7 @@ public class PantryService {
             matchingItem.setKcalPerPackage(kcalPerPackage);
             matchingItem.setKcalPer100g(kcalPer100g);
             matchingItem.setKcalPer100ml(kcalPer100ml);
+            matchingItem.setKcalPerServing(kcalPerServing);
             matchingItem.setAmount(safeAmount(matchingItem.getAmount()) + safeAmount(amount));
             if (expirationDate != null) {
                 matchingItem.setExpirationDate(expirationDate);
@@ -439,6 +451,7 @@ public class PantryService {
         pantryItem.setKcalPerPackage(kcalPerPackage);
         pantryItem.setKcalPer100g(kcalPer100g);
         pantryItem.setKcalPer100ml(kcalPer100ml);
+        pantryItem.setKcalPerServing(kcalPerServing);
         pantryItem.setExpirationDate(expirationDate);
         pantryItem.setAddedAt(Instant.now());
 

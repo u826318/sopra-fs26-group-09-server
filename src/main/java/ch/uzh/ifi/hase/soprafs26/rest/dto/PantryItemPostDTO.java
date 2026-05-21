@@ -20,6 +20,8 @@ public class PantryItemPostDTO {
 
     // populated when amountUnit = "ml"
     private Double kcalPer100ml;
+    // populated when amountUnit = "serving"
+    private Double kcalPerServing;
     private String packageQuantity;
     private Map<String, Object> nutriments;
 
@@ -58,6 +60,9 @@ public class PantryItemPostDTO {
 
     public Double getKcalPer100ml() { return kcalPer100ml; }
     public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
+
+    public Double getKcalPerServing() { return kcalPerServing; }
+    public void setKcalPerServing(Double kcalPerServing) { this.kcalPerServing = kcalPerServing; }
 
     public LocalDate getExpirationDate() { return expirationDate; }
     public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }

@@ -269,6 +269,7 @@ public class OpenFoodFactsService {
     dto.setLocalFallback(false);
     dto.setDataSource("openfoodfacts");
     dto.setCaloriesPerPackage(estimateCaloriesPerPackage(dto.getQuantity(), dto.getNutriments()));
+    dto.setCaloriesPerServing(estimateCaloriesPerServing(dto.getNutriments()));
 
     return dto;
   }
@@ -291,18 +292,13 @@ public class OpenFoodFactsService {
       }
     }
 
+    return null;
+  }
+
+  private Double estimateCaloriesPerServing(Map<String, Object> nutriments) {
+    if (nutriments == null) return null;
     Double serving = parseDoubleFromMap(nutriments, "energy-kcal_serving", "energy_kcal_serving");
-    if (serving != null) {
-      return roundTwoDecimals(serving);
-    }
-
-    Double fallback100g = parseDoubleFromMap(nutriments, "energy-kcal_100g", "energy_kcal_100g");
-    if (fallback100g != null) {
-      return roundTwoDecimals(fallback100g);
-    }
-
-    Double fallback100ml = parseDoubleFromMap(nutriments, "energy-kcal_100ml", "energy_kcal_100ml");
-    return fallback100ml == null ? null : roundTwoDecimals(fallback100ml);
+    return serving == null ? null : roundTwoDecimals(serving);
   }
 
   private QuantityInfo parseQuantity(String quantityText) {

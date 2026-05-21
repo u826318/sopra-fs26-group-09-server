@@ -57,6 +57,10 @@ public class PantryItem implements Serializable {
     @Column
     private Double kcalPer100ml;
 
+    // kcalPerServing: used when amountUnit = "serving"
+    @Column
+    private Double kcalPerServing;
+
     @Column
     private LocalDate expirationDate;
 
@@ -120,6 +124,9 @@ public class PantryItem implements Serializable {
 
     public Double getKcalPer100ml() { return kcalPer100ml; }
     public void setKcalPer100ml(Double kcalPer100ml) { this.kcalPer100ml = kcalPer100ml; }
+
+    public Double getKcalPerServing() { return kcalPerServing; }
+    public void setKcalPerServing(Double kcalPerServing) { this.kcalPerServing = kcalPerServing; }
 
     public LocalDate getExpirationDate() {
         return expirationDate;
