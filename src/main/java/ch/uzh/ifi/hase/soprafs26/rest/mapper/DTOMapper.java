@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 import org.mapstruct.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import org.mapstruct.factory.Mappers;
 
@@ -100,28 +99,10 @@ public interface DTOMapper {
 	}
 
 	default List<String> buildAvailableConsumptionUnits(PantryItem pantryItem, PantryItemMicronutrients micronutrients) {
-		List<String> units = new ArrayList<>();
-		String basisUnit = micronutrients.getNutritionBasisUnit();
-		BigDecimal basisAmount = micronutrients.getNutritionBasisAmount();
-		boolean hasBasis = isPositive(basisAmount) && ("g".equals(basisUnit) || "ml".equals(basisUnit));
-
-		if (hasBasis) {
-			units.add(basisUnit);
+		if (pantryItem != null && pantryItem.getAmountUnit() != null) {
+			return List.of(pantryItem.getAmountUnit());
 		}
-		if (hasBasis
-				&& isPositive(micronutrients.getServingQuantityValue())
-				&& basisUnit.equals(micronutrients.getServingQuantityUnit())) {
-			units.add("serving");
-		}
-		if (hasBasis
-				&& isPositive(micronutrients.getPackageQuantityValue())
-				&& basisUnit.equals(micronutrients.getPackageQuantityUnit())) {
-			units.add("package");
-		}
-		if (units.isEmpty() && pantryItem != null && pantryItem.getAmountUnit() != null) {
-			units.add(pantryItem.getAmountUnit());
-		}
-		return units;
+		return List.of();
 	}
 
 	default boolean isPositive(BigDecimal value) {
