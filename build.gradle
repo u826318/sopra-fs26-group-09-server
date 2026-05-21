@@ -57,6 +57,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     implementation 'org.apache.commons:commons-csv:1.14.1'
+
+    implementation "org.xerial:sqlite-jdbc:3.53.1.0"
 }
 
 bootJar {

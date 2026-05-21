@@ -36,4 +36,15 @@ public class LocalDatasetLookupController {
             "No local dataset product found for barcode " + barcode
         ));
   }
+
+  @GetMapping("/lookup-by-index")
+  @ResponseStatus(HttpStatus.OK)
+  public LocalDatasetProductDTO lookupByProductIndex(@RequestParam("productIndex") Long productIndex) {
+    return localDatasetLookupService.findRawRowByProductIndex(productIndex)
+        .map(localDatasetProductMapper::toDto)
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "No local dataset product found for product index " + productIndex
+        ));
+  }
 }
