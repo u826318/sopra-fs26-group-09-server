@@ -20,6 +20,9 @@ import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
 import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
 import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetNameSearchService;
+import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
@@ -32,6 +35,15 @@ class ProductControllerTest {
 
     @MockitoBean
     private BarcodeExtractionService barcodeExtractionService;
+
+    @MockitoBean
+    private LocalDatasetLookupService localDatasetLookupService;
+
+    @MockitoBean
+    private LocalDatasetProductMapper localDatasetProductMapper;
+
+    @MockitoBean
+    private LocalDatasetNameSearchService localDatasetNameSearchService;
 
     @MockitoBean
     private UserRepository userRepository;
