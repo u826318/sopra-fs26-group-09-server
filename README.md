@@ -22,6 +22,8 @@ Virtual Pantry is a collaborative calorie and nutrition tracking app for househo
   receipt item matching.
 - **RecipeAPI.io** for external recipe recommendations, with a curated local
   JSON recipe catalog and dynamic pantry-based recipe generation as fallbacks.
+- **WebSocket (STOMP over SockJS)** for real-time pantry update broadcasts to
+  connected frontend clients.
 - **Jackson** for JSON parsing and mapping external API responses into backend
   DTOs.
 - **JUnit 5**, **Mockito**, and **Spring MockMvc** for service, controller, and
