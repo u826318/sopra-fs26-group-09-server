@@ -187,11 +187,10 @@ This project was developed by Group 09 as part of the Software Praktikum (SoPra)
 
 ### Authors
 
-- [Member Name 1]
-- [Member Name 2]
-- [Member Name 3]
-- [Member Name 4]
-- [Member Name 5]
+- Maxim Emelianov
+- Tingting Xu    
+- Tingyuan Wang
+- Yifu Li
 
 ### Acknowledgment
 
