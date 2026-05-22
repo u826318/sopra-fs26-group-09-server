@@ -15,8 +15,7 @@ Virtual Pantry is a collaborative calorie and nutrition tracking app for househo
   pantry items, consumption logs, health goals, and nutrition-related entities.
 - **H2** as the local in-memory development and test database.
 - **Gradle** for dependency management, builds, and test execution.
-- **OpenAI API** for meal food recognition and portion estimation from food
-  images.
+- **OpenAI API** for portion estimation from food images.
 - **Azure Document Intelligence** for receipt OCR and structured extraction of
   receipt line items.
 - **OpenFoodFacts API** and a bundled **local product dataset** for product
@@ -287,7 +286,7 @@ Make sure you have the following installed:
 
 **Backend**
 - [Java 17+](https://adoptium.net/)
-- An [OpenAI API key](https://platform.openai.com/api-keys) (required for meal food recognition)
+- An [OpenAI API key](https://platform.openai.com/api-keys) (required for portion estimation)
 - An Azure Document Intelligence endpoint and API key (required for receipt scanning): set `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` and `AZURE_DOCUMENT_INTELLIGENCE_API_KEY`
 
 ### Installing
