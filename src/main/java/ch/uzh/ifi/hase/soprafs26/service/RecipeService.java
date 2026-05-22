@@ -33,8 +33,10 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.RecipeRecommendationGetDTO;
 @Transactional
 public class RecipeService {
 
-    private static final int DEFAULT_RECOMMENDATION_LIMIT = 8;
+    private static final int DEFAULT_RECOMMENDATION_LIMIT = 64;
     private static final int MAX_SERVINGS = 12;
+    private static final String SOURCE_LOCAL_CATALOG = "LOCAL_CATALOG";
+    private static final String SOURCE_DYNAMIC_PANTRY = "DYNAMIC_PANTRY";
 
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
@@ -65,7 +67,8 @@ public class RecipeService {
         return recipesForPantry(pantryItems).stream()
                 .map(recipe -> toRecommendation(recipe, pantryItems, goalProfile, recipe.servings()))
                 .sorted(Comparator
-                        .comparing(RecipeRecommendationGetDTO::isReadyToCook).reversed()
+                        .comparingInt((RecipeRecommendationGetDTO recipe) -> sourcePriority(recipe.getSource()))
+                        .thenComparing(RecipeRecommendationGetDTO::isReadyToCook, Comparator.reverseOrder())
                         .thenComparing(RecipeRecommendationGetDTO::getMatchScore, Comparator.reverseOrder())
                         .thenComparing(RecipeRecommendationGetDTO::getMissingIngredientCount)
                         .thenComparing(RecipeRecommendationGetDTO::getTitle))
@@ -176,6 +179,7 @@ public class RecipeService {
         dto.setTitle(recipe.title());
         dto.setSummary(recipe.summary());
         dto.setImageEmoji(recipe.imageToken());
+        dto.setSource(recipeSource(recipe));
         dto.setServings(servings);
         dto.setReadyToCook(readyToCook);
         dto.setMatchScore(score);
@@ -284,9 +288,18 @@ public class RecipeService {
 
     private List<Recipe> recipesForPantry(List<PantryItem> pantryItems) {
         List<Recipe> recipes = new ArrayList<>();
-        recipes.addAll(dynamicPantryRecipes(pantryItems));
         recipes.addAll(recipeCatalog());
+        recipes.addAll(extraRecipeCatalog());
+        recipes.addAll(dynamicPantryRecipes(pantryItems));
         return recipes;
+    }
+
+    private String recipeSource(Recipe recipe) {
+        return recipe.id().startsWith("dynamic-") ? SOURCE_DYNAMIC_PANTRY : SOURCE_LOCAL_CATALOG;
+    }
+
+    private int sourcePriority(String source) {
+        return SOURCE_DYNAMIC_PANTRY.equals(source) ? 1 : 0;
     }
 
     private List<Recipe> dynamicPantryRecipes(List<PantryItem> pantryItems) {
@@ -987,6 +1000,340 @@ public class RecipeService {
 	                                "Slice the banana or fruit into bite-size pieces.",
 	                                "Top the yogurt oat base with fruit and press some pieces slightly into the bowl.",
 	                                "Serve cold, or chill it longer if you prefer an overnight-oats texture.")));
+    }
+
+    private List<Recipe> extraRecipeCatalog() {
+        return List.of(
+                new Recipe(
+                        "spinach-tomato-omelette",
+                        "Spinach Tomato Omelette",
+                        "A quick low-calorie egg dish for using fresh vegetables before they wilt.",
+                        "omelette",
+                        1,
+                        340.0,
+                        24.0,
+                        14.0,
+                        21.0,
+                        List.of("low_calorie", "high_protein", "vegetarian"),
+                        List.of(
+                                ingredient("Eggs", 0.17, "package", "egg", "eggs"),
+                                ingredient("Spinach", 120.0, "g", "spinach"),
+                                ingredient("Tomatoes", 120.0, "g", "tomato", "tomatoes"),
+                                ingredient("Cheese", 40.0, "g", "cheese", "feta", "cheddar")),
+                        List.of(
+                                "Whisk the eggs with a pinch of salt and pepper.",
+                                "Wilt the spinach in a warm pan, then add chopped tomatoes for one minute.",
+                                "Pour in the eggs and tilt the pan so they spread evenly.",
+                                "Scatter cheese over one side once the surface is almost set.",
+                                "Fold the omelette, rest it briefly, and serve while still soft.")),
+                new Recipe(
+                        "apple-yogurt-oat-cup",
+                        "Apple Yogurt Oat Cup",
+                        "A no-cook snack that turns yogurt, oats, and fruit into a light meal.",
+                        "yogurt-cup",
+                        1,
+                        320.0,
+                        20.0,
+                        48.0,
+                        6.0,
+                        List.of("low_calorie", "vegetarian", "balanced"),
+                        List.of(
+                                ingredient("Greek yogurt", 180.0, "g", "greek yogurt", "yogurt"),
+                                ingredient("Apple", 1.0, "package", "apple", "apples"),
+                                ingredient("Oats", 40.0, "g", "oats", "oat"),
+                                ingredient("Milk", 60.0, "ml", "milk")),
+                        List.of(
+                                "Stir yogurt and milk together until smooth.",
+                                "Dice the apple into small cubes so every spoonful has fruit.",
+                                "Fold oats and apple through the yogurt base.",
+                                "Let the cup sit for five minutes if you prefer softer oats.",
+                                "Finish with cinnamon, nuts, or a little honey if available.")),
+                new Recipe(
+                        "tomato-cheese-rice-bake",
+                        "Tomato Cheese Rice Bake",
+                        "A comforting oven-style dish for leftover rice, tomato sauce, and cheese.",
+                        "rice-bake",
+                        2,
+                        520.0,
+                        20.0,
+                        70.0,
+                        17.0,
+                        List.of("balanced", "vegetarian"),
+                        List.of(
+                                ingredient("Rice", 180.0, "g", "rice"),
+                                ingredient("Tomato sauce", 260.0, "g", "tomato", "tomato sauce"),
+                                ingredient("Cheese", 90.0, "g", "cheese", "mozzarella", "cheddar"),
+                                ingredient("Mixed vegetables", 180.0, "g", "vegetable", "pepper", "corn", "spinach")),
+                        List.of(
+                                "Cook the rice or use already cooked rice from the pantry.",
+                                "Mix rice, tomato sauce, and vegetables in a baking dish or oven-safe pan.",
+                                "Spread cheese over the top in an even layer.",
+                                "Bake or heat covered until the center is hot and the cheese melts.",
+                                "Let it stand for two minutes before serving so the sauce settles.")),
+                new Recipe(
+                        "salmon-potato-plate",
+                        "Salmon Potato Plate",
+                        "A simple fish dinner with potatoes and green vegetables.",
+                        "salmon",
+                        2,
+                        560.0,
+                        36.0,
+                        46.0,
+                        24.0,
+                        List.of("balanced", "high_protein"),
+                        List.of(
+                                ingredient("Salmon", 260.0, "g", "salmon", "fish"),
+                                ingredient("Potatoes", 400.0, "g", "potato", "potatoes", "sweet potato"),
+                                ingredient("Green vegetables", 220.0, "g", "broccoli", "spinach", "kale", "green beans", "vegetable"),
+                                ingredient("Olive oil", 15.0, "ml", "olive oil", "oil")),
+                        List.of(
+                                "Cut the potatoes into small pieces and boil or roast them until tender.",
+                                "Season the salmon and cook it in a hot pan or oven until it flakes easily.",
+                                "Steam or saute the green vegetables for a few minutes.",
+                                "Drizzle olive oil over the potatoes and vegetables.",
+                                "Serve the salmon on top with pepper, lemon, or herbs if available.")),
+                new Recipe(
+                        "beef-noodle-bowl",
+                        "Beef Noodle Bowl",
+                        "A filling noodle bowl for beef, vegetables, and a quick sauce.",
+                        "noodles",
+                        2,
+                        610.0,
+                        34.0,
+                        72.0,
+                        20.0,
+                        List.of("balanced", "high_protein"),
+                        List.of(
+                                ingredient("Beef", 240.0, "g", "beef", "steak", "ground beef", "minced beef"),
+                                ingredient("Noodles", 180.0, "g", "noodle", "noodles", "ramen", "udon", "rice noodle", "soba"),
+                                ingredient("Mixed vegetables", 240.0, "g", "vegetable", "pepper", "carrot", "cabbage", "mushroom"),
+                                ingredient("Soy sauce", 20.0, "ml", "soy sauce", "soya sauce")),
+                        List.of(
+                                "Cook the noodles according to the package instructions and drain them.",
+                                "Slice or crumble the beef, then sear it in a hot pan until browned.",
+                                "Add vegetables and cook until they soften but still have bite.",
+                                "Toss noodles through the pan with soy sauce.",
+                                "Serve hot and adjust seasoning with chili, vinegar, or sesame if available.")),
+                new Recipe(
+                        "chicken-hummus-wrap",
+                        "Chicken Hummus Wrap",
+                        "A fast lunch wrap using bread or tortillas, chicken, and crunchy vegetables.",
+                        "wrap",
+                        2,
+                        520.0,
+                        38.0,
+                        54.0,
+                        16.0,
+                        List.of("balanced", "high_protein"),
+                        List.of(
+                                ingredient("Chicken", 240.0, "g", "chicken", "chicken breast", "cooked chicken"),
+                                ingredient("Wraps", 0.3, "package", "wrap", "tortilla", "flatbread", "bread"),
+                                ingredient("Hummus", 80.0, "g", "hummus", "chickpea spread"),
+                                ingredient("Salad vegetables", 200.0, "g", "lettuce", "salad", "cucumber", "tomato", "pepper")),
+                        List.of(
+                                "Warm the wrap briefly so it becomes flexible.",
+                                "Slice cooked chicken into strips.",
+                                "Spread hummus over the center of the wrap.",
+                                "Add chicken and salad vegetables in a compact line.",
+                                "Fold the sides in, roll tightly, and cut in half.")),
+                new Recipe(
+                        "sweet-potato-black-bean-bowl",
+                        "Sweet Potato Black Bean Bowl",
+                        "A colorful vegetarian bowl built around sweet potatoes, beans, and avocado.",
+                        "sweet-potato",
+                        2,
+                        540.0,
+                        20.0,
+                        82.0,
+                        15.0,
+                        List.of("balanced", "vegetarian", "high_fiber"),
+                        List.of(
+                                ingredient("Sweet potatoes", 420.0, "g", "sweet potato", "potato"),
+                                ingredient("Beans", 240.0, "g", "black bean", "kidney bean", "bean", "beans"),
+                                ingredient("Avocado", 1.0, "package", "avocado"),
+                                ingredient("Tomatoes", 160.0, "g", "tomato", "tomatoes", "salsa")),
+                        List.of(
+                                "Roast or pan-cook diced sweet potatoes until soft and browned.",
+                                "Warm the beans with a splash of water and seasoning.",
+                                "Dice tomatoes and slice avocado.",
+                                "Build bowls with sweet potatoes first, then beans, tomatoes, and avocado.",
+                                "Finish with pepper, chili, yogurt, or lime if available.")),
+                new Recipe(
+                        "mushroom-udon-stir-fry",
+                        "Mushroom Udon Stir Fry",
+                        "A vegetarian noodle dish for mushrooms, cabbage, and soy sauce.",
+                        "udon",
+                        2,
+                        480.0,
+                        18.0,
+                        78.0,
+                        10.0,
+                        List.of("vegetarian", "balanced"),
+                        List.of(
+                                ingredient("Udon noodles", 200.0, "g", "udon", "noodle", "noodles"),
+                                ingredient("Mushrooms", 220.0, "g", "mushroom", "shiitake", "champignon"),
+                                ingredient("Cabbage", 220.0, "g", "cabbage", "bok choy", "lettuce"),
+                                ingredient("Soy sauce", 20.0, "ml", "soy sauce", "soya sauce")),
+                        List.of(
+                                "Loosen or cook the udon noodles and drain them well.",
+                                "Slice mushrooms and cabbage into bite-size pieces.",
+                                "Cook mushrooms first until they release moisture and brown slightly.",
+                                "Add cabbage, then noodles and soy sauce.",
+                                "Toss until glossy and serve with chili or sesame if available.")),
+                new Recipe(
+                        "shrimp-couscous-salad",
+                        "Shrimp Couscous Salad",
+                        "A light high-protein salad with shrimp, couscous, and fresh vegetables.",
+                        "shrimp",
+                        2,
+                        430.0,
+                        32.0,
+                        52.0,
+                        9.0,
+                        List.of("low_calorie", "high_protein", "balanced"),
+                        List.of(
+                                ingredient("Shrimp", 240.0, "g", "shrimp", "prawn", "seafood"),
+                                ingredient("Couscous", 140.0, "g", "couscous", "bulgur", "quinoa"),
+                                ingredient("Cucumber", 160.0, "g", "cucumber"),
+                                ingredient("Tomatoes", 160.0, "g", "tomato", "tomatoes")),
+                        List.of(
+                                "Prepare couscous with hot water and fluff it with a fork.",
+                                "Cook shrimp until pink and just firm.",
+                                "Dice cucumber and tomatoes.",
+                                "Toss couscous, shrimp, and vegetables together.",
+                                "Season with salt, pepper, vinegar, lemon, or yogurt dressing if available.")),
+                new Recipe(
+                        "cottage-cheese-fruit-bowl",
+                        "Cottage Cheese Fruit Bowl",
+                        "A no-cook high-protein bowl with fruit, granola, and seeds.",
+                        "fruit-bowl",
+                        1,
+                        360.0,
+                        28.0,
+                        42.0,
+                        10.0,
+                        List.of("high_protein", "low_calorie"),
+                        List.of(
+                                ingredient("Cottage cheese", 220.0, "g", "cottage cheese", "quark", "greek yogurt", "yogurt"),
+                                ingredient("Fruit", 1.0, "package", "apple", "banana", "orange", "pear", "fruit"),
+                                ingredient("Granola", 35.0, "g", "granola", "cereal", "muesli"),
+                                ingredient("Seeds", 15.0, "g", "chia", "flax", "pumpkin seed", "seeds")),
+                        List.of(
+                                "Spoon cottage cheese or yogurt into a bowl.",
+                                "Cut the fruit into bite-size pieces.",
+                                "Scatter granola over the bowl for crunch.",
+                                "Add seeds for extra texture and healthy fats.",
+                                "Serve cold as breakfast, snack, or a light meal.")),
+                new Recipe(
+                        "pesto-mozzarella-sandwich",
+                        "Pesto Mozzarella Sandwich",
+                        "A quick sandwich using bread, cheese, tomato, and pesto.",
+                        "sandwich",
+                        2,
+                        500.0,
+                        22.0,
+                        50.0,
+                        24.0,
+                        List.of("balanced", "vegetarian"),
+                        List.of(
+                                ingredient("Bread", 0.25, "package", "bread", "toast", "bagel", "baguette"),
+                                ingredient("Mozzarella", 100.0, "g", "mozzarella", "cheese"),
+                                ingredient("Tomatoes", 160.0, "g", "tomato", "tomatoes"),
+                                ingredient("Pesto", 30.0, "g", "pesto")),
+                        List.of(
+                                "Toast or warm the bread if you want a crisp sandwich.",
+                                "Slice mozzarella and tomatoes.",
+                                "Spread pesto thinly over the bread.",
+                                "Layer cheese and tomatoes, then close the sandwich.",
+                                "Press in a pan for a warm version or serve fresh.")),
+                new Recipe(
+                        "frozen-dumpling-cabbage-soup",
+                        "Dumpling Cabbage Soup",
+                        "A convenient soup for frozen dumplings, cabbage, and soy sauce.",
+                        "dumpling-soup",
+                        2,
+                        520.0,
+                        22.0,
+                        68.0,
+                        17.0,
+                        List.of("balanced", "quick_meal"),
+                        List.of(
+                                ingredient("Dumplings", 0.5, "package", "dumpling", "gyoza", "ravioli"),
+                                ingredient("Cabbage", 220.0, "g", "cabbage", "bok choy", "leafy greens"),
+                                ingredient("Mushrooms", 160.0, "g", "mushroom", "shiitake"),
+                                ingredient("Soy sauce", 20.0, "ml", "soy sauce", "soya sauce")),
+                        List.of(
+                                "Bring water or broth to a simmer.",
+                                "Add frozen dumplings and cook until they float or are heated through.",
+                                "Add cabbage and mushrooms for the final few minutes.",
+                                "Season with soy sauce and pepper.",
+                                "Serve hot with chili oil or vinegar if available.")),
+                new Recipe(
+                        "granola-berry-smoothie",
+                        "Berry Milk Smoothie Bowl",
+                        "A fruit-forward breakfast using berries, milk, yogurt, and granola.",
+                        "smoothie",
+                        1,
+                        390.0,
+                        18.0,
+                        62.0,
+                        8.0,
+                        List.of("vegetarian", "balanced"),
+                        List.of(
+                                ingredient("Berries", 160.0, "g", "berries", "berry", "strawberry", "blueberry", "raspberry"),
+                                ingredient("Milk", 180.0, "ml", "milk", "oat milk", "soy milk", "almond milk"),
+                                ingredient("Greek yogurt", 120.0, "g", "greek yogurt", "yogurt"),
+                                ingredient("Granola", 35.0, "g", "granola", "cereal", "muesli")),
+                        List.of(
+                                "Blend berries, milk, and yogurt until smooth.",
+                                "Pour into a bowl rather than a glass for a thicker meal.",
+                                "Sprinkle granola over the top.",
+                                "Let it sit for one minute if you prefer softer cereal.",
+                                "Add extra fruit or seeds if available.")),
+                new Recipe(
+                        "ham-cheese-potato-hash",
+                        "Ham Cheese Potato Hash",
+                        "A hearty skillet for potatoes, ham or bacon, vegetables, and cheese.",
+                        "hash",
+                        2,
+                        590.0,
+                        30.0,
+                        52.0,
+                        27.0,
+                        List.of("balanced", "high_protein"),
+                        List.of(
+                                ingredient("Potatoes", 420.0, "g", "potato", "potatoes"),
+                                ingredient("Ham", 140.0, "g", "ham", "bacon", "pork"),
+                                ingredient("Mixed vegetables", 180.0, "g", "vegetable", "pepper", "onion", "mushroom"),
+                                ingredient("Cheese", 70.0, "g", "cheese", "cheddar", "mozzarella")),
+                        List.of(
+                                "Dice potatoes small and cook them in a pan until golden.",
+                                "Add ham or bacon and cook until warmed and slightly crisp.",
+                                "Stir in vegetables and cook until softened.",
+                                "Sprinkle cheese over the top and cover briefly so it melts.",
+                                "Serve as a filling brunch or dinner.")),
+                new Recipe(
+                        "orange-chicken-quinoa",
+                        "Orange Chicken Quinoa",
+                        "A lean bowl using chicken, quinoa or grains, fruit juice, and vegetables.",
+                        "quinoa",
+                        2,
+                        540.0,
+                        39.0,
+                        62.0,
+                        12.0,
+                        List.of("balanced", "high_protein"),
+                        List.of(
+                                ingredient("Chicken", 260.0, "g", "chicken", "chicken breast"),
+                                ingredient("Quinoa", 150.0, "g", "quinoa", "bulgur", "couscous", "rice"),
+                                ingredient("Orange juice", 80.0, "ml", "orange juice", "juice"),
+                                ingredient("Mixed vegetables", 220.0, "g", "vegetable", "broccoli", "pepper", "carrot")),
+                        List.of(
+                                "Cook quinoa or grains until tender.",
+                                "Sear chicken pieces until browned and cooked through.",
+                                "Add vegetables and cook until they are hot.",
+                                "Pour in orange juice and simmer briefly until it lightly coats the chicken.",
+                                "Serve chicken and vegetables over the grains.")));
     }
 
     private RecipeIngredient ingredient(String name, Double amount, String unit, String... keywords) {

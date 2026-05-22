@@ -72,6 +72,7 @@ class RecipeServiceTest {
         List<RecipeRecommendationGetDTO> result = recipeService.getRecommendations(1L, 99L);
 
         assertFalse(result.isEmpty());
+        assertEquals("LOCAL_CATALOG", result.get(0).getSource());
         RecipeRecommendationGetDTO dynamicHighProteinRecipe = result.stream()
                 .filter(recipe -> recipe.getId().startsWith("dynamic-"))
                 .filter(RecipeRecommendationGetDTO::isReadyToCook)
@@ -79,6 +80,7 @@ class RecipeServiceTest {
                 .findFirst()
                 .orElseThrow();
 
+        assertEquals("DYNAMIC_PANTRY", dynamicHighProteinRecipe.getSource());
         assertTrue(dynamicHighProteinRecipe.getRecommendationReason().contains("Chicken breast"));
         assertTrue(dynamicHighProteinRecipe.getMatchedIngredientCount() >= 2);
         assertEquals(0, dynamicHighProteinRecipe.getMissingIngredientCount());
@@ -97,8 +99,32 @@ class RecipeServiceTest {
                 .findFirst()
                 .orElseThrow();
         assertFalse(pasta.isReadyToCook());
+        assertEquals("LOCAL_CATALOG", pasta.getSource());
         assertEquals(1, pasta.getMatchedIngredientCount());
         assertTrue(pasta.getMissingIngredients().contains("Tomato sauce"));
+    }
+
+    @Test
+    void getRecommendations_keepsLocalCatalogBeforeDynamicPantryRecipes() {
+        when(pantryItemRepository.findByHouseholdId(1L)).thenReturn(List.of(
+                item(10L, "Whole Bread", 1.0, "package"),
+                item(11L, "Free Range Eggs", 1.0, "package"),
+                item(12L, "Cherry Tomatoes", 250.0, "g"),
+                item(13L, "Olive oil", 100.0, "ml")));
+
+        List<RecipeRecommendationGetDTO> result = recipeService.getRecommendations(1L, 99L);
+
+        int firstDynamicIndex = -1;
+        for (int index = 0; index < result.size(); index++) {
+            if ("DYNAMIC_PANTRY".equals(result.get(index).getSource())) {
+                firstDynamicIndex = index;
+                break;
+            }
+        }
+
+        assertTrue(firstDynamicIndex > 0);
+        assertTrue(result.subList(0, firstDynamicIndex).stream()
+                .allMatch(recipe -> "LOCAL_CATALOG".equals(recipe.getSource())));
     }
 
     @Test
