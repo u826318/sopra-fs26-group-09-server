@@ -183,7 +183,21 @@ java -jar build/libs/*.jar
 ## Roadmap
 
 ## Authors and Acknowledgment
+## Authors and Acknowledgment
 
+This project was developed by Group 09 as part of the Software Praktikum (SoPra) FS26 at the University of Zurich.
+
+### Authors
+
+- [Member Name 1]
+- [Member Name 2]
+- [Member Name 3]
+- [Member Name 4]
+- [Member Name 5]
+
+### Acknowledgment
+
+We would like to thank the SoPra teaching team and our teaching assistant for their guidance and feedback throughout the project. We also acknowledge Open Food Facts and Azure Document Intelligence for providing datasets and external services that helped support the product lookup and receipt scanning features.
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
