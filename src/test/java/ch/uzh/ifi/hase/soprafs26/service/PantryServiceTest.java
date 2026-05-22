@@ -1841,8 +1841,10 @@ class PantryServiceTest {
         PantryItemPostDTO dto = new PantryItemPostDTO();
         dto.setBarcode("1111111111");
         dto.setName("Manual Name");
-        dto.setAmount(500.0);
-        dto.setAmountUnit("g");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+        dto.setPackageQuantity("500");
+        dto.setPackageQuantityUnit("g");
 
         PantryItem result = pantryService.addItem(1L, dto, 99L);
 
@@ -1864,8 +1866,10 @@ class PantryServiceTest {
         PantryItemPostDTO dto = new PantryItemPostDTO();
         dto.setBarcode("1111111111");
         dto.setName("Juice");
-        dto.setAmount(500.0);
-        dto.setAmountUnit("ml");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+        dto.setPackageQuantity("500");
+        dto.setPackageQuantityUnit("ml");
 
         PantryItem result = pantryService.addItem(1L, dto, 99L);
 
@@ -1910,8 +1914,10 @@ class PantryServiceTest {
         PantryItemPostDTO dto = new PantryItemPostDTO();
         dto.setBarcode("1111111111");
         dto.setName("Granola");
-        dto.setAmount(2.0);
-        dto.setAmountUnit("serving");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+        dto.setPackageQuantity("200");
+        dto.setPackageQuantityUnit("g");
 
         PantryItem result = pantryService.addItem(1L, dto, 99L);
 
@@ -1919,12 +1925,12 @@ class PantryServiceTest {
     }
 
     @Test
-    void addItem_withLocalDatasetProduct_kcalPerPackage_nullWhenUnitsMismatch() {
+    void addItem_withLocalDatasetProduct_whenDtoPackageUnitMismatchesBasis_throws() {
         setupHouseholdAndMember();
 
-        // basisUnit=g but packageUnit=ml → mismatch → null
+        // basisUnit=g, no usable package info on product
         ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
-                makeLocalProduct("g", 100.0, 400.0, 200.0, "ml", null, null);
+                makeLocalProduct("g", 100.0, 400.0, null, null, null, null);
 
         when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
         when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
@@ -1934,10 +1940,10 @@ class PantryServiceTest {
         dto.setName("Something");
         dto.setAmount(1.0);
         dto.setAmountUnit("package");
+        dto.setPackageQuantity("200");
+        dto.setPackageQuantityUnit("ml"); // mismatches basisUnit "g"
 
-        PantryItem result = pantryService.addItem(1L, dto, 99L);
-
-        assertNull(result.getKcalPerPackage());
+        assertThrows(IllegalArgumentException.class, () -> pantryService.addItem(1L, dto, 99L));
     }
 
     @Test
@@ -1954,8 +1960,10 @@ class PantryServiceTest {
         PantryItemPostDTO dto = new PantryItemPostDTO();
         dto.setBarcode("1111111111");
         dto.setName("Granola");
-        dto.setAmount(2.0);
-        dto.setAmountUnit("serving");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+        dto.setPackageQuantity("200");
+        dto.setPackageQuantityUnit("g");
 
         PantryItem result = pantryService.addItem(1L, dto, 99L);
 
