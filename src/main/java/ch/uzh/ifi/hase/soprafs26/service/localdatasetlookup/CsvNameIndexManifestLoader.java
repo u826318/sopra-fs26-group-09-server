@@ -8,6 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class CsvNameIndexManifestLoader {
@@ -17,17 +18,17 @@ public class CsvNameIndexManifestLoader {
   private static final String MANIFEST_RESOURCE = NAME_INDEX_ROOT + "/manifest.json";
 
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private volatile CsvNameIndexManifest cachedManifest;
+  private final AtomicReference<CsvNameIndexManifest> cachedManifest = new AtomicReference<>();
 
   public CsvNameIndexManifest loadManifest() throws IOException {
-    CsvNameIndexManifest current = cachedManifest;
+    CsvNameIndexManifest current = cachedManifest.get();
     if (current != null) {
       return current;
     }
 
     synchronized (this) {
-      if (cachedManifest != null) {
-        return cachedManifest;
+      if (cachedManifest.get() != null) {
+        return cachedManifest.get();
       }
 
       ClassPathResource resource = new ClassPathResource(MANIFEST_RESOURCE);
@@ -40,7 +41,7 @@ public class CsvNameIndexManifestLoader {
         root = objectMapper.readTree(inputStream);
       }
       CsvNameIndexManifest manifest = parseManifest(root);
-      cachedManifest = manifest;
+      cachedManifest.set(manifest);
       log.info(
           "[NAME_INDEX_CSV] loaded manifest schema={} tokenShards={} metadataShards={} root={}",
           manifest.schemaVersion(),

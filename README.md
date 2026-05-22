@@ -1,5 +1,7 @@
 # Virtual Pantry
 
+This is the backend README. You can find the frontend README [here](https://github.com/sopra-fs26-group-09/sopra-fs26-group-09-client/blob/main/README.md).
+
 ## Introduction
 
 Virtual Pantry is a collaborative calorie and nutrition tracking app for households. Users can add products by barcode, name, or receipt scan to a shared pantry, then log consumption from existing items. This avoids repeatedly searching for the same food and helps households track products that are bought, stored, and consumed by different people.

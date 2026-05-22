@@ -204,10 +204,8 @@ public class LocalDatasetBucketScanner {
             .build()
             .parse(new StringReader(line))
     ) {
-      for (CSVRecord record : parser) {
-        return record.stream().toList();
-      }
-      return List.of();
+      java.util.Iterator<CSVRecord> it = parser.iterator();
+      return it.hasNext() ? it.next().stream().toList() : List.of();
     }
     catch (IOException e) {
       throw new IOException("Failed to parse CSV line in local dataset bucket file: " + bucketPath, e);

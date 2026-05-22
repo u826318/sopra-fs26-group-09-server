@@ -35,7 +35,7 @@ public class CsvPostingDecoder {
       boolean sawDigit = false;
       while (index < length && Character.isDigit(encodedProductIndices.charAt(index))) {
         sawDigit = true;
-        delta = Math.addExact(Math.multiplyExact(delta, 10L), encodedProductIndices.charAt(index) - '0');
+        delta = Math.addExact(Math.multiplyExact(delta, 10L), (long) encodedProductIndices.charAt(index) - '0');
         index += 1;
       }
 
