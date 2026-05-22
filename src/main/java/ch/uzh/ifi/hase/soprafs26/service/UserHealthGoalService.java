@@ -48,6 +48,11 @@ public class UserHealthGoalService {
     }
 
     static double calculate(UserHealthGoalPutDTO dto) {
+        if (dto.getActivityLevel() == null || dto.getWeight() == null
+                || dto.getHeight() == null || dto.getAge() == null || dto.getSex() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "activityLevel, weight, height, age, and sex are required");
+        }
         double activityFactor = switch (dto.getActivityLevel()) {
             case "SEDENTARY"   -> 1.2;
             case "LIGHT"       -> 1.375;
