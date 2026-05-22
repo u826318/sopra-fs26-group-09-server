@@ -91,11 +91,11 @@ In other words, the backend is built around one main flow: find food products, a
 
 #### Local Product Dataset
 
-The local product dataset is the main product lookup source used by the backend. It is generated offline from the Open Food Facts product dump and reduced into a compact format that only keeps the fields needed by the Virtual Pantry application.
+The local product dataset consisting [`buckets`](src/main/resources/local-dataset/buckets) and a [`manifest`](src/main/resources/local-dataset/manifest.json) is the main product lookup source used by the backend. It is generated offline from the Open Food Facts product dump and reduced into a compact format that only keeps the fields needed by the Virtual Pantry application.
 
-The local dataset builder reads the raw Open Food Facts data, filters and cleans product rows, extracts useful product information, normalizes quantity and nutrition data, assigns each product a stable `product_index`, and writes a smaller local dataset for backend lookup.
+To build the dataset, we read the raw Open Food Facts data, filter and clean product rows, extract useful product information, normalize quantity and nutrition data, assign each product a stable `product_index`, and write a smaller local dataset for backend lookup.
 
-The compact dataset records fields such as:
+The local product dataset records fields from the original dataset such as:
 
 ```text
 code
@@ -185,7 +185,7 @@ The dataset standardize per-100 nutrition data and records package quantity when
 
 #### Product Name Index
 
-The product name index supports local product search by name. It is generated from the local product dataset and uses the same `product_index` values as the local product buckets.
+The product name index dataset [`name-index`](src/main/resources/local-dataset/name=index) supports local product search by name. It is generated from the local product dataset and uses the same `product_index` values as the local product buckets.
 
 The name-index dataset is built from searchable product text, mainly:
 
