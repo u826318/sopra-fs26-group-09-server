@@ -95,9 +95,27 @@ public class UserHealthGoalService {
                 double rate = (dto.getWeight() - dto.getTargetWeight()) / dto.getWeeksToGoal();
                 double dailyDeficit = rate * 7700.0 / 7.0;
 
-                // Safety: cap deficit at 35% of current TDEE; enforce sex-based calorie floor
-                double maxDeficit = tdee0 * 0.35;
-                double floor = "MALE".equals(dto.getSex()) ? 1500.0 : 1200.0;
+                // Age-based safety limits: max deficit % and absolute calorie floor
+                double maxDeficitRate;
+                double floor;
+                boolean isMale = "MALE".equals(dto.getSex());
+                int age = dto.getAge();
+                if (age < 13) {
+                    maxDeficitRate = 0.10;
+                    floor = 1000.0;
+                } else if (age < 18) {
+                    maxDeficitRate = 0.15;
+                    floor = isMale ? 1500.0 : 1300.0;
+                } else if (age < 65) {
+                    maxDeficitRate = 0.25;
+                    floor = isMale ? 1600.0 : 1400.0;
+                } else {
+                    maxDeficitRate = 0.15;
+                    floor = isMale ? 1600.0 : 1400.0;
+                }
+                double maxDeficit = tdee0 * maxDeficitRate;
+                // A floor above TDEE would recommend a surplus — invalidate it
+                if (floor >= tdee0) floor = 0.0;
 
                 yield Math.max(
                         Math.max(tdeeAdapted - dailyDeficit, tdee0 - maxDeficit),
