@@ -55,7 +55,7 @@ public class ProductController {
     @GetMapping("/products/search")
     public LocalDatasetProductSearchResponseDTO searchByName(
             @RequestParam("q") String query,
-            @RequestParam(value = "limit", defaultValue = "5") int limit
+            @RequestParam(value = "limit", defaultValue = "10") int limit
     ) {
         return localDatasetNameSearchService.search(query, limit);
     }

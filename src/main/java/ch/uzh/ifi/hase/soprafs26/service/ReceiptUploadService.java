@@ -28,7 +28,7 @@ public class ReceiptUploadService {
 
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of("image/jpeg", "image/png");
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of(".jpg", ".jpeg", ".png");
-    private static final int RECEIPT_NAME_SEARCH_LIMIT = 5;
+    private static final int RECEIPT_NAME_SEARCH_LIMIT = 10;
     private static final String MATCH_SOURCE_LOCAL_NAME_SEARCH = "local_dataset_name_search";
     private static final String MATCH_STATUS_CANDIDATES_FOUND = "CANDIDATES_FOUND";
     private static final String MATCH_STATUS_NO_CANDIDATES = "NO_CANDIDATES";
