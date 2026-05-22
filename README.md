@@ -185,7 +185,7 @@ The dataset standardize per-100 nutrition data and records package quantity when
 
 #### Product Name Index
 
-The product name index dataset [`name-index`](src/main/resources/local-dataset/name=index) supports local product search by name. It is generated from the local product dataset and uses the same `product_index` values as the local product buckets.
+The product name index dataset [`name-index`](src/main/resources/local-dataset/name-index) supports local product search by name. It is generated from the local product dataset and uses the same `product_index` values as the local product buckets.
 
 The name-index dataset is built from searchable product text, mainly:
 
