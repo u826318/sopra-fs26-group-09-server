@@ -91,4 +91,39 @@ class ProductControllerTest {
         mockMvc.perform(get("/products/lookup/7610848492087"))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void lookupByBarcodeParam_found_returnsProduct() throws Exception {
+        LocalDatasetProductDTO localDto = new LocalDatasetProductDTO();
+        localDto.setBarcode("7610848492087");
+        localDto.setName("Param Product");
+
+        given(localDatasetLookupService.findRawRowByBarcode("7610848492087"))
+                .willReturn(Optional.of(Map.of("code", "7610848492087")));
+        given(localDatasetProductMapper.toDto(any())).willReturn(localDto);
+
+        mockMvc.perform(get("/products/lookup")
+                        .param("barcode", "7610848492087")
+                        .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.barcode", is("7610848492087")))
+                .andExpect(jsonPath("$.name", is("Param Product")));
+    }
+
+    @Test
+    void lookupByProductIndex_found_returnsProduct() throws Exception {
+        LocalDatasetProductDTO localDto = new LocalDatasetProductDTO();
+        localDto.setBarcode("7610848492087");
+        localDto.setName("Index Product");
+
+        given(localDatasetLookupService.findRawRowByProductIndex(42L))
+                .willReturn(Optional.of(Map.of("code", "7610848492087")));
+        given(localDatasetProductMapper.toDto(any())).willReturn(localDto);
+
+        mockMvc.perform(get("/products/index/42")
+                        .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.barcode", is("7610848492087")))
+                .andExpect(jsonPath("$.name", is("Index Product")));
+    }
 }

@@ -299,6 +299,16 @@ class UserControllerTest {
 	 * @param object
 	 * @return string
 	 */
+	@Test
+	void getCurrentUser_validToken_returnsUser() throws Exception {
+		given(userService.getUserByToken(TEST_TOKEN)).willReturn(authenticatedUser);
+
+		mockMvc.perform(get("/users/me")
+				.header("Authorization", TEST_TOKEN))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.username", is("authUser")));
+	}
+
 	private String asJsonString(final Object object) {
 		try {
 			return new ObjectMapper().writeValueAsString(object);

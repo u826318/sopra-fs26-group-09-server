@@ -41,6 +41,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.HouseholdBudget;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ConsumptionLogGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdMemberGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdBudgetPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdJoinPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.HouseholdPostDTO;
@@ -565,6 +566,23 @@ class HouseholdControllerTest {
                 .content(asJsonString(dto));
 
         mockMvc.perform(request).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getMembers_member_returns200WithList() throws Exception {
+        HouseholdMemberGetDTO member = new HouseholdMemberGetDTO();
+        member.setUserId(1L);
+        member.setUsername("testUser");
+        member.setRole("MEMBER");
+
+        given(householdService.getMembers(eq(1L), eq(1L))).willReturn(List.of(member));
+
+        mockMvc.perform(get("/households/1/members")
+                        .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].username", is("testUser")))
+                .andExpect(jsonPath("$[0].role", is("MEMBER")));
     }
 
     private String asJsonString(final Object object) {

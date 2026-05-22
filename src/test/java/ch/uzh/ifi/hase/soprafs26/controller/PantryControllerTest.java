@@ -20,6 +20,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.mock.web.MockMultipartFile;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.config.AuthFilter;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.exceptions.GlobalExceptionAdvice;
@@ -346,4 +350,38 @@ class PantryControllerTest {
                 .andExpect(jsonPath("$.message").value("Quantity must be greater than zero."));
         }
 
+        @Test
+        void estimateMealPortion_success_returnsOk() throws Exception {
+                PortionEstimateResponseDTO response = new PortionEstimateResponseDTO();
+                response.setStatus("OK");
+                response.setSuggestedMinAmount(100.0);
+                response.setSuggestedMaxAmount(200.0);
+                response.setUnit("g");
+
+                when(pantryService.estimateMealPortion(eq(1L), eq(10L), any(), eq(99L))).thenReturn(response);
+
+                MockMultipartFile image = new MockMultipartFile("image", "food.jpg", "image/jpeg", "data".getBytes());
+
+                mockMvc.perform(multipart("/households/1/pantry/10/consume/portion-estimate").file(image))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.status").value("OK"))
+                        .andExpect(jsonPath("$.suggestedMinAmount").value(100.0))
+                        .andExpect(jsonPath("$.suggestedMaxAmount").value(200.0));
+        }
+
+        @Test
+        void recognizeMealFood_success_returnsOk() throws Exception {
+                MealFoodRecognitionResponseDTO response = new MealFoodRecognitionResponseDTO();
+                response.setStatus("OK");
+                response.setDetectedFoods(List.of("apple", "banana"));
+
+                when(mealFoodRecognitionService.recognizeFood(any())).thenReturn(response);
+
+                MockMultipartFile image = new MockMultipartFile("image", "meal.jpg", "image/jpeg", "data".getBytes());
+
+                mockMvc.perform(multipart("/households/1/meal/recognize-food").file(image))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.status").value("OK"))
+                        .andExpect(jsonPath("$.detectedFoods[0]").value("apple"));
+        }
 }
