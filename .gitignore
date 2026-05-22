@@ -59,3 +59,9 @@ local.properties
 
 # application.properties
 /src/main/resources/application.properties
+
+.history/
+.codex
+DESIGN_EN.md
+DESIGN_ZH.md
+docs/superpowers/

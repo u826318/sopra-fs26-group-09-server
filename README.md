@@ -129,7 +129,7 @@ Every push to `main` triggers the GitHub Actions workflow, which automatically d
 
 To release a new version, merge your changes into `main`. The CI/CD pipeline will automatically build and deploy the backend.
 
-**One-time setup** (one team member):
+**One-time setup**:
 
 Add the following [repository secret](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) to the server repo:
 - `GCP_SERVICE_CREDENTIALS` (Google Cloud service account JSON)
@@ -140,8 +140,6 @@ Add the following [repository secret](https://docs.github.com/en/actions/securit
 ./gradlew clean build
 java -jar build/libs/*.jar
 ```
-
-## Illustrations
 
 ## Roadmap
 
