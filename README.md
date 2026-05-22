@@ -87,6 +87,180 @@ The household and pantry component is the center of the backend. Users add produ
 
 In other words, the backend is built around one main flow: find food products, add them to a shared pantry, consume them, and use that consumption data for household statistics and personal nutrition tracking.
 
+### Local Datasets construction
+
+#### Local Product Dataset
+
+The local product dataset is the main product lookup source used by the backend. It is generated offline from the Open Food Facts product dump and reduced into a compact format that only keeps the fields needed by the Virtual Pantry application.
+
+The local dataset builder reads the raw Open Food Facts data, filters and cleans product rows, extracts useful product information, normalizes quantity and nutrition data, assigns each product a stable `product_index`, and writes a smaller local dataset for backend lookup.
+
+The compact dataset records fields such as:
+
+```text
+code
+brands
+product_quantity
+product_quantity_unit
+package_quantity
+package_quantity_unit
+serving_quantity
+serving_quantity_unit
+nutrition_basis_unit
+nutrition
+```
+
+It also combines name related columns to a list of names:
+
+```text
+name candidates
+```
+
+And also, it refactors the image column and only extract the parts needed to reconstruct the product image url. There are two image url component recording schemas in the original dataset, sometimes both schema has data stored inside, so both are recorded. 
+
+```text
+image_1
+image_2
+```
+
+
+The dataset is sorted by barcode and split into smaller bucket files. During this process, each product receives a stable `product_index` in barcode-ascending order.
+
+column name:
+
+```text
+product_index, code, brands, name_candidates, ...
+```
+
+Row Example:
+
+```text
+1 = smallest barcode row
+2 = second-smallest barcode row
+3 = third-smallest barcode row
+...
+```
+
+The bucketed local dataset is stored with a manifest file:
+
+```text
+local-dataset/
+  manifest.json
+  buckets/
+    bucket_000.csv
+    bucket_001.csv
+    ...
+```
+
+The manifest records both barcode ranges and product-index ranges for each bucket. This allows the backend to resolve products in two ways:
+
+```text
+barcode -> bucket -> product row
+```
+
+or:
+
+```text
+product_index -> bucket -> product row
+```
+
+This structure avoids scanning the full product dataset for every lookup. Instead, the backend reads the manifest, finds the relevant bucket, and scans only that smaller file.
+
+Nutrition values are stored in a standardized per-100 format. The `nutrition_basis_unit` field describes whether the values in the `nutrition` cell are per `100g` or per `100ml`.
+
+```text
+nutrition_basis_unit = g  -> nutrition values are per 100g
+nutrition_basis_unit = ml -> nutrition values are per 100ml
+```
+
+The `nutrition` cell stores an indexed JSON dictionary, where numeric keys refer to nutrient definitions shared between the dataset builder and the backend.
+
+Example:
+
+```json
+{"0":533.0,"1":30.9,"13":3300.0}
+```
+
+The dataset standardize per-100 nutrition data and records package quantity when available. This allows the backend to calculate package-level or consumed nutrition later when enough quantity information exists.
+
+#### Product Name Index
+
+The product name index supports local product search by name. It is generated from the local product dataset and uses the same `product_index` values as the local product buckets.
+
+The name-index dataset is built from searchable product text, mainly:
+
+```text
+brands
+name_candidates
+product_index
+```
+
+During generation, product names and brands are normalized and tokenized, for example, if we have "brand: tiger kitchen; name: udon noodles, product_index: 101", the brand and name will be normalized (decapitalized, trimmed...), and tokenized into "tiger", "kitchen", "udon", "noodles". The index then records which products are connected to each search token, so we will have 4 entries from the example product:
+
+```text
+"tiger": [101]
+"kitchen": [101]
+"udon": [101]
+"noodles": [101]
+```
+
+Eventually, we will have:
+
+```text
+token -> a list of product_index values
+
+yogurt -> 12 55 9001...
+milk   -> 44 55 87...
+noodles -> 101 10098 78239 9243876...
+...
+```
+
+At runtime, when a user searches for a product name, the backend normalizes and tokenizes the query, finds matching `product_index` values from the name-index, combines and ranks the candidates, and then resolves the selected product through the local product dataset.
+
+The generated name-index resources are stored as streamable CSV/GZIP shards:
+
+```text
+name-index/
+  manifest.json
+  token-postings/
+    shard_000.csv.gz
+    shard_001.csv.gz
+    ...
+  product-metadata/
+    shard_000.csv.gz
+    shard_001.csv.gz
+    ...
+```
+
+The token-posting shards store mappings from search tokens to product indices. The product metadata shards store minimal display and search metadata:
+
+```text
+product_index
+brands
+name_candidates
+```
+
+The full product details are still resolved through the local product dataset after a product candidate is selected.
+
+This keeps the name index small.
+
+Together, the local product dataset and the name index support the main product lookup flow of Virtual Pantry:
+
+```text
+user searches or scans product
+        ↓
+backend resolves product locally
+        ↓
+product data is returned to the client
+        ↓
+user adds the product to the shared pantry
+        ↓
+nutrition values are used for calorie and nutrition tracking
+```
+
+
+
+
 
 ## Launch & Deployment
 
