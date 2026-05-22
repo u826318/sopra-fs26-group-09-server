@@ -53,7 +53,15 @@ public class OpenFoodFactsService {
       "purchase_places_tags"
   );
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate = buildRestTemplate();
+
+  private static RestTemplate buildRestTemplate() {
+    org.springframework.http.client.SimpleClientHttpRequestFactory factory =
+        new org.springframework.http.client.SimpleClientHttpRequestFactory();
+    factory.setConnectTimeout(5_000);
+    factory.setReadTimeout(10_000);
+    return new RestTemplate(factory);
+  }
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final LocalProductDatasetService localProductDatasetService;
 
