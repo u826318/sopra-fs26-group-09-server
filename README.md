@@ -183,8 +183,6 @@ java -jar build/libs/*.jar
 ## Roadmap
 
 ## Authors and Acknowledgment
-## Authors and Acknowledgment
-
 This project was developed by Group 09 as part of the Software Praktikum (SoPra) FS26 at the University of Zurich.
 
 ### Authors
