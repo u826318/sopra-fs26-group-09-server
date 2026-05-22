@@ -2,6 +2,8 @@
 
 ## Introduction
 
+Virtual Pantry is a collaborative calorie and nutrition tracking app for households. Users can add products by barcode, name, or receipt scan to a shared pantry, then log consumption from existing items. This avoids repeatedly searching for the same food and helps households track products that are bought, stored, and consumed by different people.
+
 ## Technologies Used
 
 - **Java 17** and **Spring Boot 4** for the backend REST API and application
