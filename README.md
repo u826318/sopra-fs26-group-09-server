@@ -27,7 +27,60 @@ Virtual Pantry is a collaborative calorie and nutrition tracking app for househo
 - **Google App Engine** for backend deployment through the GitHub Actions
   workflow.
 
-## High-Level Components
+## High-level components
+
+### 1. Household and pantry management
+
+This part manages the shared household pantry: households, household members, invite codes, pantry items, item consumption, item removal, calorie budgets, and household statistics.
+
+The household endpoints are defined in [`HouseholdController`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/HouseholdController.java), and pantry actions go through [`PantryController`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/PantryController.java).
+
+On the household side, [`HouseholdService.createHousehold`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/HouseholdService.java#L89-L109) creates a household and adds the creator as a member. [`HouseholdService.joinHouseholdByInviteCode`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/HouseholdService.java#L182-L206) lets another user join with an invite code, and [`HouseholdService.getStats`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/HouseholdService.java#L261-L380) builds the statistics view from consumption logs.
+
+On the pantry side, [`PantryService.addItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L164-L181) validates and saves one pantry item, while [`PantryService.bulkAddItems`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L187-L220) saves multiple items in one request. [`PantryService.consumeItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L501-L618) handles the main consumption flow: it checks membership, validates the consumed amount, subtracts the correct amount from the pantry, records a `ConsumptionLog`, calculates consumed calories through [`PantryService.computeConsumedCalories`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L87-L118), and sends nutrient data to [`DailyNutrientIntakeService.recordConsumedPantryItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L59-L89). For unit conversion, it uses helper methods such as [`PantryService.resolveNutritionBasisMultiplier`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L628-L645), [`PantryService.resolveConsumedBasisAmount`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L647-L673), and [`PantryService.resolveInventoryAmountToSubtract`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L675-L706). If the user only removes an item without eating it, [`PantryService.removeItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L712-L764) updates the pantry without logging nutrition.
+
+After pantry changes, the backend sends live update messages through [`PantryBroadcastService.broadcastPantryUpdate`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryBroadcastService.java#L16-L21), so the frontend can refresh the pantry state.
+
+### 2. Product lookup and local dataset search
+
+This component is responsible for finding product information. A product can be looked up by barcode, by product index, or by name. The REST endpoints are in [`ProductController`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ProductController.java).
+
+For barcode lookup, [`ProductController.lookupByBarcode`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ProductController.java#L32-L35) and [`ProductController.lookupByBarcodePath`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ProductController.java#L37-L40) both go through [`ProductController.lookupLocalProductByBarcode`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ProductController.java#L59-L70). That method calls [`LocalDatasetLookupService.findRawRowByBarcode`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetLookupService.java#L34-L55), which normalizes the barcode, finds the correct local dataset bucket, and scans that bucket for the product row.
+
+For product-index lookup, [`ProductController.lookupByProductIndex`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ProductController.java#L42-L49) calls [`LocalDatasetLookupService.findRawRowByProductIndex`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetLookupService.java#L57-L67). For resolving many product indices at once, the backend uses [`LocalDatasetLookupService.findRawRowsByProductIndices`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetLookupService.java#L69-L98).
+
+For name search, [`ProductController.searchByName`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ProductController.java#L51-L57) calls [`LocalDatasetNameSearchService.search`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetNameSearchService.java#L44-L108). That method tokenizes the query, checks which tokens exist in the local name index, selects candidate product indices, and then ranks the candidates. The actual ranking and response-building happens in [`LocalDatasetNameSearchService.rankAndAttachCandidates`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetNameSearchService.java#L110-L168). If a query is too broad, [`LocalDatasetNameSearchService.attachTooManyMatchesSample`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetNameSearchService.java#L170-L216) returns a small stable sample instead of trying to return everything.
+
+Finally, [`LocalDatasetProductMapper.toDto`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/localdatasetlookup/LocalDatasetProductMapper.java#L77-L107) converts raw local dataset rows into the DTO format used by the frontend. This includes barcode, product name, brand, image URL, quantity fields, serving/package fields, nutrition data, and consumption options.
+
+### 3. Receipt scanning and product matching
+
+This component lets users upload a receipt image and turn it into structured food items. The endpoint is [`ReceiptController.uploadReceipt`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/ReceiptController.java#L24-L32). The main workflow is handled by [`ReceiptUploadService.uploadReceipt`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptUploadService.java#L56-L62).
+
+[`ReceiptUploadService.validateReceiptImage`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptUploadService.java#L74-L91) checks that the uploaded file is a valid JPG or PNG receipt image, and [`ReceiptOcrService.analyzeReceipt`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptOcrService.java#L53-L80) sends the image to Azure Document Intelligence.
+
+Inside the OCR service, [`ReceiptOcrService.submitAnalyzeRequest`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptOcrService.java#L82-L109) submits the image to Azure, [`ReceiptOcrService.pollAnalyzeResult`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptOcrService.java#L111-L157) waits for the result, and [`ReceiptOcrService.mapReceiptAnalysis`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptOcrService.java#L171-L207) maps the Azure result into our own receipt DTO.
+
+After OCR, [`ReceiptUploadService.buildUploadResponse`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptUploadService.java#L98-L119) builds the final response. It also calls [`ReceiptUploadService.attachLocalNameSearchCandidates`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/ReceiptUploadService.java#L121-L186), which runs local product name search for each receipt line and attaches possible product matches. So the rough flow is: receipt image -> Azure OCR -> extracted receipt lines -> local product candidates.
+
+### 4. Nutrition, micronutrients, and daily intake tracking
+
+This component tracks the nutrition side of the application. Users can store a personal profile, retrieve micronutrient reference values, and view daily nutrient intake.
+
+The personal profile endpoints are in [`UserPersonalProfileController`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/UserPersonalProfileController.java). The actual profile logic is in [`UserPersonalProfileService.createOrUpdatePersonalProfile`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/UserPersonalProfileService.java#L50-L76), which saves the user birth date and life stage group. [`UserPersonalProfileService.calculateAgeInMonths`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/UserPersonalProfileService.java#L112-L120) calculates age in months, which is needed because micronutrient requirements depend on both age and life stage.
+
+Micronutrient reference values are exposed through [`MicronutrientReferenceController.getMicronutrientRequirementsForUser`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/MicronutrientReferenceController.java#L24-L31). It calls [`MicronutrientReferenceService.getRequirementsForUser`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/MicronutrientReferenceService.java#L35-L43), which loads the user's profile and age, then calls [`MicronutrientReferenceService.findRequirements`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/MicronutrientReferenceService.java#L45-L58) to filter the reference table by life stage and age range.
+
+Daily intake is exposed through [`UserDailyNutrientIntakeController.getDailyNutrientIntake`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/UserDailyNutrientIntakeController.java#L28-L42). It calls [`DailyNutrientIntakeService.getDailyIntakeOrEmpty`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L36-L41), which returns the stored daily intake or an empty intake object for that date.
+
+This part connects back to the pantry through consumption. When a user consumes a pantry item, [`PantryService.consumeItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L501-L618) computes the nutrient multiplier with [`PantryService.resolveNutritionBasisMultiplier`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L628-L645), then passes the result to [`DailyNutrientIntakeService.recordConsumedPantryItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L59-L89). That method finds or creates the daily intake row and adds micronutrients through [`DailyNutrientIntakeService.addConsumedMicronutrients`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L98-L132).
+
+### How the components work together
+
+The household and pantry component is the center of the backend. Users add products into a shared household pantry. Product information can come from barcode lookup, product-index lookup, name search, or receipt scanning. When users consume pantry items, [`PantryService.consumeItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L501-L618) updates the pantry state, writes a consumption log, recalculates pantry calories, broadcasts the update, and sends nutrition data to daily intake tracking.
+
+In other words, the backend is built around one main flow: find food products, add them to a shared pantry, consume them, and use that consumption data for household statistics and personal nutrition tracking.
+
 
 ## Launch & Deployment
 
