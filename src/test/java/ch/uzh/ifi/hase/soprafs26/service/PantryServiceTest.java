@@ -1287,4 +1287,678 @@ class PantryServiceTest {
 
         assertEquals(900.0, total, 0.001);
     }
+
+    // --- calculateTotalCalories: serving unit and skip branches ---
+
+    @Test
+    void calculateTotalCalories_servingUnit_includesServingCalories() {
+        PantryItem servingItem = new PantryItem();
+        servingItem.setAmountUnit("serving");
+        servingItem.setAmount(3.0);
+        servingItem.setKcalPerServing(200.0); // 3 * 200 = 600
+
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(servingItem));
+
+        double total = pantryService.calculateTotalCalories(1L);
+
+        assertEquals(600.0, total, 0.001);
+    }
+
+    @Test
+    void calculateTotalCalories_itemWithNullUnit_isSkipped() {
+        PantryItem noUnit = new PantryItem();
+        noUnit.setAmountUnit(null);
+        noUnit.setAmount(2.0);
+        noUnit.setKcalPerPackage(100.0);
+
+        PantryItem validItem = new PantryItem();
+        validItem.setAmountUnit("package");
+        validItem.setAmount(1.0);
+        validItem.setKcalPerPackage(50.0);
+
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(noUnit, validItem));
+
+        double total = pantryService.calculateTotalCalories(1L);
+
+        assertEquals(50.0, total, 0.001);
+    }
+
+    @Test
+    void calculateTotalCalories_itemWithNullAmount_isSkipped() {
+        PantryItem noAmount = new PantryItem();
+        noAmount.setAmountUnit("package");
+        noAmount.setAmount(null);
+        noAmount.setKcalPerPackage(100.0);
+
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(noAmount));
+
+        double total = pantryService.calculateTotalCalories(1L);
+
+        assertEquals(0.0, total, 0.001);
+    }
+
+    // --- getPantryItems: household not found ---
+
+    @Test
+    void getPantryItems_throwsException_whenHouseholdNotFound() {
+        when(mockHouseholdRepo.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> pantryService.getPantryItems(99L, 1L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    // --- validatePantryItemPayload: null dto and blank barcode+name ---
+
+    @Test
+    void addItem_throwsException_whenDtoIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> pantryService.addItem(1L, null, 99L));
+    }
+
+    @Test
+    void addItem_throwsException_whenBothBarcodeAndNameAreBlank() {
+        PantryItemPostDTO postDTO = new PantryItemPostDTO();
+        postDTO.setBarcode("   ");
+        postDTO.setName("   ");
+        postDTO.setAmount(1.0);
+        postDTO.setAmountUnit("package");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.addItem(1L, postDTO, 99L)
+        );
+
+        assertEquals("Product name or barcode must not be empty.", ex.getMessage());
+    }
+
+    @Test
+    void addItem_throwsException_whenAmountIsNull() {
+        PantryItemPostDTO postDTO = new PantryItemPostDTO();
+        postDTO.setBarcode("1234");
+        postDTO.setName("Test");
+        postDTO.setAmount(null);
+        postDTO.setAmountUnit("package");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.addItem(1L, postDTO, 99L)
+        );
+
+        assertEquals("Amount must be greater than zero.", ex.getMessage());
+    }
+
+    // --- bulkAddItems: null entry in list ---
+
+    @Test
+    void bulkAddItems_throwsWhenListContainsNullEntry() {
+        List<PantryItemPostDTO> items = new ArrayList<>();
+        items.add(null);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.bulkAddItems(1L, items, 99L)
+        );
+
+        assertEquals("Bulk add items must not contain null entries.", ex.getMessage());
+    }
+
+    // --- bulkAddItems: household not found ---
+
+    @Test
+    void bulkAddItems_throwsWhenHouseholdNotFound() {
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("111");
+        dto.setName("A");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> pantryService.bulkAddItems(1L, List.of(dto), 99L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    // --- consumeItem: invalid amountUnit ---
+
+    @Test
+    void consumeItem_withInvalidAmountUnit_throwsException() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("package");
+        item.setAmount(5.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.consumeItem(1L, 10L, 1.0, "oz", null, false, 99L, null)
+        );
+
+        assertEquals("Amount unit must be one of: g, ml, serving, package.", ex.getMessage());
+    }
+
+    // --- consumeItem: serving unit ---
+
+    @Test
+    void consumeItem_withServingUnit_usesKcalPerServing() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("serving");
+        item.setKcalPerServing(300.0);
+        item.setAmount(5.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 2.0, 99L);
+
+        assertEquals(3.0, result.getRemainingAmount(), 0.001);
+        assertEquals(600.0, result.getConsumedCalories(), 0.001);
+    }
+
+    // --- ConsumeResult: deprecated getter/setter ---
+
+    @Test
+    void consumeResult_deprecatedGetRemainingCount_returnsIntValue() {
+        PantryService.ConsumeResult result = new PantryService.ConsumeResult();
+        result.setRemainingAmount(4.0);
+
+        assertEquals(4, result.getRemainingCount());
+    }
+
+    @Test
+    void consumeResult_deprecatedSetRemainingCount_setsDoubleValue() {
+        PantryService.ConsumeResult result = new PantryService.ConsumeResult();
+        result.setRemainingCount(7);
+
+        assertEquals(7.0, result.getRemainingAmount(), 0.001);
+    }
+
+    @Test
+    void consumeResult_deprecatedGetRemainingCount_nullWhenRemainingAmountNull() {
+        PantryService.ConsumeResult result = new PantryService.ConsumeResult();
+        result.setRemainingAmount(null);
+
+        assertNull(result.getRemainingCount());
+    }
+
+    @Test
+    void consumeResult_deprecatedSetRemainingCount_nullSetsNull() {
+        PantryService.ConsumeResult result = new PantryService.ConsumeResult();
+        result.setRemainingCount(null);
+
+        assertNull(result.getRemainingAmount());
+    }
+
+    // --- estimateMealPortion ---
+
+    @Test
+    void estimateMealPortion_throwsWhenHouseholdNotFound() {
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> pantryService.estimateMealPortion(1L, 10L, null, 99L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void estimateMealPortion_throwsWhenUserIsNotMember() {
+        Household household = new Household();
+        household.setId(1L);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.estimateMealPortion(1L, 10L, null, 99L)
+        );
+
+        assertEquals("User is not a member of this household.", ex.getMessage());
+    }
+
+    @Test
+    void estimateMealPortion_throwsWhenPantryItemNotFound() {
+        Household household = new Household();
+        household.setId(1L);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> pantryService.estimateMealPortion(1L, 10L, null, 99L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void estimateMealPortion_delegatesToMealPortionEstimateService() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO expectedResponse =
+                new ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO();
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+        when(mockMealPortionEstimateService.estimatePortion(eq(item), any())).thenReturn(expectedResponse);
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO result =
+                pantryService.estimateMealPortion(1L, 10L, null, 99L);
+
+        assertEquals(expectedResponse, result);
+        verify(mockMealPortionEstimateService).estimatePortion(eq(item), any());
+    }
+
+    // --- addItem: manualEntry flag bypasses local dataset ---
+
+    @Test
+    void addItem_withManualEntry_bypassesLocalDataset() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItemPostDTO postDTO = new PantryItemPostDTO();
+        postDTO.setBarcode("1234567890");
+        postDTO.setName("Manual Product");
+        postDTO.setAmount(1.0);
+        postDTO.setAmountUnit("package");
+        postDTO.setKcalPerPackage(100.0);
+        postDTO.setManualEntry(true);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByHouseholdIdAndBarcode(eq(1L), any())).thenReturn(List.of());
+        when(mockPantryRepo.save(any(PantryItem.class))).thenAnswer(inv -> {
+            PantryItem saved = inv.getArgument(0);
+            saved.setId(42L);
+            return saved;
+        });
+
+        PantryItem result = pantryService.addItem(1L, postDTO, 99L);
+
+        // Even though we have a barcode, local dataset should not be consulted for name/kcal
+        verify(mockLocalDatasetProductMapper, never()).toDto(any());
+        assertEquals("Manual Product", result.getName());
+        assertEquals(100.0, result.getKcalPerPackage(), 0.001);
+    }
+
+    // --- calculateTotalCalories: g item with null kcal ---
+
+    @Test
+    void calculateTotalCalories_gramItemWithNullKcal_doesNotContribute() {
+        PantryItem item = new PantryItem();
+        item.setAmountUnit("g");
+        item.setAmount(200.0);
+        item.setKcalPer100g(null);
+
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item));
+
+        double total = pantryService.calculateTotalCalories(1L);
+
+        assertEquals(0.0, total, 0.001);
+    }
+
+    // --- consumeItem: null amount throws ---
+
+    @Test
+    void consumeItem_nullAmount_throwsException() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.consumeItem(1L, 10L, null, 99L)
+        );
+
+        assertEquals("Quantity must be greater than zero.", ex.getMessage());
+    }
+
+    // --- removeItem: null amount throws ---
+
+    @Test
+    void removeItem_nullAmount_throwsException() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.removeItem(1L, 10L, null, 99L)
+        );
+
+        assertEquals("Quantity must be greater than zero.", ex.getMessage());
+    }
+
+    // --- consumeItem: serving unit with no kcalPerServing returns null calories ---
+
+    @Test
+    void consumeItem_withServingUnit_nullKcalPerServing_returnsNullCalories() {
+        Household household = new Household();
+        household.setId(1L);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("serving");
+        item.setKcalPerServing(null);
+        item.setAmount(4.0);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 1.0, 99L);
+
+        assertNull(result.getConsumedCalories());
+        assertEquals(3.0, result.getRemainingAmount(), 0.001);
+    }
+
+    // --- computeConsumedCalories: g item with micronutrients uses kcalPer100g via basis ---
+
+    @Test
+    void consumeItem_withGramUnitAndMicronutrients_usesKcalPer100gViaBasis() {
+        Household household = new Household();
+        household.setId(1L);
+
+        ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients mn =
+                new ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients();
+        mn.setNutritionBasisUnit("g");
+        mn.setNutritionBasisAmount(java.math.BigDecimal.valueOf(100));
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("g");
+        item.setKcalPer100g(400.0);
+        item.setAmount(500.0);
+        item.setMicronutrients(mn);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        // consume 200g: kcalPer100g * 200 / 100 = 800
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 200.0, 99L);
+
+        assertEquals(800.0, result.getConsumedCalories(), 0.001);
+        assertEquals(300.0, result.getRemainingAmount(), 0.001);
+    }
+
+    // --- computeConsumedCalories: ml item with micronutrients uses kcalPer100ml via basis ---
+
+    @Test
+    void consumeItem_withMlUnitAndMicronutrients_usesKcalPer100mlViaBasis() {
+        Household household = new Household();
+        household.setId(1L);
+
+        ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients mn =
+                new ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients();
+        mn.setNutritionBasisUnit("ml");
+        mn.setNutritionBasisAmount(java.math.BigDecimal.valueOf(100));
+
+        PantryItem item = new PantryItem();
+        item.setId(11L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("ml");
+        item.setKcalPer100ml(60.0);
+        item.setAmount(300.0);
+        item.setMicronutrients(mn);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(11L, 1L)).thenReturn(Optional.of(item));
+
+        // consume 100ml: kcalPer100ml * 100 / 100 = 60
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 11L, 100.0, 99L);
+
+        assertEquals(60.0, result.getConsumedCalories(), 0.001);
+        assertEquals(200.0, result.getRemainingAmount(), 0.001);
+    }
+
+    // --- computeConsumedCalories: basisAmount is zero, returns null ---
+
+    @Test
+    void consumeItem_withMicronutrientsButZeroBasisAmount_returnsNullCalories() {
+        Household household = new Household();
+        household.setId(1L);
+
+        ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients mn =
+                new ch.uzh.ifi.hase.soprafs26.entity.PantryItemMicronutrients();
+        mn.setNutritionBasisUnit("g");
+        mn.setNutritionBasisAmount(java.math.BigDecimal.ZERO);
+
+        PantryItem item = new PantryItem();
+        item.setId(10L);
+        item.setHouseholdId(1L);
+        item.setAmountUnit("g");
+        item.setKcalPer100g(400.0);
+        item.setAmount(500.0);
+        item.setMicronutrients(mn);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByIdAndHouseholdId(10L, 1L)).thenReturn(Optional.of(item));
+
+        PantryService.ConsumeResult result = pantryService.consumeItem(1L, 10L, 100.0, 99L);
+
+        assertNull(result.getConsumedCalories());
+    }
+
+    // --- calculateTotalCalories: ml unit with kcal ---
+
+    @Test
+    void calculateTotalCalories_mlItem_usesKcalPer100ml() {
+        PantryItem item = new PantryItem();
+        item.setAmountUnit("ml");
+        item.setAmount(300.0);
+        item.setKcalPer100ml(40.0); // 300 * 40 / 100 = 120
+
+        when(mockPantryRepo.findByHouseholdId(1L)).thenReturn(List.of(item));
+
+        double total = pantryService.calculateTotalCalories(1L);
+
+        assertEquals(120.0, total, 0.001);
+    }
+
+    // ===== Local Dataset Product: calculateKcal* methods via addItem =====
+    // These tests drive the private calculateKcalPerPackage / calculateKcalPerBasisUnit /
+    // calculateKcalPerServing methods indirectly through addItem with a mocked local dataset match.
+
+    private ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO makeLocalProduct(
+            String basisUnit, double basisAmount, double kcalValue,
+            Double packageQuantity, String packageUnit,
+            Double servingQuantity, String servingUnit) {
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO p =
+                new ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO();
+        p.setBarcode("1111111111");
+        p.setName("Test Product");
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO.NutritionDTO nutrition =
+                new ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO.NutritionDTO();
+        nutrition.setBasisUnit(basisUnit);
+        nutrition.setBasisAmount(basisAmount);
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO.NutrientAmountDTO energy =
+                new ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO.NutrientAmountDTO(kcalValue, "kcal");
+        nutrition.setCoreNutrition(java.util.Map.of("energy-kcal", energy));
+        p.setNutrition(nutrition);
+
+        p.setPackageQuantity(packageQuantity);
+        p.setPackageQuantityUnit(packageUnit);
+        p.setServingQuantity(servingQuantity);
+        p.setServingQuantityUnit(servingUnit);
+
+        return p;
+    }
+
+    private void setupHouseholdAndMember() {
+        ch.uzh.ifi.hase.soprafs26.entity.Household household = new ch.uzh.ifi.hase.soprafs26.entity.Household();
+        household.setId(1L);
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(ch.uzh.ifi.hase.soprafs26.entity.HouseholdMemberId.class))).thenReturn(true);
+        when(mockPantryRepo.findByHouseholdIdAndBarcode(eq(1L), any())).thenReturn(List.of());
+        when(mockPantryRepo.save(any(PantryItem.class))).thenAnswer(inv -> {
+            PantryItem saved = inv.getArgument(0);
+            if (saved.getId() == null) saved.setId(50L);
+            return saved;
+        });
+    }
+
+    @Test
+    void addItem_withLocalDatasetProduct_calculatesKcalPer100g() {
+        setupHouseholdAndMember();
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
+                makeLocalProduct("g", 100.0, 400.0, null, null, null, null);
+
+        ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetBucketScanner.class.getSimpleName(); // force class load
+
+        // findRawRowByBarcode returns a non-empty Optional, then mapper returns localProduct
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
+        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1111111111");
+        dto.setName("Manual Name");
+        dto.setAmount(500.0);
+        dto.setAmountUnit("g");
+
+        PantryItem result = pantryService.addItem(1L, dto, 99L);
+
+        // kcalPer100g = 400 * 100 / 100 = 400
+        assertEquals(400.0, result.getKcalPer100g(), 0.001);
+        assertNull(result.getKcalPer100ml());
+    }
+
+    @Test
+    void addItem_withLocalDatasetProduct_calculatesKcalPer100ml() {
+        setupHouseholdAndMember();
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
+                makeLocalProduct("ml", 100.0, 50.0, null, null, null, null);
+
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
+        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1111111111");
+        dto.setName("Juice");
+        dto.setAmount(500.0);
+        dto.setAmountUnit("ml");
+
+        PantryItem result = pantryService.addItem(1L, dto, 99L);
+
+        // kcalPer100ml = 50 * 100 / 100 = 50
+        assertEquals(50.0, result.getKcalPer100ml(), 0.001);
+        assertNull(result.getKcalPer100g());
+    }
+
+    @Test
+    void addItem_withLocalDatasetProduct_calculatesKcalPerPackage() {
+        setupHouseholdAndMember();
+
+        // basis=g, packageUnit=g, packageQuantity=200 → kcalPerPackage = 400 * 200 / 100 = 800
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
+                makeLocalProduct("g", 100.0, 400.0, 200.0, "g", null, null);
+
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
+        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1111111111");
+        dto.setName("Biscuits");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+
+        PantryItem result = pantryService.addItem(1L, dto, 99L);
+
+        assertEquals(800.0, result.getKcalPerPackage(), 0.001);
+    }
+
+    @Test
+    void addItem_withLocalDatasetProduct_calculatesKcalPerServing() {
+        setupHouseholdAndMember();
+
+        // basis=g basisAmount=100, kcal=300, serving=50g → kcalPerServing = 300 * 50 / 100 = 150
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
+                makeLocalProduct("g", 100.0, 300.0, null, null, 50.0, "g");
+
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
+        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1111111111");
+        dto.setName("Granola");
+        dto.setAmount(2.0);
+        dto.setAmountUnit("serving");
+
+        PantryItem result = pantryService.addItem(1L, dto, 99L);
+
+        assertEquals(150.0, result.getKcalPerServing(), 0.001);
+    }
+
+    @Test
+    void addItem_withLocalDatasetProduct_kcalPerPackage_nullWhenUnitsMismatch() {
+        setupHouseholdAndMember();
+
+        // basisUnit=g but packageUnit=ml → mismatch → null
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
+                makeLocalProduct("g", 100.0, 400.0, 200.0, "ml", null, null);
+
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
+        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1111111111");
+        dto.setName("Something");
+        dto.setAmount(1.0);
+        dto.setAmountUnit("package");
+
+        PantryItem result = pantryService.addItem(1L, dto, 99L);
+
+        assertNull(result.getKcalPerPackage());
+    }
+
+    @Test
+    void addItem_withLocalDatasetProduct_kcalPerServing_nullWhenServingUnitMismatch() {
+        setupHouseholdAndMember();
+
+        // servingQuantityUnit=ml but basisUnit=g → mismatch → null
+        ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO localProduct =
+                makeLocalProduct("g", 100.0, 300.0, null, null, 50.0, "ml");
+
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(java.util.Map.of("code", "1111111111")));
+        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(localProduct);
+
+        PantryItemPostDTO dto = new PantryItemPostDTO();
+        dto.setBarcode("1111111111");
+        dto.setName("Granola");
+        dto.setAmount(2.0);
+        dto.setAmountUnit("serving");
+
+        PantryItem result = pantryService.addItem(1L, dto, 99L);
+
+        assertNull(result.getKcalPerServing());
+    }
 }

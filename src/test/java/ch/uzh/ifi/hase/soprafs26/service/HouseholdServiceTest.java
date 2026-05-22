@@ -992,4 +992,148 @@ class HouseholdServiceTest {
         assertEquals("Unknown", result.get(0).getUsername());
     }
 
+    // ── getHouseholdsForUser ─────────────────────────────────────────────────
+
+    @Test
+    void getHouseholdsForUser_noMemberships_returnsEmptyList() {
+        when(householdMemberRepository.findByIdUserId(1L)).thenReturn(Collections.emptyList());
+
+        List<HouseholdService.HouseholdAccess> result = householdService.getHouseholdsForUser(1L);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void getHouseholdsForUser_withMemberships_returnsHouseholdsWithRole() {
+        Household h1 = new Household();
+        h1.setId(10L);
+        h1.setOwnerId(1L);
+        h1.setName("My House");
+
+        HouseholdMember m1 = new HouseholdMember();
+        m1.setId(new HouseholdMemberId(1L, 10L));
+
+        when(householdMemberRepository.findByIdUserId(1L)).thenReturn(List.of(m1));
+        when(householdRepository.findAllById(List.of(10L))).thenReturn(List.of(h1));
+
+        List<HouseholdService.HouseholdAccess> result = householdService.getHouseholdsForUser(1L);
+
+        assertEquals(1, result.size());
+        assertEquals("My House", result.get(0).household().getName());
+        assertEquals("owner", result.get(0).role());
+    }
+
+    @Test
+    void getHouseholdsForUser_nonOwnerMember_returnsRoleMember() {
+        Household h1 = new Household();
+        h1.setId(10L);
+        h1.setOwnerId(99L);
+        h1.setName("Other House");
+
+        HouseholdMember m1 = new HouseholdMember();
+        m1.setId(new HouseholdMemberId(1L, 10L));
+
+        when(householdMemberRepository.findByIdUserId(1L)).thenReturn(List.of(m1));
+        when(householdRepository.findAllById(List.of(10L))).thenReturn(List.of(h1));
+
+        List<HouseholdService.HouseholdAccess> result = householdService.getHouseholdsForUser(1L);
+
+        assertEquals(1, result.size());
+        assertEquals("member", result.get(0).role());
+    }
+
+    // ── getHouseholdForUser ─────────────────────────────────────────────────
+
+    @Test
+    void getHouseholdForUser_memberAccess_returnsHouseholdWithRole() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(1L, 10L)))).thenReturn(true);
+
+        HouseholdService.HouseholdAccess access = householdService.getHouseholdForUser(10L, 1L);
+
+        assertEquals(household, access.household());
+        assertEquals("owner", access.role());
+    }
+
+    @Test
+    void getHouseholdForUser_nonMember_throwsForbidden() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+        when(householdMemberRepository.existsById(eq(new HouseholdMemberId(99L, 10L)))).thenReturn(false);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.getHouseholdForUser(10L, 99L));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+    }
+
+    @Test
+    void getHouseholdForUser_householdNotFound_throws404() {
+        when(householdRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.getHouseholdForUser(99L, 1L));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    // ── deleteHousehold ─────────────────────────────────────────────────────
+
+    @Test
+    void deleteHousehold_owner_success() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(1L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+
+        householdService.deleteHousehold(10L, 1L);
+
+        verify(consumptionLogRepository).deleteByHouseholdId(10L);
+        verify(pantryItemRepository).deleteByHouseholdId(10L);
+        verify(householdMemberRepository).deleteByIdHouseholdId(10L);
+        verify(householdRepository).delete(household);
+    }
+
+    @Test
+    void deleteHousehold_nonOwner_throwsForbidden() {
+        Household household = new Household();
+        household.setId(10L);
+        household.setOwnerId(2L);
+
+        when(householdRepository.findById(10L)).thenReturn(Optional.of(household));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.deleteHousehold(10L, 1L));
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+    }
+
+    @Test
+    void deleteHousehold_householdNotFound_throws404() {
+        when(householdRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.deleteHousehold(99L, 1L));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void joinHouseholdByInviteCode_emptyCode_throwsBadRequest() {
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.joinHouseholdByInviteCode("", 1L));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void joinHouseholdByInviteCode_nullCode_throwsBadRequest() {
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> householdService.joinHouseholdByInviteCode(null, 1L));
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
 }
