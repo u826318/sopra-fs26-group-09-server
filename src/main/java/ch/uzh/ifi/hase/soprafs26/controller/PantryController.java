@@ -23,20 +23,15 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryOverviewGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs26.service.MealFoodRecognitionService;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 
 @RestController
 public class PantryController {
 
     private final PantryService pantryService;
-    private final MealFoodRecognitionService mealFoodRecognitionService;
 
-    public PantryController(
-            PantryService pantryService,
-            MealFoodRecognitionService mealFoodRecognitionService) {
+    public PantryController(PantryService pantryService) {
         this.pantryService = pantryService;
-        this.mealFoodRecognitionService = mealFoodRecognitionService;
     }
 
     @PostMapping("/households/{householdId}/pantry")
@@ -117,14 +112,21 @@ public class PantryController {
         );
     }
 
-    @PostMapping("/households/{householdId}/meal/recognize-food")
+    @PostMapping({
+            "/households/{householdId}/pantry/recognize-food",
+            "/households/{householdId}/meal/recognize-food"
+    })
     @ResponseStatus(HttpStatus.OK)
     public MealFoodRecognitionResponseDTO recognizeMealFood(
             @RequestAttribute("authenticatedUserId") Long authenticatedUserId,
             @PathVariable Long householdId,
             @RequestParam("image") MultipartFile image) {
 
-        return mealFoodRecognitionService.recognizeFood(image);
+        return pantryService.recognizeMealFood(
+                householdId,
+                image,
+                authenticatedUserId
+        );
     }
 
     @PostMapping("/households/{householdId}/pantry/{itemId}/remove")

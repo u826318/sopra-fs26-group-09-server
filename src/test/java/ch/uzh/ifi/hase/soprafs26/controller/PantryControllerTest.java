@@ -13,9 +13,11 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,8 +26,9 @@ import ch.uzh.ifi.hase.soprafs26.config.AuthFilter;
 import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.exceptions.GlobalExceptionAdvice;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
-import ch.uzh.ifi.hase.soprafs26.service.MealFoodRecognitionService;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.RecognizedFoodDTO;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
@@ -42,10 +45,6 @@ class PantryControllerTest {
 
         @MockitoBean
         private PantryService pantryService;
-
-        @MockitoBean
-
-        private MealFoodRecognitionService mealFoodRecognitionService;
 
         @MockitoBean
         private UserRepository userRepository;
@@ -299,6 +298,81 @@ class PantryControllerTest {
                                 .content("{ \"items\": [] }"))
                         .andExpect(status().isBadRequest())
                         .andExpect(jsonPath("$.message").value("Bulk add payload must contain at least one item."));
+        }
+
+        @Test
+        void recognizeMealFood_success_returnsRecognizedFoods() throws Exception {
+                RecognizedFoodDTO recognizedFood = new RecognizedFoodDTO();
+                recognizedFood.setName("Rice");
+                recognizedFood.setKcalPer100g(130.0);
+                recognizedFood.setSuggestedAmount(100.0);
+                recognizedFood.setUnit("g");
+                recognizedFood.setConfidence(0.82);
+
+                MealFoodRecognitionResponseDTO response = new MealFoodRecognitionResponseDTO();
+                response.setStatus("RECOGNIZED");
+                response.setDetectedFoods(List.of("rice"));
+                response.setRecognizedFoods(List.of(recognizedFood));
+                response.setMessage("Detected rice.");
+
+                when(pantryService.recognizeMealFood(eq(1L), any(), eq(99L))).thenReturn(response);
+
+                MockMultipartFile image = new MockMultipartFile(
+                        "image",
+                        "meal.jpg",
+                        "image/jpeg",
+                        new byte[]{1, 2, 3}
+                );
+
+                mockMvc.perform(multipart("/households/1/pantry/recognize-food").file(image))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.status").value("RECOGNIZED"))
+                        .andExpect(jsonPath("$.detectedFoods[0]").value("rice"))
+                        .andExpect(jsonPath("$.recognizedFoods[0].name").value("Rice"))
+                        .andExpect(jsonPath("$.recognizedFoods[0].kcalPer100g").value(130.0))
+                        .andExpect(jsonPath("$.recognizedFoods[0].suggestedAmount").value(100.0))
+                        .andExpect(jsonPath("$.recognizedFoods[0].unit").value("g"));
+        }
+
+        @Test
+        void recognizeMealFood_emptyImage_returnsBadRequest() throws Exception {
+                when(pantryService.recognizeMealFood(eq(1L), any(), eq(99L)))
+                        .thenThrow(new IllegalArgumentException("Meal photo must not be empty."));
+
+                MockMultipartFile image = new MockMultipartFile(
+                        "image",
+                        "empty.jpg",
+                        "image/jpeg",
+                        new byte[0]
+                );
+
+                mockMvc.perform(multipart("/households/1/pantry/recognize-food").file(image))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").value("Meal photo must not be empty."));
+        }
+
+        @Test
+        void recognizeMealFood_legacyEndpoint_returnsFallbackResponse() throws Exception {
+                MealFoodRecognitionResponseDTO response = new MealFoodRecognitionResponseDTO();
+                response.setStatus("MANUAL_FALLBACK");
+                response.setDetectedFoods(List.of());
+                response.setRecognizedFoods(List.of());
+                response.setMessage("Automatic food recognition failed. Please enter the food manually.");
+
+                when(pantryService.recognizeMealFood(eq(1L), any(), eq(99L))).thenReturn(response);
+
+                MockMultipartFile image = new MockMultipartFile(
+                        "image",
+                        "meal.jpg",
+                        "image/jpeg",
+                        new byte[]{1}
+                );
+
+                mockMvc.perform(multipart("/households/1/meal/recognize-food").file(image))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.status").value("MANUAL_FALLBACK"))
+                        .andExpect(jsonPath("$.recognizedFoods.length()").value(0))
+                        .andExpect(jsonPath("$.message").value("Automatic food recognition failed. Please enter the food manually."));
         }
 
         @Test

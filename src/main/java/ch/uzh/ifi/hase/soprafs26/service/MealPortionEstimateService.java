@@ -19,6 +19,7 @@ public class MealPortionEstimateService {
 
     private final WebClient webClient;
     private final ObjectMapper mapper = new ObjectMapper();
+    private static final List<String> AI_PORTION_UNITS = List.of("g", "ml", "package");
 
     @Value("${openai.model:gpt-4o-mini}")
     private String model;
@@ -100,7 +101,11 @@ public class MealPortionEstimateService {
             PortionEstimateResponseDTO dto = mapper.readValue(cleanJson, PortionEstimateResponseDTO.class);
             dto.setStatus("ESTIMATED");
 
-            if (dto.getUnit() == null && pantryItem != null) {
+            if (dto.getUnit() != null) {
+                String normalizedUnit = dto.getUnit().trim().toLowerCase();
+                dto.setUnit(AI_PORTION_UNITS.contains(normalizedUnit) ? normalizedUnit : null);
+            }
+            if (dto.getUnit() == null && pantryItem != null && AI_PORTION_UNITS.contains(pantryItem.getAmountUnit())) {
                 dto.setUnit(pantryItem.getAmountUnit());
             }
 

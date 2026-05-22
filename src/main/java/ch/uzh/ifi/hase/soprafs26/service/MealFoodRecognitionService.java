@@ -17,6 +17,7 @@ import ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO;
 public class MealFoodRecognitionService {
 
     private final WebClient webClient;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${openai.model:gpt-4o-mini}")
     private String model;
@@ -37,13 +38,27 @@ public class MealFoodRecognitionService {
             String prompt = """
                     You are a food recognition assistant.
 
-                    Analyze the meal photo and identify the visible food items.
+                    Analyze the meal photo and identify visible edible food items.
+                    Estimate practical nutrition values for adding one recognized food to a pantry.
+                    Use only these units for suggestedAmount: g, ml, package.
+                    Prefer kcalPer100g for solid foods and kcalPerServing only when per-100g is not realistic.
+                    Keep estimates conservative and mark low confidence when uncertain.
 
                     Respond ONLY in JSON:
 
                     {
-                      "detectedFoods": ["rice", "chicken", "broccoli"],
-                      "message": "Detected rice, chicken, and broccoli."
+                      "detectedFoods": ["rice", "grilled chicken"],
+                      "recognizedFoods": [
+                        {
+                          "name": "rice",
+                          "kcalPer100g": 130,
+                          "kcalPerServing": null,
+                          "suggestedAmount": 100,
+                          "unit": "g",
+                          "confidence": 0.82
+                        }
+                      ],
+                      "message": "Detected rice and grilled chicken."
                     }
                     """;
 
@@ -86,11 +101,16 @@ public class MealFoodRecognitionService {
                     .replace("```", "")
                     .trim();
 
-            ObjectMapper mapper = new ObjectMapper();
             MealFoodRecognitionResponseDTO dto =
                     mapper.readValue(cleanJson, MealFoodRecognitionResponseDTO.class);
 
             dto.setStatus("RECOGNIZED");
+            if (dto.getDetectedFoods() == null) {
+                dto.setDetectedFoods(List.of());
+            }
+            if (dto.getRecognizedFoods() == null) {
+                dto.setRecognizedFoods(List.of());
+            }
 
             return dto;
         }
@@ -98,6 +118,7 @@ public class MealFoodRecognitionService {
             MealFoodRecognitionResponseDTO fallback = new MealFoodRecognitionResponseDTO();
             fallback.setStatus("MANUAL_FALLBACK");
             fallback.setDetectedFoods(List.of());
+            fallback.setRecognizedFoods(List.of());
             fallback.setMessage("Automatic food recognition failed. Please enter the food manually.");
             return fallback;
         }

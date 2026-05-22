@@ -26,6 +26,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PortionEstimateResponseDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
@@ -55,6 +56,7 @@ public class PantryService {
     private final PantryItemMicronutrientService pantryItemMicronutrientService;
     private final DailyNutrientIntakeService dailyNutrientIntakeService;
     private final MealPortionEstimateService mealPortionEstimateService;
+    private final MealFoodRecognitionService mealFoodRecognitionService;
     private final LocalDatasetLookupService localDatasetLookupService;
     private final LocalDatasetProductMapper localDatasetProductMapper;
 
@@ -68,6 +70,7 @@ public class PantryService {
             PantryItemMicronutrientService pantryItemMicronutrientService,
             DailyNutrientIntakeService dailyNutrientIntakeService,
             MealPortionEstimateService mealPortionEstimateService,
+            MealFoodRecognitionService mealFoodRecognitionService,
             LocalDatasetLookupService localDatasetLookupService,
             LocalDatasetProductMapper localDatasetProductMapper
     ) {
@@ -80,6 +83,7 @@ public class PantryService {
         this.pantryItemMicronutrientService = pantryItemMicronutrientService;
         this.dailyNutrientIntakeService = dailyNutrientIntakeService;
         this.mealPortionEstimateService = mealPortionEstimateService;
+        this.mealFoodRecognitionService = mealFoodRecognitionService;
         this.localDatasetLookupService = localDatasetLookupService;
         this.localDatasetProductMapper = localDatasetProductMapper;
     }
@@ -601,6 +605,23 @@ public class PantryService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pantry item not found in this household."));
 
         return mealPortionEstimateService.estimatePortion(pantryItem, image);
+    }
+
+    public MealFoodRecognitionResponseDTO recognizeMealFood(
+            Long householdId,
+            MultipartFile image,
+            Long authenticatedUserId) {
+
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Household not found."));
+
+        HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
+        boolean isMember = householdMemberRepository.existsById(membershipId);
+        if (!isMember) {
+            throw new IllegalArgumentException("User is not a member of this household.");
+        }
+
+        return mealFoodRecognitionService.recognizeFood(image);
     }
 
     public ConsumeResult consumeItem(Long householdId, Long itemId, Double amount, Long authenticatedUserId) {

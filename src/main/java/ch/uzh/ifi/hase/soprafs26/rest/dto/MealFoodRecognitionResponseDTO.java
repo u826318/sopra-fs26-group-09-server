@@ -6,6 +6,7 @@ public class MealFoodRecognitionResponseDTO {
 
     private String status;
     private List<String> detectedFoods;
+    private List<RecognizedFoodDTO> recognizedFoods;
     private String message;
 
     public String getStatus() {
@@ -22,6 +23,14 @@ public class MealFoodRecognitionResponseDTO {
 
     public void setDetectedFoods(List<String> detectedFoods) {
         this.detectedFoods = detectedFoods;
+    }
+
+    public List<RecognizedFoodDTO> getRecognizedFoods() {
+        return recognizedFoods;
+    }
+
+    public void setRecognizedFoods(List<RecognizedFoodDTO> recognizedFoods) {
+        this.recognizedFoods = recognizedFoods;
     }
 
     public String getMessage() {

@@ -53,6 +53,7 @@ class PantryServiceTest {
     private DailyNutrientIntakeService mockDailyNutrientIntakeService;
     private PantryService pantryService;
     private MealPortionEstimateService mockMealPortionEstimateService;
+    private MealFoodRecognitionService mockMealFoodRecognitionService;
     private LocalDatasetLookupService mockLocalDatasetLookupService;
     private LocalDatasetProductMapper mockLocalDatasetProductMapper;
 
@@ -67,6 +68,7 @@ class PantryServiceTest {
         mockMicronutrientService = mock(PantryItemMicronutrientService.class);
         mockDailyNutrientIntakeService = mock(DailyNutrientIntakeService.class);
         mockMealPortionEstimateService = mock(MealPortionEstimateService.class);
+        mockMealFoodRecognitionService = mock(MealFoodRecognitionService.class);
         mockLocalDatasetLookupService = mock(LocalDatasetLookupService.class);
         mockLocalDatasetProductMapper = mock(LocalDatasetProductMapper.class);
 
@@ -80,6 +82,7 @@ class PantryServiceTest {
                 mockMicronutrientService,
                 mockDailyNutrientIntakeService,
                 mockMealPortionEstimateService,
+                mockMealFoodRecognitionService,
                 mockLocalDatasetLookupService,
                 mockLocalDatasetProductMapper
         );
@@ -1577,6 +1580,57 @@ class PantryServiceTest {
 
         assertEquals(expectedResponse, result);
         verify(mockMealPortionEstimateService).estimatePortion(eq(item), any());
+    }
+
+    // --- recognizeMealFood ---
+
+    @Test
+    void recognizeMealFood_throwsWhenHouseholdNotFound() {
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> pantryService.recognizeMealFood(1L, null, 99L)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        verify(mockMealFoodRecognitionService, never()).recognizeFood(any());
+    }
+
+    @Test
+    void recognizeMealFood_throwsWhenUserIsNotMember() {
+        Household household = new Household();
+        household.setId(1L);
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> pantryService.recognizeMealFood(1L, null, 99L)
+        );
+
+        assertEquals("User is not a member of this household.", ex.getMessage());
+        verify(mockMealFoodRecognitionService, never()).recognizeFood(any());
+    }
+
+    @Test
+    void recognizeMealFood_delegatesToMealFoodRecognitionServiceAfterMembershipValidation() {
+        Household household = new Household();
+        household.setId(1L);
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO expectedResponse =
+                new ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO();
+
+        when(mockHouseholdRepo.findById(1L)).thenReturn(Optional.of(household));
+        when(mockHouseholdMemberRepo.existsById(any(HouseholdMemberId.class))).thenReturn(true);
+        when(mockMealFoodRecognitionService.recognizeFood(any())).thenReturn(expectedResponse);
+
+        ch.uzh.ifi.hase.soprafs26.rest.dto.MealFoodRecognitionResponseDTO result =
+                pantryService.recognizeMealFood(1L, null, 99L);
+
+        assertEquals(expectedResponse, result);
+        verify(mockMealFoodRecognitionService).recognizeFood(any());
     }
 
     // --- addItem: manualEntry flag bypasses local dataset ---

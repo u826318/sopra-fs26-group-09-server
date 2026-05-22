@@ -126,6 +126,31 @@ class MealPortionEstimateServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    void estimatePortion_usesAmountUnitAsFallback_whenAiUnitIsUnsupported() {
+        String json = "{\"suggestedMinAmount\":1,\"suggestedMaxAmount\":2,\"unit\":\"serving\",\"message\":\"Toast.\"}";
+        Map<String, Object> response = Map.of(
+                "choices", List.of(
+                        Map.of("message", Map.of("content", json))
+                )
+        );
+
+        doReturn(Mono.just(response)).when(responseSpec).bodyToMono(any(Class.class));
+
+        PantryItem item = new PantryItem();
+        item.setId(2L);
+        item.setAmountUnit("g");
+
+        MockMultipartFile image = new MockMultipartFile(
+                "image", "toast.jpg", "image/jpeg", new byte[]{4, 5, 6});
+
+        PortionEstimateResponseDTO dto = service.estimatePortion(item, image);
+
+        assertEquals("ESTIMATED", dto.getStatus());
+        assertEquals("g", dto.getUnit());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     void estimatePortion_returnsManualFallback_whenWebClientThrows() {
         doThrow(new RuntimeException("Network failure")).when(responseSpec).bodyToMono(any(Class.class));
 
