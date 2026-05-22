@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class PantryItemPostDTO {
 
+    private Long productIndex;
     private String barcode;
     private String name;
     private LocalDate expirationDate;
@@ -22,10 +23,21 @@ public class PantryItemPostDTO {
     private Double kcalPer100ml;
     // populated when amountUnit = "serving"
     private Double kcalPerServing;
+    // Package metadata is required for local-dataset products when the dataset does not provide it.
+    // It is stored as conversion metadata so pantry amount can stay as fractional packages.
     private String packageQuantity;
+    private String packageQuantityUnit;
     private Map<String, Object> nutriments;
     private Boolean manualEntry;
     private Map<String, PantryItemMicronutrientPostDTO> micronutrients;
+
+    public Long getProductIndex() {
+        return productIndex;
+    }
+
+    public void setProductIndex(Long productIndex) {
+        this.productIndex = productIndex;
+    }
 
     public String getBarcode() {
         return barcode;
@@ -75,6 +87,14 @@ public class PantryItemPostDTO {
 
     public void setPackageQuantity(String packageQuantity) {
         this.packageQuantity = packageQuantity;
+    }
+
+    public String getPackageQuantityUnit() {
+        return packageQuantityUnit;
+    }
+
+    public void setPackageQuantityUnit(String packageQuantityUnit) {
+        this.packageQuantityUnit = packageQuantityUnit;
     }
 
     public Map<String, Object> getNutriments() {
