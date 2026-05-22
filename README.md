@@ -225,6 +225,8 @@ noodles -> 101 10098 78239 413876...
 
 At runtime, when a user searches for a product name, the backend normalizes and tokenizes the query, finds matching `product_index` values from the name-index, combines and ranks the candidates, and then resolves the selected product through the local product dataset.
 
+For example "tik udon noodles" will be tokenized to "tik", "udon", "noodles", and we search each token in the name-index dataset, and then filter and rank candidates. 
+
 The generated name-index resources are stored as streamable CSV/GZIP shards:
 
 ```text
