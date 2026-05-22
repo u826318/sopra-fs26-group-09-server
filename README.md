@@ -20,8 +20,9 @@ Virtual Pantry is a collaborative calorie and nutrition tracking app for househo
 - **OpenFoodFacts API** and a bundled **local product dataset** for product
   lookup, barcode resolution, product-name search, nutrition metadata, and
   receipt item matching.
-- **RecipeAPI.io** for external recipe recommendations, with a curated local
-  JSON recipe catalog and dynamic pantry-based recipe generation as fallbacks.
+- A curated local recipe catalog and dynamic pantry-based recipe generation for
+  stable pantry-aware recipe recommendations without depending on an external
+  recipe API during demos and deployment.
 - **WebSocket (STOMP over SockJS)** for real-time pantry update broadcasts to
   connected frontend clients.
 - **Jackson** for JSON parsing and mapping external API responses into backend
@@ -78,6 +79,31 @@ Micronutrient reference values are exposed through [`MicronutrientReferenceContr
 Daily intake is exposed through [`UserDailyNutrientIntakeController.getDailyNutrientIntake`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/UserDailyNutrientIntakeController.java#L28-L42). It calls [`DailyNutrientIntakeService.getDailyIntakeOrEmpty`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L36-L41), which returns the stored daily intake or an empty intake object for that date.
 
 This part connects back to the pantry through consumption. When a user consumes a pantry item, [`PantryService.consumeItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L501-L618) computes the nutrient multiplier with [`PantryService.resolveNutritionBasisMultiplier`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L628-L645), then passes the result to [`DailyNutrientIntakeService.recordConsumedPantryItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L59-L89). That method finds or creates the daily intake row and adds micronutrients through [`DailyNutrientIntakeService.addConsumedMicronutrients`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/DailyNutrientIntakeService.java#L98-L132).
+
+### 5. Recipe recommendation and pantry ingredient matching
+
+This component recommends recipes from the current household pantry. The REST endpoints are in [`RecipeController`](src/main/java/ch/uzh/ifi/hase/soprafs26/controller/RecipeController.java), and the recommendation logic is handled by [`RecipeService`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/RecipeService.java).
+
+The backend first builds recommendations from the curated local recipe catalog, then appends dynamic recipes generated from pantry contents. The response keeps a `source` field so the frontend can show where a recommendation came from:
+
+- `LOCAL_CATALOG` for curated recipes.
+- `DYNAMIC_PANTRY` for recipes generated from the current pantry.
+
+Recipe ingredient matching is keyword-based rather than exact-name based. Each recipe ingredient stores a display name, required amount, unit, and a set of keywords. During matching, [`RecipeService.matchIngredient`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/RecipeService.java#L210-L238) first filters pantry items by unit (`g`, `ml`, or `package`) and then calls [`RecipeService.matchesName`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/RecipeService.java#L240-L249). Both the pantry item name and recipe keywords are normalized by lowercasing, replacing non-alphanumeric characters with spaces, and trimming whitespace. A match succeeds if the normalized pantry item name contains a keyword, or if the keyword contains the pantry item name.
+
+Examples:
+
+- A recipe ingredient `Eggs` with keywords `egg`, `eggs` can match pantry items named `Egg`, `Fresh eggs`, or `Organic Eggs`.
+- A recipe ingredient `Avocado` with keyword `avocado` can match pantry items named `Avocado` or `Ripe avocado`.
+- A recipe ingredient `Pasta` with keywords `pasta`, `spaghetti`, `penne` can match pantry items named `Pasta spaghetti` or `Penne`.
+- A recipe ingredient `Tomato sauce` with keywords `tomato`, `tomato sauce` can match pantry items named `Tomato sauce` or `Cherry tomatoes`.
+
+For demo and local testing, these local product barcodes are useful because they can be added to the pantry and then matched by recipe recommendations:
+
+- `20408466` — egg
+- `7610632951347` — avocado
+
+After these items are added to a household pantry, the recipe endpoint can rank recipes such as egg-based breakfasts or avocado toast/bowl recipes higher because the pantry ingredient matching finds the relevant local items. When the user cooks a ready recipe, [`RecipeService.cookRecipe`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/RecipeService.java#L82-L122) consumes the matched pantry ingredients through [`PantryService.consumeItem`](src/main/java/ch/uzh/ifi/hase/soprafs26/service/PantryService.java#L501-L618), which subtracts pantry quantities and records consumption.
 
 ### How the components work together
 
