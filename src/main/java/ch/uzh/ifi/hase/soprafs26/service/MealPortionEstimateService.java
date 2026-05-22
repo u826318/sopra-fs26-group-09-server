@@ -100,15 +100,30 @@ public class MealPortionEstimateService {
             PortionEstimateResponseDTO dto = mapper.readValue(cleanJson, PortionEstimateResponseDTO.class);
             dto.setStatus("ESTIMATED");
 
-            if (dto.getUnit() == null && pantryItem != null) {
-                dto.setUnit(pantryItem.getAmountUnit());
-            }
+            String normalizedUnit = normalizeAiUnit(dto.getUnit(), pantryItem);
+            dto.setUnit(normalizedUnit);
 
             return dto;
         }
         catch (Exception e) {
             return manualFallback(pantryItem);
         }
+    }
+
+    private String normalizeAiUnit(String unit, PantryItem pantryItem) {
+        if (unit != null) {
+            String normalized = unit.trim().toLowerCase();
+            if ("g".equals(normalized) || "gram".equals(normalized) || "grams".equals(normalized)) {
+                return "g";
+            }
+            if ("ml".equals(normalized) || "milliliter".equals(normalized) || "milliliters".equals(normalized)) {
+                return "ml";
+            }
+            if ("package".equals(normalized) || "packages".equals(normalized) || "pack".equals(normalized)) {
+                return "package";
+            }
+        }
+        return pantryItem != null ? pantryItem.getAmountUnit() : null;
     }
 
     private PortionEstimateResponseDTO manualFallback(PantryItem pantryItem) {

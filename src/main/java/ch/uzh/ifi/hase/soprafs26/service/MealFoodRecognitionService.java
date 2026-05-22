@@ -37,14 +37,26 @@ public class MealFoodRecognitionService {
             String prompt = """
                     You are a food recognition assistant.
 
-                    Analyze the meal photo and identify the visible food items.
+                    Analyze the meal photo and identify visible food items. Estimate calories conservatively.
 
                     Respond ONLY in JSON:
 
                     {
                       "detectedFoods": ["rice", "chicken", "broccoli"],
-                      "message": "Detected rice, chicken, and broccoli."
+                      "recognizedFoods": [
+                        {
+                          "name": "rice",
+                          "kcalPer100g": 130,
+                          "kcalPerServing": 260,
+                          "suggestedAmount": 200,
+                          "unit": "g",
+                          "confidence": 0.8
+                        }
+                      ],
+                      "message": "Detected rice, chicken, and broccoli. Please review before saving."
                     }
+
+                    Allowed units are g, ml, package, serving. If unsure, use g and kcalPer100g.
                     """;
 
             Map<String, Object> requestBody = Map.of(
@@ -91,6 +103,12 @@ public class MealFoodRecognitionService {
                     mapper.readValue(cleanJson, MealFoodRecognitionResponseDTO.class);
 
             dto.setStatus("RECOGNIZED");
+            if (dto.getDetectedFoods() == null) {
+                dto.setDetectedFoods(List.of());
+            }
+            if (dto.getRecognizedFoods() == null) {
+                dto.setRecognizedFoods(List.of());
+            }
 
             return dto;
         }
@@ -98,6 +116,7 @@ public class MealFoodRecognitionService {
             MealFoodRecognitionResponseDTO fallback = new MealFoodRecognitionResponseDTO();
             fallback.setStatus("MANUAL_FALLBACK");
             fallback.setDetectedFoods(List.of());
+            fallback.setRecognizedFoods(List.of());
             fallback.setMessage("Automatic food recognition failed. Please enter the food manually.");
             return fallback;
         }
