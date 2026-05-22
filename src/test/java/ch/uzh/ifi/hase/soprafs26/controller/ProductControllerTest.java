@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
@@ -39,6 +40,9 @@ class ProductControllerTest {
 
     @MockitoBean
     private LocalDatasetNameSearchService localDatasetNameSearchService;
+
+    @MockitoBean
+    private BarcodeExtractionService barcodeExtractionService;
 
     @MockitoBean
     private UserRepository userRepository;
