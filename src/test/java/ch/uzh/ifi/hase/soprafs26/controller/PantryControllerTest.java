@@ -29,7 +29,6 @@ import ch.uzh.ifi.hase.soprafs26.entity.PantryItem;
 import ch.uzh.ifi.hase.soprafs26.exceptions.GlobalExceptionAdvice;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
-import ch.uzh.ifi.hase.soprafs26.service.MealFoodRecognitionService;
 import ch.uzh.ifi.hase.soprafs26.service.PantryService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
@@ -46,10 +45,6 @@ class PantryControllerTest {
 
         @MockitoBean
         private PantryService pantryService;
-
-        @MockitoBean
-
-        private MealFoodRecognitionService mealFoodRecognitionService;
 
         @MockitoBean
         private UserRepository userRepository;
@@ -375,7 +370,7 @@ class PantryControllerTest {
                 response.setStatus("OK");
                 response.setDetectedFoods(List.of("apple", "banana"));
 
-                when(mealFoodRecognitionService.recognizeFood(any())).thenReturn(response);
+                when(pantryService.recognizeMealFood(eq(1L), any(), eq(99L))).thenReturn(response);
 
                 MockMultipartFile image = new MockMultipartFile("image", "meal.jpg", "image/jpeg", "data".getBytes());
 

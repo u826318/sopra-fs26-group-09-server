@@ -39,6 +39,7 @@ import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
+import ch.uzh.ifi.hase.soprafs26.service.MealFoodRecognitionService;
 import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
 
 class PantryServiceTest {
@@ -53,6 +54,7 @@ class PantryServiceTest {
     private DailyNutrientIntakeService mockDailyNutrientIntakeService;
     private PantryService pantryService;
     private MealPortionEstimateService mockMealPortionEstimateService;
+    private MealFoodRecognitionService mockMealFoodRecognitionService;
     private LocalDatasetLookupService mockLocalDatasetLookupService;
     private LocalDatasetProductMapper mockLocalDatasetProductMapper;
 
@@ -67,6 +69,7 @@ class PantryServiceTest {
         mockMicronutrientService = mock(PantryItemMicronutrientService.class);
         mockDailyNutrientIntakeService = mock(DailyNutrientIntakeService.class);
         mockMealPortionEstimateService = mock(MealPortionEstimateService.class);
+        mockMealFoodRecognitionService = mock(MealFoodRecognitionService.class);
         mockLocalDatasetLookupService = mock(LocalDatasetLookupService.class);
         mockLocalDatasetProductMapper = mock(LocalDatasetProductMapper.class);
 
@@ -80,6 +83,7 @@ class PantryServiceTest {
                 mockMicronutrientService,
                 mockDailyNutrientIntakeService,
                 mockMealPortionEstimateService,
+                mockMealFoodRecognitionService,
                 mockLocalDatasetLookupService,
                 mockLocalDatasetProductMapper
         );

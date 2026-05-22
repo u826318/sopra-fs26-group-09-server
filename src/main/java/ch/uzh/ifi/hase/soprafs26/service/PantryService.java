@@ -619,7 +619,7 @@ public class PantryService {
         HouseholdMemberId membershipId = new HouseholdMemberId(authenticatedUserId, household.getId());
         boolean isMember = householdMemberRepository.existsById(membershipId);
         if (!isMember) {
-            throw new IllegalArgumentException("User is not a member of this household.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not a member of this household.");
         }
 
         return mealFoodRecognitionService.recognizeFood(image);
