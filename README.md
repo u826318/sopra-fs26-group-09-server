@@ -187,6 +187,14 @@ java -jar build/libs/*.jar
 
 ## Roadmap
 
+New developers can contribute by adding the following features:
+
+- **LLM diet chatbot** — A chat interface where users can ask diet and nutrition questions. Answers are personalized based on the current pantry, consumption history, and health goals.
+
+- **Auto-generated shopping list** — Automatically build a shopping list from low-stock pantry items and missing recipe ingredients. The list can be shared across household members.
+
+- **Weekly meal planner** — Generate a personalized weekly meal plan based on health goals and current pantry contents. The planner highlights missing ingredients and estimates daily calorie coverage for each day.
+
 ## Authors and Acknowledgment
 This project was developed by Group 09 as part of the Software Praktikum (SoPra) FS26 at the University of Zurich.
 
