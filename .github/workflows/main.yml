@@ -45,6 +45,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Inject secrets into app.yaml
+        run: |
+          sed -i "s|OPENAI_API_KEY: \"\"|OPENAI_API_KEY: \"${{ secrets.OPENAI_API_KEY }}\"|" app.yaml
+          sed -i "s|AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT: \"\"|AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT: \"${{ secrets.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT }}\"|" app.yaml
+          sed -i "s|AZURE_DOCUMENT_INTELLIGENCE_API_KEY: \"\"|AZURE_DOCUMENT_INTELLIGENCE_API_KEY: \"${{ secrets.AZURE_DOCUMENT_INTELLIGENCE_API_KEY }}\"|" app.yaml
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
