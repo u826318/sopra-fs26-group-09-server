@@ -59,7 +59,7 @@ class ReceiptUploadServiceTest {
         ReceiptLineItemDTO item = receiptItem("Milk 1L", null);
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(receiptAnalysis(List.of(item)));
         LocalDatasetProductSearchResponseDTO search = searchResponse("OK", List.of(candidate("Whole Milk", 350.0)));
-        when(localDatasetNameSearchService.search("Milk 1L", 5)).thenReturn(search);
+        when(localDatasetNameSearchService.search("Milk 1L", 10)).thenReturn(search);
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -84,7 +84,7 @@ class ReceiptUploadServiceTest {
         ReceiptLineItemDTO item = receiptItem("Pasta", null);
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(receiptAnalysis(List.of(item)));
         LocalDatasetProductSearchResponseDTO search = searchResponse("TOO_MANY_MATCHES", List.of(candidate("Penne Pasta", 200.0)));
-        when(localDatasetNameSearchService.search("Pasta", 5)).thenReturn(search);
+        when(localDatasetNameSearchService.search("Pasta", 10)).thenReturn(search);
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -99,7 +99,7 @@ class ReceiptUploadServiceTest {
         ReceiptLineItemDTO item = receiptItem("Xyzzy Product", null);
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(receiptAnalysis(List.of(item)));
         LocalDatasetProductSearchResponseDTO search = searchResponse("NO_MATCH", List.of());
-        when(localDatasetNameSearchService.search("Xyzzy Product", 5)).thenReturn(search);
+        when(localDatasetNameSearchService.search("Xyzzy Product", 10)).thenReturn(search);
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
 
@@ -129,7 +129,7 @@ class ReceiptUploadServiceTest {
         mockMembership(true);
         ReceiptLineItemDTO item = receiptItem("Bread", null);
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(receiptAnalysis(List.of(item)));
-        when(localDatasetNameSearchService.search("Bread", 5))
+        when(localDatasetNameSearchService.search("Bread", 10))
                 .thenThrow(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "unavailable"));
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
@@ -157,9 +157,9 @@ class ReceiptUploadServiceTest {
         ReceiptLineItemDTO item1 = receiptItem("Milk", null);
         ReceiptLineItemDTO item2 = receiptItem("Eggs", null);
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(receiptAnalysis(List.of(item1, item2)));
-        when(localDatasetNameSearchService.search("Milk", 5))
+        when(localDatasetNameSearchService.search("Milk", 10))
                 .thenReturn(searchResponse("OK", List.of(candidate("Whole Milk", 400.0))));
-        when(localDatasetNameSearchService.search("Eggs", 5))
+        when(localDatasetNameSearchService.search("Eggs", 10))
                 .thenReturn(searchResponse("NO_MATCH", List.of()));
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
@@ -178,7 +178,7 @@ class ReceiptUploadServiceTest {
         item.setPrice("1.50");
         item.setTotalPrice("3.00");
         when(receiptOcrService.analyzeReceipt(any())).thenReturn(receiptAnalysis(List.of(item)));
-        when(localDatasetNameSearchService.search("Milk 1L", 5))
+        when(localDatasetNameSearchService.search("Milk 1L", 10))
                 .thenReturn(searchResponse("OK", List.of(candidate("Milk", 300.0))));
 
         ReceiptUploadResponseDTO response = receiptUploadService.uploadReceipt(1L, 99L, jpgImage());
