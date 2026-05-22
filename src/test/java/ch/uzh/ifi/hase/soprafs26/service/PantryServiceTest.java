@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs26.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -38,7 +37,6 @@ import ch.uzh.ifi.hase.soprafs26.repository.HouseholdRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.PantryItemRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.PantryItemPostDTO;
-import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
 import ch.uzh.ifi.hase.soprafs26.websocket.PantryUpdateMessage;
@@ -89,10 +87,8 @@ class PantryServiceTest {
         when(mockUserRepo.findById(anyLong())).thenReturn(Optional.empty());
         when(mockPantryRepo.findByHouseholdId(anyLong())).thenReturn(List.of());
 
-        // Default stubs for local dataset lookup so addItem/bulkAddItems tests do not throw
-        Map<String, String> stubRow = Map.of("code", "stub");
-        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.of(stubRow));
-        when(mockLocalDatasetProductMapper.toDto(any())).thenReturn(new LocalDatasetProductDTO());
+        // Default stub: no local dataset match, so addItem tests use the DTO values directly
+        when(mockLocalDatasetLookupService.findRawRowByBarcode(any())).thenReturn(Optional.empty());
     }
 
     // Issue #114 — calories now computed per unit (g/ml/package)

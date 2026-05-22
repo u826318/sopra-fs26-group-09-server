@@ -1,11 +1,14 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
-import ch.uzh.ifi.hase.soprafs26.service.BarcodeExtractionService;
-import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetNameSearchService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
@@ -29,12 +30,6 @@ class ProductControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockitoBean
-    private OpenFoodFactsService openFoodFactsService;
-
-    @MockitoBean
-    private BarcodeExtractionService barcodeExtractionService;
 
     @MockitoBean
     private LocalDatasetLookupService localDatasetLookupService;
@@ -62,13 +57,15 @@ class ProductControllerTest {
 
     @Test
     void lookupByBarcodePath_validInput_returns200() throws Exception {
-        ProductDTO dto = new ProductDTO();
+        LocalDatasetProductDTO dto = new LocalDatasetProductDTO();
         dto.setBarcode("7610848492087");
         dto.setName("Sample Product");
 
-        given(openFoodFactsService.lookupByBarcode(eq("7610848492087"))).willReturn(dto);
+        given(localDatasetLookupService.findRawRowByBarcode("7610848492087"))
+                .willReturn(Optional.of(Map.of("code", "7610848492087")));
+        given(localDatasetProductMapper.toDto(any())).willReturn(dto);
 
-        mockMvc.perform(get("/products/barcode/7610848492087")
+        mockMvc.perform(get("/products/lookup/7610848492087")
                         .header("Authorization", TEST_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.barcode", is("7610848492087")))
@@ -77,7 +74,7 @@ class ProductControllerTest {
 
     @Test
     void lookupByBarcodePath_noToken_returns401() throws Exception {
-        mockMvc.perform(get("/products/barcode/7610848492087"))
+        mockMvc.perform(get("/products/lookup/7610848492087"))
                 .andExpect(status().isUnauthorized());
     }
 }

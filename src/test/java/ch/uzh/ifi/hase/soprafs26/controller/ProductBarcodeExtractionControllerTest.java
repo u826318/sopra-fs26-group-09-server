@@ -62,19 +62,17 @@ class ProductBarcodeExtractionControllerTest {
     }
 
     @Test
-    void extractBarcode_authenticatedAndValidImage_returns200() throws Exception {
+    void extractBarcode_endpointRemovedFromProductController_returns404() throws Exception {
         MockMultipartFile image = new MockMultipartFile(
                 "image",
                 "barcode.png",
                 MediaType.IMAGE_PNG_VALUE,
                 "fake-image-content".getBytes());
-        given(barcodeExtractionService.extractBarcode(any())).willReturn("7610848492087");
 
         mockMvc.perform(multipart("/products/barcode/extract")
                         .file(image)
                         .header("Authorization", TEST_TOKEN))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.barcode", is("7610848492087")));
+                .andExpect(status().isNotFound());
     }
 
     @Test

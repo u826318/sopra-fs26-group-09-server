@@ -90,14 +90,14 @@ class ProductSearchControllerTest {
     @Test
     void search_withoutLimit_usesDefaultLimit() throws Exception {
         LocalDatasetProductSearchResponseDTO response = new LocalDatasetProductSearchResponseDTO();
-        given(localDatasetNameSearchService.search(eq("milk"), eq(10))).willReturn(response);
+        given(localDatasetNameSearchService.search(eq("milk"), eq(5))).willReturn(response);
 
         mockMvc.perform(get("/products/search")
                         .header("Authorization", TEST_TOKEN)
                         .param("q", "milk"))
                 .andExpect(status().isOk());
 
-        verify(localDatasetNameSearchService).search("milk", 10);
+        verify(localDatasetNameSearchService).search("milk", 5);
     }
 
     @Test

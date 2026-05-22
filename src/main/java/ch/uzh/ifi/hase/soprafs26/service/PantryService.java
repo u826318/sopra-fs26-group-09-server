@@ -263,6 +263,7 @@ public class PantryService {
                 useLocalDatasetProduct ? calculateKcalPerPackage(localProduct) : positiveOrNull(dto.getKcalPerPackage()),
                 useLocalDatasetProduct ? calculateKcalPer100g(localProduct) : positiveOrNull(dto.getKcalPer100g()),
                 useLocalDatasetProduct ? calculateKcalPer100ml(localProduct) : positiveOrNull(dto.getKcalPer100ml()),
+                useLocalDatasetProduct ? calculateKcalPerServing(localProduct) : positiveOrNull(dto.getKcalPerServing()),
                 dto.getExpirationDate());
 
         if (useLocalDatasetProduct) {
@@ -332,6 +333,29 @@ public class PantryService {
 
     private Double calculateKcalPer100ml(LocalDatasetProductDTO product) {
         return calculateKcalPerBasisUnit(product, "ml");
+    }
+
+    private Double calculateKcalPerServing(LocalDatasetProductDTO product) {
+        if (product == null
+                || product.getNutrition() == null
+                || product.getNutrition().getCoreNutrition() == null
+                || product.getNutrition().getBasisAmount() == null
+                || product.getNutrition().getBasisAmount() <= 0
+                || product.getNutrition().getBasisUnit() == null
+                || product.getServingQuantity() == null
+                || product.getServingQuantity() <= 0
+                || product.getServingQuantityUnit() == null
+                || !product.getServingQuantityUnit().equalsIgnoreCase(product.getNutrition().getBasisUnit())) {
+            return null;
+        }
+
+        LocalDatasetProductDTO.NutrientAmountDTO energy =
+                product.getNutrition().getCoreNutrition().get("energy-kcal");
+        if (energy == null || energy.getValue() == null) {
+            return null;
+        }
+
+        return energy.getValue() * product.getServingQuantity() / product.getNutrition().getBasisAmount();
     }
 
     private Double calculateKcalPerBasisUnit(LocalDatasetProductDTO product, String expectedBasisUnit) {
