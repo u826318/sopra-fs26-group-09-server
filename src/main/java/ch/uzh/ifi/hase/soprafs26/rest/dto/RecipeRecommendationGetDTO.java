@@ -7,6 +7,7 @@ public class RecipeRecommendationGetDTO {
     private String title;
     private String summary;
     private String imageEmoji;
+    private String source;
     private Integer servings;
     private boolean readyToCook;
     private Integer matchScore;
@@ -53,6 +54,14 @@ public class RecipeRecommendationGetDTO {
 
     public void setImageEmoji(String imageEmoji) {
         this.imageEmoji = imageEmoji;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public Integer getServings() {
