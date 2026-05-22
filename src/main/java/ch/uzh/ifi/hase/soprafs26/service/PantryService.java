@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
@@ -244,8 +245,12 @@ public class PantryService {
 
     private PantryItem persistIncomingPantryItem(Long householdId, PantryItemPostDTO dto) {
         String normalizedBarcode = dto.getBarcode() != null ? dto.getBarcode().trim() : null;
-        LocalDatasetProductDTO localProduct = lookupLocalProductByBarcodeIfPresent(normalizedBarcode);
+        LocalDatasetProductDTO localProduct = lookupLocalProductIfPresent(dto.getProductIndex(), normalizedBarcode);
         boolean useLocalDatasetProduct = localProduct != null && !Boolean.TRUE.equals(dto.getManualEntry());
+
+        if (useLocalDatasetProduct) {
+            enforceLocalDatasetPackageQuantity(localProduct, dto);
+        }
 
         String persistedBarcode = useLocalDatasetProduct
                 ? cleanOrFallback(localProduct.getBarcode(), normalizedBarcode)
@@ -253,12 +258,13 @@ public class PantryService {
         String persistedName = useLocalDatasetProduct
                 ? cleanOrFallback(localProduct.getName(), normalizedBarcode)
                 : cleanOrFallback(dto.getName(), normalizedBarcode);
+        String persistedAmountUnit = useLocalDatasetProduct ? "package" : dto.getAmountUnit();
 
         PantryItem saved = mergeOrCreatePantryItem(
                 householdId,
                 persistedBarcode,
                 persistedName,
-                dto.getAmountUnit(),
+                persistedAmountUnit,
                 dto.getAmount(),
                 useLocalDatasetProduct ? calculateKcalPerPackage(localProduct) : positiveOrNull(dto.getKcalPerPackage()),
                 useLocalDatasetProduct ? calculateKcalPer100g(localProduct) : positiveOrNull(dto.getKcalPer100g()),
@@ -279,7 +285,16 @@ public class PantryService {
         return saved;
     }
 
-    private LocalDatasetProductDTO lookupLocalProductByBarcodeIfPresent(String barcode) {
+    private LocalDatasetProductDTO lookupLocalProductIfPresent(Long productIndex, String barcode) {
+        if (productIndex != null && productIndex > 0) {
+            LocalDatasetProductDTO product = localDatasetLookupService.findRawRowByProductIndex(productIndex)
+                    .map(localDatasetProductMapper::toDto)
+                    .orElse(null);
+            if (product != null) {
+                return product;
+            }
+        }
+
         if (isBlank(barcode)) {
             return null;
         }
@@ -287,6 +302,74 @@ public class PantryService {
         return localDatasetLookupService.findRawRowByBarcode(barcode.trim())
                 .map(localDatasetProductMapper::toDto)
                 .orElse(null);
+    }
+
+    private void enforceLocalDatasetPackageQuantity(LocalDatasetProductDTO product, PantryItemPostDTO dto) {
+        if (!"package".equals(dto.getAmountUnit())) {
+            throw new IllegalArgumentException("Local dataset products must be added in package units.");
+        }
+
+        if (hasUsablePackageQuantity(product)) {
+            return;
+        }
+
+        BigDecimal packageQuantity = parsePositiveDecimal(dto.getPackageQuantity());
+        String packageQuantityUnit = normalizeQuantityUnit(dto.getPackageQuantityUnit());
+        String basisUnit = normalizeQuantityUnit(
+                product.getNutrition() == null ? null : product.getNutrition().getBasisUnit());
+
+        if (packageQuantity == null) {
+            throw new IllegalArgumentException("Package quantity is required before adding this local dataset product.");
+        }
+        if (packageQuantityUnit == null) {
+            throw new IllegalArgumentException("Package quantity unit must be g or ml.");
+        }
+        if (basisUnit != null && !basisUnit.equals(packageQuantityUnit)) {
+            throw new IllegalArgumentException("Package quantity unit must match the nutrition basis unit: " + basisUnit + ".");
+        }
+
+        product.setPackageQuantity(packageQuantity.doubleValue());
+        product.setPackageQuantityUnit(packageQuantityUnit);
+    }
+
+    private boolean hasUsablePackageQuantity(LocalDatasetProductDTO product) {
+        if (product == null) {
+            return false;
+        }
+
+        String basisUnit = normalizeQuantityUnit(
+                product.getNutrition() == null ? null : product.getNutrition().getBasisUnit());
+        String packageUnit = normalizeQuantityUnit(product.getPackageQuantityUnit());
+        return product.getPackageQuantity() != null
+                && product.getPackageQuantity() > 0
+                && basisUnit != null
+                && basisUnit.equals(packageUnit);
+    }
+
+    private BigDecimal parsePositiveDecimal(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            BigDecimal parsed = new BigDecimal(value.trim().replace(',', '.'));
+            return parsed.compareTo(BigDecimal.ZERO) > 0 ? parsed : null;
+        }
+        catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    private String normalizeQuantityUnit(String unit) {
+        if (unit == null || unit.trim().isEmpty()) {
+            return null;
+        }
+
+        String normalized = unit.trim().toLowerCase(Locale.ROOT);
+        if ("g".equals(normalized) || "ml".equals(normalized)) {
+            return normalized;
+        }
+        return null;
     }
 
     private Double positiveOrNull(Double value) {
@@ -311,19 +394,22 @@ public class PantryService {
             return null;
         }
 
-        String basisUnit = product.getNutrition().getBasisUnit();
-        String packageUnit = product.getPackageQuantityUnit();
+        String basisUnit = normalizeQuantityUnit(product.getNutrition().getBasisUnit());
+        String packageUnit = normalizeQuantityUnit(product.getPackageQuantityUnit());
         Double packageQuantity = product.getPackageQuantity();
+        Double basisAmount = product.getNutrition().getBasisAmount();
 
         if (basisUnit == null
                 || packageUnit == null
                 || packageQuantity == null
                 || packageQuantity <= 0
+                || basisAmount == null
+                || basisAmount <= 0
                 || !basisUnit.equals(packageUnit)) {
             return null;
         }
 
-        return energy.getValue() * packageQuantity / 100.0;
+        return energy.getValue() * packageQuantity / basisAmount;
     }
 
 
