@@ -195,7 +195,15 @@ name_candidates
 product_index
 ```
 
-During generation, product names and brands are normalized and tokenized, for example, if we have "brand: tiger kitchen; name: udon noodles, product_index: 101", the brand and name will be normalized (decapitalized, trimmed...), and tokenized into "tiger", "kitchen", "udon", "noodles". The index then records which products are connected to each search token, so we will have 4 entries from the example product:
+During generation, product names and brands are normalized and tokenized, for example, if we have something like 
+
+```text
+brand: tiger kitchen
+name: udon noodles
+product_index: 101
+```
+
+the brand and name will be normalized (decapitalized, trimmed...), and tokenized into "tiger", "kitchen", "udon", "noodles". The index will corespond to which products are connected to each search token, so we will have 4 entries from the example product:
 
 ```text
 "tiger": [101]
