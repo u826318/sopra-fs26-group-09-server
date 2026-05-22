@@ -14,13 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ProductDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.localdataset.LocalDatasetProductDTO;
+import ch.uzh.ifi.hase.soprafs26.service.OpenFoodFactsService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetLookupService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetNameSearchService;
 import ch.uzh.ifi.hase.soprafs26.service.localdatasetlookup.LocalDatasetProductMapper;
@@ -30,6 +34,9 @@ class ProductControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private OpenFoodFactsService openFoodFactsService;
 
     @MockitoBean
     private LocalDatasetLookupService localDatasetLookupService;
@@ -56,20 +63,39 @@ class ProductControllerTest {
     }
 
     @Test
-    void lookupByBarcodePath_validInput_returns200() throws Exception {
-        LocalDatasetProductDTO dto = new LocalDatasetProductDTO();
+    void lookupByBarcodePath_offHit_returnsProductDTO() throws Exception {
+        ProductDTO dto = new ProductDTO();
         dto.setBarcode("7610848492087");
-        dto.setName("Sample Product");
+        dto.setName("OFF Product");
+        dto.setBrand("OFF Brand");
 
-        given(localDatasetLookupService.findRawRowByBarcode("7610848492087"))
-                .willReturn(Optional.of(Map.of("code", "7610848492087")));
-        given(localDatasetProductMapper.toDto(any())).willReturn(dto);
+        given(openFoodFactsService.lookupByBarcode("7610848492087")).willReturn(dto);
 
         mockMvc.perform(get("/products/lookup/7610848492087")
                         .header("Authorization", TEST_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.barcode", is("7610848492087")))
-                .andExpect(jsonPath("$.name", is("Sample Product")));
+                .andExpect(jsonPath("$.name", is("OFF Product")));
+    }
+
+    @Test
+    void lookupByBarcodePath_offFails_returnsLocalDatasetProduct() throws Exception {
+        given(openFoodFactsService.lookupByBarcode("7610848492087"))
+                .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "not found in OFF"));
+
+        LocalDatasetProductDTO localDto = new LocalDatasetProductDTO();
+        localDto.setBarcode("7610848492087");
+        localDto.setName("Local Product");
+
+        given(localDatasetLookupService.findRawRowByBarcode("7610848492087"))
+                .willReturn(Optional.of(Map.of("code", "7610848492087")));
+        given(localDatasetProductMapper.toDto(any())).willReturn(localDto);
+
+        mockMvc.perform(get("/products/lookup/7610848492087")
+                        .header("Authorization", TEST_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.barcode", is("7610848492087")))
+                .andExpect(jsonPath("$.name", is("Local Product")));
     }
 
     @Test
