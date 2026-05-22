@@ -169,10 +169,15 @@ public class RecipeService {
         int missing = ingredientDTOs.size() - matched;
         boolean readyToCook = missing == 0;
         int pantryScore = ingredientDTOs.isEmpty() ? 0 : (int) Math.round((matched * 62.0) / ingredientDTOs.size());
+        int goalScore = goalProfile.score(recipe);
         int dynamicPantryBonus = recipe.id().startsWith("dynamic-") ? 12 : 0;
         int readyBonus = readyToCook ? 8 : 0;
+        int missingPenalty = Math.min(24, missing * 6);
         int score = Math.max(0, Math.min(100,
-                pantryScore + goalProfile.score(recipe) + dynamicPantryBonus + readyBonus - (missing * 10)));
+                pantryScore + goalScore + dynamicPantryBonus + readyBonus - missingPenalty));
+        if (!ingredientDTOs.isEmpty()) {
+            score = Math.max(score, Math.min(35, goalScore + (matched > 0 ? 10 : 5)));
+        }
 
         RecipeRecommendationGetDTO dto = new RecipeRecommendationGetDTO();
         dto.setId(recipe.id());
